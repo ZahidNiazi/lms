@@ -484,8 +484,27 @@
                     </tbody> --}}
                     <tbody>
                         @foreach($students as $student)
+                            @php
+                                $application = $student->jobPortalApplication;
+                                $statusClass = 'status-pending';
+                                if ($application) {
+                                    switch($application->status) {
+                                        case 'approved':
+                                        case 'selected':
+                                        case 'batch_assigned':
+                                            $statusClass = 'status-approved';
+                                            break;
+                                        case 'rejected':
+                                            $statusClass = 'status-reject';
+                                            break;
+                                        case 'document_review':
+                                            $statusClass = 'status-document';
+                                            break;
+                                    }
+                                }
+                            @endphp
                             <tr>
-                                <td><strong>NS-{{ $student->id }}</strong></td>
+                                <td><strong>{{ $application ? $application->application_number : 'NS-' . $student->id }}</strong></td>
                                 <td>{{ $student->name }}</td>
                                 <td>{{ $student->profile->nid ?? 'N/A' }}</td>
                                 <td>
@@ -503,38 +522,58 @@
                                 </td>
                                 <td>{{ $student->created_at->format('Y-m-d') }}</td>
                                 <td>
-                                    <span class="status-badge status-pending">
-                                        {{ ucfirst($student->status) ?? 'Pending Review' }}
+                                    <span class="status-badge {{ $statusClass }}">
+                                        {{ $application ? ucfirst(str_replace('_', ' ', $application->status)) : 'Pending Review' }}
                                     </span>
                                 </td>
                                 <td>
-    <div class="d-flex gap-2 align-items-center">
-        {{-- View --}}
-        <button class="action-btn view border-0 bg-transparent p-0"
-            data-bs-toggle="modal"
-            data-bs-target="#studentModal"
-            data-name="{{ $student->name }}"
-            data-nid="{{ $student->profile->nid ?? 'N/A' }}"
-            data-mobile="{{ $student->profile->mobile ?? 'N/A' }}"
-            data-dob="{{ $student->profile->dob ?? 'N/A' }}"
-            data-age="{{ !empty($student->profile->dob) ? \Carbon\Carbon::parse($student->profile->dob)->age : 'N/A' }}"
-            data-address="{{ optional($student->addresses->first())->island ?? 'N/A' }}, {{ optional($student->addresses->first())->atoll ?? '' }}"
-            data-applied="{{ $student->profile->applied_field ?? 'N/A' }}"
-            data-submitted="{{ $student->created_at->format('Y-m-d') }}"
-            data-status="{{ $student->profile->application_status ?? 'Pending' }}"
-        >
-            <i class="bi bi-eye text-primary"></i>
-        </button>
-       
-        <a href="{{route('apllication.response',[$student->id,'approved'])}}" class="bg-transparent btn-sm me-1" data-bs-toggle="tooltip" data-bs-original-title="{{__('Approve')}}">
-                                                    <i class="bi bi-check-circle text-success"></i>
-                                                </a>
-                                                <a href="{{route('apllication.response',[$student->id,'rejected'])}}" class="bg-transparent btn-sm" data-bs-toggle="tooltip" data-bs-original-title="{{__('Reject')}}">
-                                                <i class="bi bi-x-circle text-danger"></i>
-                                                </a>
-    </div>
-</td>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        {{-- View --}}
+                                        <button class="action-btn view border-0 bg-transparent p-0"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#studentModal"
+                                            data-name="{{ $student->name }}"
+                                            data-nid="{{ $student->profile->nid ?? 'N/A' }}"
+                                            data-mobile="{{ $student->profile->mobile_no ?? 'N/A' }}"
+                                            data-dob="{{ $student->profile->dob ?? 'N/A' }}"
+                                            data-age="{{ !empty($student->profile->dob) ? \Carbon\Carbon::parse($student->profile->dob)->age : 'N/A' }}"
+                                            data-address="{{ optional($student->addresses->first())->island ?? 'N/A' }}, {{ optional($student->addresses->first())->atoll ?? '' }}"
+                                            data-applied="{{ $student->profile->applied_field ?? 'N/A' }}"
+                                            data-submitted="{{ $student->created_at->format('Y-m-d') }}"
+                                            data-status="{{ $application ? ucfirst(str_replace('_', ' ', $application->status)) : 'Pending' }}"
+                                            data-application-id="{{ $application ? $application->id : $student->id }}"
+                                        >
+                                            <i class="bi bi-eye text-primary"></i>
+                                        </button>
+                                       
+                                        @if($application && in_array($application->status, ['pending_review', 'document_review']))
+                                            <a href="{{ route('job-portal.applications.status', [$application->id]) }}" 
+                                               class="bg-transparent btn-sm me-1" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-original-title="Review Application">
+                                                <i class="bi bi-check-circle text-success"></i>
+                                            </a>
+                                        @endif
 
+                                        @if($application && $application->status === 'approved')
+                                            <a href="{{ route('job-portal.applications.schedule-interview', [$application->id]) }}" 
+                                               class="bg-transparent btn-sm me-1" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-original-title="Schedule Interview">
+                                                <i class="bi bi-calendar-plus text-info"></i>
+                                            </a>
+                                        @endif
+
+                                        @if($application && $application->status === 'selected')
+                                            <a href="{{ route('job-portal.applications.assign-batch', [$application->id]) }}" 
+                                               class="bg-transparent btn-sm me-1" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-original-title="Assign to Batch">
+                                                <i class="bi bi-people text-warning"></i>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -63,6 +63,14 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\InterviewScheduleController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\JobPortalController;
+use App\Http\Controllers\JobPortalApplicationController;
+use App\Http\Controllers\TrainingBatchController;
+use App\Http\Controllers\InterviewLocationController;
+use App\Http\Controllers\NotificationTemplateController;
+use App\Http\Controllers\ApplicationCommunicationController;
+use App\Http\Controllers\PoliceDisVettingController;
+use App\Http\Controllers\JobPortalReportController;
 use App\Http\Controllers\IyziPayController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobCategoryController;
@@ -1824,10 +1832,69 @@ Route::get('payslip/payslipPdf/{id}/{month}', [PaySlipController::class, 'paysli
 // Route::post('/student-login', [AuthController::class, 'postLogin'])->name('post.login');
 // // Main Home
 Route::get('/landing-page', [StudentController::class, 'index'])->name('landing_page');
+// Job Portal Login Routes (must be before the job-portal group)
 Route::get('/job-portal', [StudentController::class, 'jobPortal'])->name('job.login');
 Route::post('/job-login', [AuthController::class, 'jobPostLogin'])->name('job.login.submit');
 Route::get('/job-logout', [AuthController::class, 'jobLogout'])->name('job.logout');
 Route::get('/job-applications', [StudentController::class, 'jobApplications'])->name('job.applications');
+
+// Job Portal Admin Routes
+Route::prefix('job-portal/admin')->name('job-portal.')->middleware(['auth'])->group(function () {
+    // Dashboard
+    Route::get('/', [JobPortalController::class, 'index'])->name('dashboard');
+    
+    // Applications Management
+    Route::get('/applications', [JobPortalController::class, 'applications'])->name('applications.index');
+    Route::get('/applications/{id}', [JobPortalController::class, 'showApplication'])->name('applications.show');
+    
+    // Application Reviews
+    Route::post('/applications/{id}/review', [JobPortalApplicationController::class, 'reviewApplication'])->name('applications.review');
+    Route::post('/applications/{id}/status', [JobPortalApplicationController::class, 'updateApplicationStatus'])->name('applications.status');
+    
+    // Interview Management
+    Route::post('/applications/{id}/schedule-interview', [JobPortalApplicationController::class, 'scheduleInterview'])->name('applications.schedule-interview');
+    Route::post('/applications/{id}/interview-result', [JobPortalApplicationController::class, 'recordInterviewResult'])->name('applications.interview-result');
+    
+    // Batch Assignment
+    Route::post('/applications/{id}/assign-batch', [JobPortalApplicationController::class, 'assignToBatch'])->name('applications.assign-batch');
+    
+    // Training Batches
+    Route::get('/batches', [TrainingBatchController::class, 'index'])->name('batches.index');
+    Route::get('/batches/create', [TrainingBatchController::class, 'create'])->name('batches.create');
+    Route::post('/batches', [TrainingBatchController::class, 'store'])->name('batches.store');
+    Route::get('/batches/{id}', [TrainingBatchController::class, 'show'])->name('batches.show');
+    Route::get('/batches/{id}/edit', [TrainingBatchController::class, 'edit'])->name('batches.edit');
+    Route::put('/batches/{id}', [TrainingBatchController::class, 'update'])->name('batches.update');
+    
+    // Interview Locations
+    Route::get('/interview-locations', [InterviewLocationController::class, 'index'])->name('interview-locations.index');
+    Route::get('/interview-locations/create', [InterviewLocationController::class, 'create'])->name('interview-locations.create');
+    Route::post('/interview-locations', [InterviewLocationController::class, 'store'])->name('interview-locations.store');
+    Route::get('/interview-locations/{id}/edit', [InterviewLocationController::class, 'edit'])->name('interview-locations.edit');
+    Route::put('/interview-locations/{id}', [InterviewLocationController::class, 'update'])->name('interview-locations.update');
+    
+    // Notification Templates
+    Route::get('/notification-templates', [NotificationTemplateController::class, 'index'])->name('notification-templates.index');
+    Route::get('/notification-templates/create', [NotificationTemplateController::class, 'create'])->name('notification-templates.create');
+    Route::post('/notification-templates', [NotificationTemplateController::class, 'store'])->name('notification-templates.store');
+    Route::get('/notification-templates/{id}/edit', [NotificationTemplateController::class, 'edit'])->name('notification-templates.edit');
+    Route::put('/notification-templates/{id}', [NotificationTemplateController::class, 'update'])->name('notification-templates.update');
+    
+    // Communications
+    Route::get('/communications', [ApplicationCommunicationController::class, 'index'])->name('communications.index');
+    Route::get('/communications/{id}', [ApplicationCommunicationController::class, 'show'])->name('communications.show');
+    
+    // Police & DIS Vetting
+    Route::get('/vetting', [PoliceDisVettingController::class, 'index'])->name('vetting.index');
+    Route::post('/vetting/{id}/update', [PoliceDisVettingController::class, 'update'])->name('vetting.update');
+    
+                // Reports
+                Route::get('/reports', [JobPortalReportController::class, 'index'])->name('reports.index');
+                Route::get('/reports/export', [JobPortalReportController::class, 'export'])->name('reports.export');
+                
+                // Logout
+                Route::post('/logout', [App\Http\Controllers\Student\AuthController::class, 'jobLogout'])->name('logout');
+            });
 
 Route::get('/contact', [StudentController::class, 'contact'])->name('student_contact');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');

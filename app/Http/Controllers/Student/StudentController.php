@@ -57,7 +57,7 @@ class StudentController extends Controller
     }
 
     public function jobApplications(){
-        $students = Student::has('profile')->with(['profile', 'addresses'])->get();
+        $students = Student::has('profile')->with(['profile', 'addresses', 'jobPortalApplication'])->get();
         $totalApplications = Student::has('profile')->count();
         return view('landing-page.student.job_portal', compact('students', 'totalApplications'));
     }

@@ -80,6 +80,11 @@ class Student extends Authenticatable
         return $this->hasOne(ApplicationStatus::class);
     }
 
+    public function jobPortalApplication()
+    {
+        return $this->hasOne(JobPortalApplication::class);
+    }
+
     // Helper methods
     public function isProfileComplete()
     {

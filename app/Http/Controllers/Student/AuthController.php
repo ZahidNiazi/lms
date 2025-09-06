@@ -86,11 +86,11 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            // $request->session()->regenerate();
+            $request->session()->regenerate();
 
             $user = Auth::user();
             if ($user->type === 'super admin') {
-                return redirect()->route('job.applications');
+                return redirect()->route('job-portal.dashboard');
             } else {
                 return back()->withErrors([
                     'msg' => "You're not super admin.",

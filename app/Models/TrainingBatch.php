@@ -34,4 +34,9 @@ class TrainingBatch extends Model
     {
         return $this->belongsToMany(Student::class, 'student_training_enrollments');
     }
+
+    public function applications()
+    {
+        return $this->hasMany(JobPortalApplication::class, 'batch_id');
+    }
 }
