@@ -169,6 +169,13 @@
             margin: 0;
         }
 
+        .activity-subtitle {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin: 0.25rem 0;
+            font-weight: 400;
+        }
+
         .activity-time {
             font-size: 0.8rem;
             color: #6c757d;
@@ -358,39 +365,34 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="recent-activity">
-                    <h5 class="mb-3">
-                        <i class="bi bi-clock-history me-2"></i>Recent Activity
-                    </h5>
-                    
-                    <div class="activity-item">
-                        <div class="activity-icon" style="background: var(--success-green);">
-                            <i class="bi bi-check"></i>
-                        </div>
-                        <div class="activity-content">
-                            <p class="activity-title">5 applications approved</p>
-                            <p class="activity-time">2 hours ago</p>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-clock-history me-2"></i>Recent Activity
+                        </h5>
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshRecentActivity()" title="Refresh">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
                     </div>
                     
-                    <div class="activity-item">
-                        <div class="activity-icon" style="background: var(--warning-yellow);">
-                            <i class="bi bi-calendar"></i>
+                    @forelse($recentActivities as $activity)
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: {{ $activity['icon_color'] }};">
+                                <i class="{{ $activity['icon'] }}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p class="activity-title">{{ $activity['title'] }}</p>
+                                <p class="activity-subtitle">{{ $activity['subtitle'] }}</p>
+                                <p class="activity-time">{{ $activity['time']->diffForHumans() }}</p>
+                            </div>
                         </div>
-                        <div class="activity-content">
-                            <p class="activity-title">Interview scheduled for 10 candidates</p>
-                            <p class="activity-time">4 hours ago</p>
+                    @empty
+                        <div class="activity-item">
+                            <div class="activity-content">
+                                <p class="activity-title text-muted">No recent activities</p>
+                                <p class="activity-time">Check back later for updates</p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-icon" style="background: var(--primary-blue);">
-                            <i class="bi bi-people"></i>
-                        </div>
-                        <div class="activity-content">
-                            <p class="activity-title">New batch created: NS-2025-03</p>
-                            <p class="activity-time">1 day ago</p>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
             </div>
             
@@ -407,6 +409,12 @@
                         <a href="{{ route('job-portal.batches.create') }}" class="btn btn-outline-success">
                             <i class="bi bi-plus-circle me-2"></i>Create New Batch
                         </a>
+                        <a href="{{ route('job-portal.batches.assignment.dashboard') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-people-fill me-2"></i>Assign Students to Batches
+                        </a>
+                        <a href="{{ route('sms.dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-people me-2"></i>SMS - Student Management
+                        </a>
                         <a href="{{ route('job-portal.interview-locations.create') }}" class="btn btn-outline-warning">
                             <i class="bi bi-geo-alt me-2"></i>Add Interview Location
                         </a>
@@ -421,5 +429,33 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function refreshRecentActivity() {
+            const refreshBtn = document.querySelector('[onclick="refreshRecentActivity()"]');
+            const icon = refreshBtn.querySelector('i');
+            
+            // Add spinning animation
+            icon.classList.add('bi-arrow-clockwise');
+            icon.style.animation = 'spin 1s linear infinite';
+            
+            // Reload the page to get fresh data
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        }
+        
+        // Auto-refresh every 5 minutes
+        setInterval(() => {
+            window.location.reload();
+        }, 300000); // 5 minutes
+    </script>
+    
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </body>
 </html>

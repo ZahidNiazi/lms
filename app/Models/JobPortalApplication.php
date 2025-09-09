@@ -24,7 +24,23 @@ class JobPortalApplication extends Model
         'reviewed_at',
         'batch_id',
         'batch_position',
-        'is_reserve'
+        'is_reserve',
+        'updated_by',
+        'interview_completed_at',
+        'assigned_by',
+        'assigned_at',
+        'assignment_type',
+        'is_second_attempt',
+        'is_application_closed',
+        'application_closure_reason',
+        'application_closed_at',
+        'application_closed_by',
+        'is_unreachable',
+        'last_contact_attempt',
+        'contact_attempts_count',
+        'preferred_interview_location_id',
+        'location_preference_reason',
+        'location_preference_submitted_at'
     ];
 
     protected $casts = [
@@ -32,6 +48,11 @@ class JobPortalApplication extends Model
         'basic_criteria_met' => 'boolean',
         'is_reserve' => 'boolean',
         'reviewed_at' => 'datetime',
+        'is_second_attempt' => 'boolean',
+        'is_application_closed' => 'boolean',
+        'application_closed_at' => 'datetime',
+        'is_unreachable' => 'boolean',
+        'last_contact_attempt' => 'datetime',
     ];
 
     // Relationships
@@ -70,9 +91,34 @@ class JobPortalApplication extends Model
         return $this->hasMany(ApplicationCommunication::class, 'application_id');
     }
 
+    public function vettings(): HasMany
+    {
+        return $this->hasMany(Vetting::class, 'application_id');
+    }
+
     public function vetting(): HasMany
     {
-        return $this->hasMany(PoliceDisVetting::class, 'application_id');
+        return $this->hasMany(Vetting::class, 'application_id');
+    }
+
+    public function nominationLetter(): HasOne
+    {
+        return $this->hasOne(NominationLetter::class);
+    }
+
+    public function serviceOfferLetter(): HasOne
+    {
+        return $this->hasOne(ServiceOfferLetter::class);
+    }
+
+    public function vettingRecord(): HasOne
+    {
+        return $this->hasOne(VettingRecord::class);
+    }
+
+    public function preferredInterviewLocation(): BelongsTo
+    {
+        return $this->belongsTo(InterviewLocation::class, 'preferred_interview_location_id');
     }
 
     // Helper methods

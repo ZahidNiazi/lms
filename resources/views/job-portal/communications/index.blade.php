@@ -198,12 +198,42 @@
                         Communications ({{ $communications->total() }})
                     </h4>
                     
-                    <div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('job-portal.communications.create') }}" class="btn btn-primary">
+                            <i class="bi bi-send me-1"></i>Send Message
+                        </a>
                         <a href="{{ route('job-portal.dashboard') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
                         </a>
                     </div>
                 </div>
+
+                <!-- Flash Messages -->
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
 
                 @if($communications->count() > 0)
                     @foreach($communications as $communication)
@@ -308,3 +338,4 @@
     </script>
 </body>
 </html>
+

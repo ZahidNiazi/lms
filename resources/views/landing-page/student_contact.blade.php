@@ -94,7 +94,7 @@
             </ul>
           </li> -->
 <li>
-    <a href="{{ route('student.register') }}"
+    <a href="{{ route('student.login') }}"
        class="{{ request()->is('student/register') || (request()->is('student/login') && !request()->query('job_portal')) ? 'active' : '' }}">
        Student Portal
     </a>

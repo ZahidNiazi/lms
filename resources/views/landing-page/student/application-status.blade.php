@@ -1,7 +1,4 @@
 @extends('landing-page.student.dashboard')
-@php
-    $student = Student::findOrFail($id);
-@endphp
 @section('content')
 <div class="form-section">
     <h2>Application Status</h2>

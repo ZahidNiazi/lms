@@ -73,14 +73,6 @@
             font-size: 0.9rem;
             margin: 0;
         }
-
-        .chart-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
-        }
     </style>
 </head>
 
@@ -285,32 +277,6 @@
             </div>
         </div>
 
-        <!-- Charts Section -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="chart-card">
-                    <h5 class="mb-3">
-                        <i class="bi bi-pie-chart me-2"></i>Applications by Status
-                    </h5>
-                    <div class="text-center py-4">
-                        <i class="bi bi-graph-up display-1 text-muted"></i>
-                        <p class="text-muted mt-2">Chart visualization will be implemented here</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="chart-card">
-                    <h5 class="mb-3">
-                        <i class="bi bi-bar-chart me-2"></i>Monthly Applications
-                    </h5>
-                    <div class="text-center py-4">
-                        <i class="bi bi-graph-up display-1 text-muted"></i>
-                        <p class="text-muted mt-2">Chart visualization will be implemented here</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Export Options -->
         <div class="row mt-4">
@@ -358,5 +324,7 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>
+

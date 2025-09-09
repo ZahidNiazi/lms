@@ -57,7 +57,7 @@
         <ul>
           <li><a href="{{route('landing_page')}}" class="{{ request()->is('landing-page') ? 'active' : '' }}">Home</a></li>
           <li>
-    <a href="{{ route('student.register') }}"
+    <a href="{{ route('student.login') }}"
        class="{{ request()->is('student/register') || (request()->is('student/login')) ? 'active' : '' }}">
        Student Portal
     </a>

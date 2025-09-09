@@ -56,7 +56,7 @@
         <ul>
           <li><a href="{{route('landing_page')}}" class="{{ request()->is('landing-page') ? 'active' : '' }}">Home</a></li>
           <li>
-    <a href="{{ route('student.register') }}"
+    <a href="{{ route('student.login') }}"
        class="{{ request()->is('student/register') || (request()->is('student/login') && !request()->query('job_portal')) ? 'active' : '' }}">
        Student Portal
     </a>
@@ -101,20 +101,44 @@
                 @csrf
                 <div class="row">
                   <div class="col-md-12 form-group pb-2">
-                    <input type="text" name="name" class="form-control inp-style" id="name" placeholder="Enter Name *" required="required">
+                    <input type="text" name="name" class="form-control inp-style" id="name" placeholder="Enter Full Name *" required="required" value="{{ old('name') }}">
+                    @error('name')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
                   </div>
                   <div class="col-md-12 form-group pb-2">
-                    <input type="email" name="email" class="form-control inp-style" id="email" placeholder="Enter Email *" required="required">
+                    <input type="email" name="email" class="form-control inp-style" id="email" placeholder="Enter Email *" required="required" value="{{ old('email') }}">
+                    @error('email')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 form-group pb-2">
+                    <input type="date" name="date_of_birth" class="form-control inp-style" id="date_of_birth" placeholder="Date of Birth *" required="required" value="{{ old('date_of_birth') }}">
+                    @error('date_of_birth')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
+                    <small class="text-muted">Age must be between 16-28 years</small>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-12 form-group pb-2">
                     <input type="password" name="password" class="form-control inp-style" id="password" placeholder="Enter Password *" required="required">
+                    @error('password')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
                   </div>
                   <div class="col-md-12 form-group pb-2">
-                    <input type="password" name="cpassword" class="form-control inp-style" id="cpassword" placeholder="Enter Confirm Password *" required="required">
+                    <input type="password" name="password_confirmation" class="form-control inp-style" id="password_confirmation" placeholder="Confirm Password *" required="required">
                   </div>
                 </div>
+                
+                @if ($errors->has('program'))
+                    <div class="alert alert-danger">
+                        {{ $errors->first('program') }}
+                    </div>
+                @endif
 
                 <div class="form-submit" style="float:right;">
                   <button type="submit" class="btn-style" style="background: linear-gradient(90deg, hsl(195deg 91.06% 30.27%) 0%, hsl(195, 85%, 45%) 100%);
@@ -155,6 +179,6 @@
   <!-- Main JS File -->
   <script src="{{asset('assets/js-front/main.js')}}"></script>
 
-</body>
-
-</html>
+  </body>
+  
+  </html>

@@ -248,10 +248,12 @@
                                         @endif
 
                                         @if($application->status === 'selected')
-                                            <a href="{{ route('job-portal.applications.assign-batch', $application->id) }}" 
-                                               class="action-btn btn-batch">
-                                                <i class="bi bi-people me-1"></i>Assign Batch
-                                            </a>
+                                            <form method="POST" action="{{ route('job-portal.applications.assign-batch', $application->id) }}" style="display: inline;">
+                                                @csrf
+                                                <button type="submit" class="action-btn btn-batch">
+                                                    <i class="bi bi-people me-1"></i>Assign Batch
+                                                </button>
+                                            </form>
                                         @endif
 
                                         <a href="{{ route('job-portal.applications.show', $application->id) }}" 
@@ -283,3 +285,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+

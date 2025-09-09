@@ -13,8 +13,11 @@ class JobPortalInterviewSchedule extends Model
 
     protected $fillable = [
         'application_id',
+        'location_id',
         'interview_date',
         'interview_time',
+        'interview_type',
+        'instructions',
         'venue',
         'dress_code',
         'travel_arrangements',
@@ -22,7 +25,7 @@ class JobPortalInterviewSchedule extends Model
         'status',
         'student_acknowledged',
         'acknowledged_at',
-        'student_comments',
+        'notes',
         'scheduled_by'
     ];
 
@@ -39,9 +42,9 @@ class JobPortalInterviewSchedule extends Model
         return $this->belongsTo(JobPortalApplication::class, 'application_id');
     }
 
-    public function scheduledBy(): BelongsTo
+    public function location(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'scheduled_by');
+        return $this->belongsTo(InterviewLocation::class, 'location_id');
     }
 
     public function results(): HasMany
@@ -100,8 +103,7 @@ class JobPortalInterviewSchedule extends Model
         $this->update([
             'student_acknowledged' => true,
             'acknowledged_at' => now(),
-            'student_comments' => $comments,
-            'status' => 'acknowledged'
+            'notes' => $comments
         ]);
         
         return true;

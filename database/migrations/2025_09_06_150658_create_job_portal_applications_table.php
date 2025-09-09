@@ -49,6 +49,24 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop foreign key constraints first (only if they exist)
+        try {
+            Schema::table('interview_results', function (Blueprint $table) {
+                $table->dropForeign(['application_id']);
+            });
+        } catch (\Exception $e) {
+            // Constraint might not exist, continue
+        }
+        
+        try {
+            Schema::table('job_portal_interview_schedules', function (Blueprint $table) {
+                $table->dropForeign(['application_id']);
+            });
+        } catch (\Exception $e) {
+            // Constraint might not exist, continue
+        }
+        
+        // Then drop the table
         Schema::dropIfExists('job_portal_applications');
     }
 };

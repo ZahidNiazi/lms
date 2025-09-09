@@ -214,8 +214,16 @@
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <h4 class="text-info">{{ $batch->start_date->diffInDays(now()) }}</h4>
-                    <p class="mb-0">Days Until Start</p>
+                    @php
+                        $daysDiff = $batch->start_date->diffInDays(now(), false);
+                        $isPast = $batch->start_date->isPast();
+                    @endphp
+                    <h4 class="text-{{ $isPast ? 'success' : 'info' }}">
+                        {{ abs($daysDiff) }}
+                    </h4>
+                    <p class="mb-0">
+                        {{ $isPast ? 'Days Since Start' : 'Days Until Start' }}
+                    </p>
                 </div>
             </div>
         </div>

@@ -25,6 +25,18 @@ class TrainingBatch extends Model
         'end_date' => 'date',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($batch) {
+            $validStatuses = ['planning', 'active', 'completed', 'cancelled'];
+            if (!in_array($batch->status, $validStatuses)) {
+                throw new \InvalidArgumentException('Invalid status. Must be one of: ' . implode(', ', $validStatuses));
+            }
+        });
+    }
+
     public function enrollments()
     {
         return $this->hasMany(StudentTrainingEnrollment::class);
@@ -39,4 +51,5 @@ class TrainingBatch extends Model
     {
         return $this->hasMany(JobPortalApplication::class, 'batch_id');
     }
+
 }

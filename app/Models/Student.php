@@ -20,7 +20,8 @@ class Student extends Authenticatable
         'is_reachable',
         'is_under_age_18',
         'application_date',
-        'rejection_reason'
+        'rejection_reason',
+        'date_of_birth'
     ];
 
     protected $hidden = [
@@ -33,6 +34,7 @@ class Student extends Authenticatable
         'is_reachable' => 'boolean',
         'is_under_age_18' => 'boolean',
         'application_date' => 'date',
+        'date_of_birth' => 'date',
     ];
 
     public function profile()
@@ -83,6 +85,11 @@ class Student extends Authenticatable
     public function jobPortalApplication()
     {
         return $this->hasOne(JobPortalApplication::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(StudentNotification::class);
     }
 
     // Helper methods

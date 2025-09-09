@@ -183,7 +183,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4>
                         <i class="bi bi-shield-check me-2"></i>
-                        Vetting Records ({{ $vettings->total() }})
+                        Vetting Records ({{ $vettingRecords->total() }})
                     </h4>
                     
                     <div>
@@ -193,8 +193,8 @@
                     </div>
                 </div>
 
-                @if($vettings->count() > 0)
-                    @foreach($vettings as $vetting)
+                @if($vettingRecords->count() > 0)
+                    @foreach($vettingRecords as $vetting)
                         <div class="vetting-card">
                             <div class="row align-items-center">
                                 <div class="col-md-2">
@@ -257,7 +257,7 @@
 
                     <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">
-                        {{ $vettings->links() }}
+                        {{ $vettingRecords->links() }}
                     </div>
                 @else
                     <div class="text-center py-5">
@@ -281,3 +281,4 @@
     </script>
 </body>
 </html>
+

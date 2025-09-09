@@ -137,7 +137,7 @@
             </ul>
           </li> -->
 <li>
-    <a href="{{ route('student.register') }}"
+    <a href="{{ route('student.login') }}"
        class="{{ request()->is('student/register') || request()->is('student/login') ? 'active' : '' }}">
        Student Portal
     </a>
@@ -189,7 +189,7 @@
               <a href="#" class="btn btn-primary me-2" style="background: hsla(195, 85%, 55%, 1) !important;border:none;padding:10px 36px !important;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket mr-3 w-5 h-5" data-lov-id="src/pages/Index.tsx:71:18" data-lov-name="Rocket" data-component-path="src/pages/Index.tsx" data-component-line="71" data-component-file="Index.tsx" data-component-name="Rocket" data-component-content="%7B%22className%22%3A%22mr-3%20w-5%20h-5%22%7D"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
               Apply Now</a>
-              <a href="{{ route('student.register') }}" class="btn btn-secondary" style="padding:10px 36px !important;">
+              <a href="{{ route('student.login') }}" class="btn btn-secondary" style="padding:10px 36px !important;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user mr-3 w-5 h-5" data-lov-id="src/pages/Index.tsx:77:18" data-lov-name="User" data-component-path="src/pages/Index.tsx" data-component-line="77" data-component-file="Index.tsx" data-component-name="User" data-component-content="%7B%22className%22%3A%22mr-3%20w-5%20h-5%22%7D"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               Student Portal</a>
             </div>

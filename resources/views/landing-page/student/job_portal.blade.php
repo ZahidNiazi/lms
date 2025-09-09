@@ -565,12 +565,14 @@
                                         @endif
 
                                         @if($application && $application->status === 'selected')
-                                            <a href="{{ route('job-portal.applications.assign-batch', [$application->id]) }}" 
-                                               class="bg-transparent btn-sm me-1" 
-                                               data-bs-toggle="tooltip" 
-                                               data-bs-original-title="Assign to Batch">
-                                                <i class="bi bi-people text-warning"></i>
-                                            </a>
+                                            <form method="POST" action="{{ route('job-portal.applications.assign-batch', $application->id) }}" style="display: inline;">
+                                                @csrf
+                                                <button type="submit" class="bg-transparent btn-sm me-1" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-original-title="Assign to Batch">
+                                                    <i class="bi bi-people text-warning"></i>
+                                                </button>
+                                            </form>
                                         @endif
                                     </div>
                                 </td>
