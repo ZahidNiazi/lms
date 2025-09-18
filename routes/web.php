@@ -1832,11 +1832,9 @@ Route::get('payslip/payslipPdf/{id}/{month}', [PaySlipController::class, 'paysli
 // Route::get('/get-login', [AuthController::class, 'getLogin'])->name('get.login');
 // Route::post('/student-login', [AuthController::class, 'postLogin'])->name('post.login');
 // // Main Home
-Route::get('/landing-page', [StudentController::class, 'index'])->name('landing_page');
+Route::get('/', [StudentController::class, 'index'])->name('landing_page');
 
-// Main Admin Login Route (preserves original admin panel functionality)
-Route::get('/login', [App\Http\Controllers\AuthController::class, 'index'])->name('login');
-Route::post('/login', [App\Http\Controllers\AuthController::class, 'postLogin'])->name('login.submit');
+// Admin login now handled under /admin/login in routes/auth.php
 
 // Job Portal Login Routes (must be before the job-portal group)
 Route::get('/job-portal', [StudentController::class, 'jobPortal'])->name('job.login');
@@ -1848,40 +1846,40 @@ Route::get('/job-applications', [StudentController::class, 'jobApplications'])->
 Route::prefix('job-portal/admin')->name('job-portal.')->middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/', [JobPortalController::class, 'index'])->name('dashboard');
-    
+
     // Applications Management
     Route::get('/applications', [JobPortalController::class, 'applications'])->name('applications.index');
     Route::get('/applications/{id}', [JobPortalController::class, 'showApplication'])->name('applications.show');
     Route::get('/documents/{document}/download', [JobPortalController::class, 'downloadDocument'])->name('documents.download');
-    
+
     // Application Reviews
     Route::post('/applications/{id}/review', [JobPortalApplicationController::class, 'reviewApplication'])->name('applications.review');
     Route::post('/applications/{id}/status', [JobPortalApplicationController::class, 'updateApplicationStatus'])->name('applications.status');
-    
+
     // Interview Management
     Route::get('/applications/{id}/schedule-interview', [JobPortalApplicationController::class, 'showScheduleInterviewForm'])->name('applications.schedule-interview');
     Route::post('/applications/{id}/schedule-interview', [JobPortalApplicationController::class, 'scheduleInterview'])->name('applications.schedule-interview.store');
     Route::post('/applications/{id}/interview-result', [JobPortalApplicationController::class, 'recordInterviewResult'])->name('applications.interview-result');
-    
+
     // Batch Assignment
     Route::post('/applications/{id}/assign-batch', [JobPortalApplicationController::class, 'assignToBatch'])->name('applications.assign-batch');
-    
+
     // Training Batches
     Route::get('/batches', [JobPortalController::class, 'batches'])->name('batches.index');
     Route::get('/batches/create', [JobPortalController::class, 'createBatch'])->name('batches.create');
     Route::post('/batches', [JobPortalController::class, 'storeBatch'])->name('batches.store');
-    
+
     // Batch Assignment - These routes must come before the {id} routes to avoid conflicts
     Route::get('/batches/assignment/dashboard', [JobPortalController::class, 'batchAssignmentDashboard'])->name('batches.assignment.dashboard');
     Route::get('/batches/available-students', [JobPortalController::class, 'getAvailableStudents'])->name('batches.available-students');
-    
+
     // Batch CRUD routes
     Route::get('/batches/{id}', [JobPortalController::class, 'showBatch'])->name('batches.show');
     Route::get('/batches/{id}/edit', [JobPortalController::class, 'editBatch'])->name('batches.edit');
     Route::put('/batches/{id}', [JobPortalController::class, 'updateBatch'])->name('batches.update');
     Route::delete('/batches/{id}', [JobPortalController::class, 'deleteBatch'])->name('batches.delete');
     Route::post('/batches/{id}/auto-assign', [JobPortalController::class, 'autoAssignToBatch'])->name('batches.auto-assign');
-    
+
     // Interview Locations Management
     Route::get('/interview-locations', [InterviewLocationController::class, 'index'])->name('interview-locations.index');
     Route::get('/interview-locations/create', [InterviewLocationController::class, 'create'])->name('interview-locations.create');
@@ -1890,7 +1888,7 @@ Route::prefix('job-portal/admin')->name('job-portal.')->middleware(['auth'])->gr
     Route::get('/interview-locations/{id}/edit', [InterviewLocationController::class, 'edit'])->name('interview-locations.edit');
     Route::put('/interview-locations/{id}', [InterviewLocationController::class, 'update'])->name('interview-locations.update');
     Route::delete('/interview-locations/{id}', [InterviewLocationController::class, 'destroy'])->name('interview-locations.destroy');
-    
+
     // Communications Management
     Route::get('/communications', [ApplicationCommunicationController::class, 'index'])->name('communications.index');
     Route::get('/communications/create', [ApplicationCommunicationController::class, 'create'])->name('communications.create');
@@ -1900,7 +1898,7 @@ Route::prefix('job-portal/admin')->name('job-portal.')->middleware(['auth'])->gr
     Route::put('/communications/{id}', [ApplicationCommunicationController::class, 'update'])->name('communications.update');
     Route::post('/communications/{id}/resend', [ApplicationCommunicationController::class, 'resend'])->name('communications.resend');
     Route::delete('/communications/{id}', [ApplicationCommunicationController::class, 'destroy'])->name('communications.destroy');
-    
+
     // Vetting Management
     Route::get('/vetting', [VettingController::class, 'index'])->name('vetting.index');
     Route::get('/vetting/create', [VettingController::class, 'create'])->name('vetting.create');
@@ -1909,7 +1907,7 @@ Route::prefix('job-portal/admin')->name('job-portal.')->middleware(['auth'])->gr
     Route::get('/vetting/{id}/edit', [VettingController::class, 'edit'])->name('vetting.edit');
     Route::put('/vetting/{id}', [VettingController::class, 'update'])->name('vetting.update');
     Route::delete('/vetting/{id}', [VettingController::class, 'destroy'])->name('vetting.destroy');
-    
+
     // Notification Templates Management
     Route::get('/notification-templates', [NotificationTemplateController::class, 'index'])->name('notification-templates.index');
     Route::get('/notification-templates/create', [NotificationTemplateController::class, 'create'])->name('notification-templates.create');
@@ -1918,19 +1916,19 @@ Route::prefix('job-portal/admin')->name('job-portal.')->middleware(['auth'])->gr
     Route::get('/notification-templates/{id}/edit', [NotificationTemplateController::class, 'edit'])->name('notification-templates.edit');
     Route::put('/notification-templates/{id}', [NotificationTemplateController::class, 'update'])->name('notification-templates.update');
     Route::delete('/notification-templates/{id}', [NotificationTemplateController::class, 'destroy'])->name('notification-templates.destroy');
-    
+
     // Reports
     Route::get('/reports', [JobPortalReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/applications', [JobPortalReportController::class, 'applicationsReport'])->name('reports.applications');
     Route::get('/reports/interviews', [JobPortalReportController::class, 'interviewsReport'])->name('reports.interviews');
     Route::get('/reports/batches', [JobPortalReportController::class, 'batchesReport'])->name('reports.batches');
     Route::get('/reports/export', [JobPortalReportController::class, 'export'])->name('reports.export');
-    
+
     // Vetting Management
     Route::get('/vetting', [JobPortalController::class, 'vetting'])->name('vetting.index');
     Route::post('/vetting', [JobPortalController::class, 'createVetting'])->name('vetting.create');
     Route::put('/vetting/{id}', [JobPortalController::class, 'updateVetting'])->name('vetting.update');
-    
+
     // Logout
     Route::post('/logout', function() {
         Auth::logout();
@@ -1943,66 +1941,66 @@ Route::prefix('sms')->name('sms.')->middleware(['auth'])->group(function () {
     Route::get('/', [SMSController::class, 'index'])->name('dashboard');
     Route::get('/students', [SMSController::class, 'students'])->name('students.index');
     Route::get('/students/{id}', [SMSController::class, 'showStudent'])->name('students.show');
-    
+
     // Leave Management
     Route::get('/leaves', [SMSController::class, 'leaves'])->name('leaves.index');
     Route::post('/leaves/{id}/process', [SMSController::class, 'processLeave'])->name('leaves.process');
-    
+
     // Attendance Management
     Route::get('/attendance', [SMSController::class, 'attendance'])->name('attendance.index');
     Route::post('/attendance/mark', [SMSController::class, 'markAttendance'])->name('attendance.mark');
-    
+
     // Performance Management
     Route::get('/performance', [SMSController::class, 'performance'])->name('performance.index');
     Route::post('/performance', [SMSController::class, 'addPerformance'])->name('performance.add');
-    
+
     // Medical Management
     Route::get('/medical', [SMSController::class, 'medical'])->name('medical.index');
     Route::post('/medical', [SMSController::class, 'addMedicalRecord'])->name('medical.add');
-    
+
     // Graduation Management
     Route::get('/graduation', [SMSController::class, 'graduation'])->name('graduation.index');
     Route::post('/graduation', [SMSController::class, 'processGraduation'])->name('graduation.process');
-    
+
     // Postings Management
     Route::get('/postings', [SMSController::class, 'postings'])->name('postings.index');
     Route::post('/postings', [SMSController::class, 'createPosting'])->name('postings.create');
-    
+
     // HR Admin
     Route::get('/awards', [SMSController::class, 'awards'])->name('awards.index');
     Route::post('/awards', [SMSController::class, 'addAward'])->name('awards.add');
-    
+
     // Graduation Management
     Route::get('/graduation', [SMSController::class, 'graduation'])->name('graduation.index');
     Route::post('/graduation/{id}', [SMSController::class, 'graduateStudent'])->name('graduation.graduate');
-    
+
     // Posting Management
     Route::get('/postings', [SMSController::class, 'postings'])->name('postings.index');
     Route::post('/postings/{id}', [SMSController::class, 'postStudent'])->name('postings.post');
-    
+
     // Interview Locations
     Route::get('/interview-locations', [InterviewLocationController::class, 'index'])->name('interview-locations.index');
     Route::get('/interview-locations/create', [InterviewLocationController::class, 'create'])->name('interview-locations.create');
     Route::post('/interview-locations', [InterviewLocationController::class, 'store'])->name('interview-locations.store');
     Route::get('/interview-locations/{id}/edit', [InterviewLocationController::class, 'edit'])->name('interview-locations.edit');
     Route::put('/interview-locations/{id}', [InterviewLocationController::class, 'update'])->name('interview-locations.update');
-    
+
     // Notification Templates
     Route::get('/notification-templates', [NotificationTemplateController::class, 'index'])->name('notification-templates.index');
     Route::get('/notification-templates/create', [NotificationTemplateController::class, 'create'])->name('notification-templates.create');
     Route::post('/notification-templates', [NotificationTemplateController::class, 'store'])->name('notification-templates.store');
     Route::get('/notification-templates/{id}/edit', [NotificationTemplateController::class, 'edit'])->name('notification-templates.edit');
     Route::put('/notification-templates/{id}', [NotificationTemplateController::class, 'update'])->name('notification-templates.update');
-    
+
     // Communications
     Route::get('/communications', [ApplicationCommunicationController::class, 'index'])->name('communications.index');
     Route::get('/communications/{id}', [ApplicationCommunicationController::class, 'show'])->name('communications.show');
-    
-    
+
+
                 // Reports
                 Route::get('/reports', [JobPortalReportController::class, 'index'])->name('reports.index');
                 Route::get('/reports/export', [JobPortalReportController::class, 'export'])->name('reports.export');
-                
+
                 // Logout
                 Route::post('/logout', [App\Http\Controllers\Student\AuthController::class, 'jobLogout'])->name('logout');
             });
@@ -2045,14 +2043,14 @@ Route::prefix('student')->name('student.')->group(function () {
 
         // Application status
         Route::get('/status', [App\Http\Controllers\Student\StudentController::class, 'applicationStatus'])->name('status');
-        
+
         // Interview acknowledgment
         Route::post('/interview/{id}/acknowledge', [App\Http\Controllers\Student\StudentController::class, 'acknowledgeInterview'])->name('interview.acknowledge');
-        
+
         // Notifications
         Route::post('/notifications/{id}/mark-read', [App\Http\Controllers\Student\StudentController::class, 'markNotificationAsRead'])->name('notifications.mark-read');
         Route::post('/notifications/mark-all-read', [App\Http\Controllers\Student\StudentController::class, 'markAllNotificationsAsRead'])->name('notifications.mark-all-read');
-        
+
         // Test route for debugging
         Route::get('/test-notifications', function() {
             $student = Auth::guard('student')->user();
@@ -2067,7 +2065,7 @@ Route::prefix('student')->name('student.')->group(function () {
         // Interview Location Selection
         Route::get('/interview-locations', [App\Http\Controllers\Student\StudentController::class, 'getInterviewLocations'])->name('interview-locations');
         Route::post('/interview-location-preference', [App\Http\Controllers\Student\StudentController::class, 'submitLocationPreference'])->name('interview-location-preference');
-        
+
         // Logout
         Route::post('/logout', [App\Http\Controllers\Student\AuthController::class, 'logout'])->name('logout');
     });
@@ -2080,7 +2078,7 @@ Route::middleware(['auth:student'])->group(function () {
 Route::prefix('sms')->name('sms.')->middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\SMS\SMSController::class, 'dashboard'])->name('dashboard');
-    
+
     // Students Management
     Route::get('/students', [App\Http\Controllers\SMS\SMSController::class, 'students'])->name('students.index');
     Route::get('/students/create', [App\Http\Controllers\SMS\SMSController::class, 'createStudent'])->name('students.create');
@@ -2089,7 +2087,7 @@ Route::prefix('sms')->name('sms.')->middleware(['auth'])->group(function () {
     Route::get('/students/{id}/edit', [App\Http\Controllers\SMS\SMSController::class, 'editStudent'])->name('students.edit');
     Route::put('/students/{id}', [App\Http\Controllers\SMS\SMSController::class, 'updateStudent'])->name('students.update');
     Route::delete('/students/{id}', [App\Http\Controllers\SMS\SMSController::class, 'deleteStudent'])->name('students.destroy');
-    
+
     // Leave Management
     Route::get('/leaves', [App\Http\Controllers\SMS\SMSController::class, 'leaves'])->name('leaves.index');
     Route::get('/leaves/types', [App\Http\Controllers\SMS\LeaveController::class, 'leaveTypes'])->name('leave-types.index');
@@ -2102,22 +2100,22 @@ Route::prefix('sms')->name('sms.')->middleware(['auth'])->group(function () {
     Route::get('/leaves/applications/{id}', [App\Http\Controllers\SMS\LeaveController::class, 'showLeaveApplication'])->name('leave-applications.show');
     Route::post('/leaves/{id}/approve', [App\Http\Controllers\SMS\LeaveController::class, 'approveLeave'])->name('leaves.approve');
     Route::post('/leaves/{id}/reject', [App\Http\Controllers\SMS\LeaveController::class, 'rejectLeave'])->name('leaves.reject');
-    
+
     // Attendance Management
     Route::get('/attendance', [App\Http\Controllers\SMS\SMSController::class, 'attendance'])->name('attendance.index');
     Route::get('/attendance/monthly', [App\Http\Controllers\SMS\AttendanceController::class, 'monthlyView'])->name('attendance.monthly');
     Route::get('/attendance/mark', [App\Http\Controllers\SMS\AttendanceController::class, 'markAttendance'])->name('attendance.mark');
     Route::post('/attendance/store', [App\Http\Controllers\SMS\AttendanceController::class, 'storeAttendance'])->name('attendance.store');
-    
+
     // Performance Management
     Route::get('/performance', [App\Http\Controllers\SMS\SMSController::class, 'performance'])->name('performance.index');
-    
+
     // Medical Records
     Route::get('/medical', [App\Http\Controllers\SMS\SMSController::class, 'medical'])->name('medical.index');
-    
+
     // Graduation Management
     Route::get('/graduation', [App\Http\Controllers\SMS\SMSController::class, 'graduation'])->name('graduation.index');
-    
+
     // Postings Management
     Route::get('/postings', [App\Http\Controllers\SMS\SMSController::class, 'postings'])->name('postings.index');
 });

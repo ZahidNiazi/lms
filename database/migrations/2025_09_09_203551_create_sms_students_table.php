@@ -21,35 +21,35 @@ return new class extends Migration
             $table->string('name_in_dhivehi')->nullable();
             $table->string('email')->unique();
             $table->string('national_id')->unique();
-            
+
             // Permanent Address
             $table->string('permanent_address_name')->nullable();
             $table->string('permanent_atoll')->nullable();
             $table->string('permanent_island')->nullable();
             $table->string('permanent_district')->nullable();
             $table->string('permanent_road_name')->nullable();
-            
+
             // Present Address
             $table->string('present_address_name')->nullable();
             $table->string('present_atoll')->nullable();
             $table->string('present_island')->nullable();
             $table->string('present_district')->nullable();
             $table->string('present_road_name')->nullable();
-            
+
             $table->string('contact_no');
             $table->enum('gender', ['male', 'female']);
             $table->string('blood_group')->nullable();
             $table->date('date_of_birth');
             $table->integer('age')->nullable();
             $table->integer('service_duration')->nullable();
-            
+
             // Parent Details
             $table->string('parent_name')->nullable();
             $table->string('parent_relationship')->nullable();
             $table->string('parent_email')->nullable();
             $table->string('parent_contact_no')->nullable();
             $table->text('parent_address')->nullable();
-            
+
             $table->unsignedBigInteger('batch_id')->nullable();
             $table->string('company')->nullable();
             $table->string('platoon')->nullable();
@@ -61,8 +61,9 @@ return new class extends Migration
             $table->timestamp('last_login_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
-            // Foreign key will be added later after training_batches table is created
+
+            // Foreign key constraint
+            $table->foreign('batch_id')->references('id')->on('sms_training_batches')->onDelete('set null');
         });
     }
 
@@ -71,6 +72,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('sms_students', function (Blueprint $table) {
+            $table->dropForeign(['batch_id']);
+        });
+
         Schema::dropIfExists('sms_students');
     }
 };

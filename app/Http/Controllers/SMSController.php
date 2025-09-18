@@ -28,7 +28,7 @@ class SMSController extends Controller
     {
         $stats = $this->getDashboardStats();
         $recentActivities = $this->getRecentActivities();
-        
+
         return view('sms.dashboard', compact('stats', 'recentActivities'));
     }
 
@@ -80,7 +80,7 @@ class SMSController extends Controller
     public function showStudent($id)
     {
         $student = Student::with([
-            'profile', 
+            'profile',
             'jobPortalApplication.batch',
             'addresses',
             'parentDetail',

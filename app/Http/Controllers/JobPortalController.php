@@ -43,10 +43,10 @@ class JobPortalController extends Controller
             ->latest()
             ->limit(10)
             ->get();
-        
+
         // Get recent activities
         $recentActivities = $this->getRecentActivities();
-        
+
         return view('job-portal.dashboard', compact('stats', 'recentApplications', 'recentActivities'));
     }
 
@@ -172,7 +172,7 @@ class JobPortalController extends Controller
 
         $applications = $query->paginate(20);
         $statuses = $this->getApplicationStatuses();
-        
+
         return view('job-portal.applications.index', compact('applications', 'statuses'));
     }
 
@@ -196,11 +196,11 @@ class JobPortalController extends Controller
 
             $reviewTypes = ['document_verification', 'basic_criteria_check', 'final_approval'];
             $interviewStages = ['medical', 'fitness_swimming', 'fitness_run', 'aptitude_test', 'physical_interview'];
-            
+
             // Get data for modals
             $interviewLocations = \App\Models\InterviewLocation::all();
             $trainingBatches = \App\Models\TrainingBatch::where('status', 'active')->get();
-            
+
             return view('job-portal.applications.show', compact('application', 'reviewTypes', 'interviewStages', 'interviewLocations', 'trainingBatches'));
         } catch (\Exception $e) {
             \Log::error('Error in showApplication: ' . $e->getMessage());
@@ -216,13 +216,13 @@ class JobPortalController extends Controller
     {
         try {
             $document = \App\Models\StudentDocument::findOrFail($documentId);
-            
+
             // Check if file exists
             $filePath = storage_path('app/public/' . $document->file_path);
             if (!file_exists($filePath)) {
                 return redirect()->back()->with('error', 'Document file not found.');
             }
-            
+
             return response()->download($filePath, $document->original_name);
         } catch (\Exception $e) {
             \Log::error('Error downloading document: ' . $e->getMessage());
@@ -256,18 +256,18 @@ class JobPortalController extends Controller
     private function getRecentActivities()
     {
         $activities = collect();
-        
+
         // Recent applications
         $recentApplications = JobPortalApplication::with(['student.profile'])
             ->latest()
             ->limit(5)
             ->get();
-            
+
         foreach ($recentApplications as $application) {
-            $studentName = $application->student->profile 
+            $studentName = $application->student->profile
                 ? $application->student->profile->first_name . ' ' . $application->student->profile->last_name
                 : $application->student->name;
-                
+
             $activities->push([
                 'type' => 'application',
                 'icon' => 'bi-person-plus',
@@ -278,7 +278,7 @@ class JobPortalController extends Controller
                 'status' => $application->status,
             ]);
         }
-        
+
         // Recent status changes
         $recentStatusChanges = JobPortalApplication::with(['student.profile'])
             ->whereNotNull('updated_at')
@@ -287,12 +287,12 @@ class JobPortalController extends Controller
             ->latest('updated_at')
             ->limit(5)
             ->get();
-            
+
         foreach ($recentStatusChanges as $application) {
-            $studentName = $application->student->profile 
+            $studentName = $application->student->profile
                 ? $application->student->profile->first_name . ' ' . $application->student->profile->last_name
                 : $application->student->name;
-                
+
             $statusColors = [
                 'approved' => 'var(--success-green)',
                 'selected' => 'var(--success-green)',
@@ -300,7 +300,7 @@ class JobPortalController extends Controller
                 'batch_assigned' => 'var(--info-blue)',
                 'rejected' => 'var(--danger-red)',
             ];
-            
+
             $statusIcons = [
                 'approved' => 'bi-check-circle',
                 'selected' => 'bi-check-circle',
@@ -308,7 +308,7 @@ class JobPortalController extends Controller
                 'batch_assigned' => 'bi-people',
                 'rejected' => 'bi-x-circle',
             ];
-            
+
             $activities->push([
                 'type' => 'status_change',
                 'icon' => $statusIcons[$application->status] ?? 'bi-info-circle',
@@ -319,12 +319,12 @@ class JobPortalController extends Controller
                 'status' => $application->status,
             ]);
         }
-        
+
         // Recent batches
         $recentBatches = TrainingBatch::latest()
             ->limit(3)
             ->get();
-            
+
         foreach ($recentBatches as $batch) {
             $activities->push([
                 'type' => 'batch',
@@ -336,18 +336,18 @@ class JobPortalController extends Controller
                 'status' => $batch->status,
             ]);
         }
-        
+
         // Recent interview schedules
         $recentInterviews = JobPortalInterviewSchedule::with(['application.student.profile'])
             ->latest()
             ->limit(3)
             ->get();
-            
+
         foreach ($recentInterviews as $interview) {
-            $studentName = $interview->application->student->profile 
+            $studentName = $interview->application->student->profile
                 ? $interview->application->student->profile->first_name . ' ' . $interview->application->student->profile->last_name
                 : $interview->application->student->name;
-                
+
             $activities->push([
                 'type' => 'interview',
                 'icon' => 'bi-calendar-check',
@@ -358,7 +358,7 @@ class JobPortalController extends Controller
                 'status' => $interview->status,
             ]);
         }
-        
+
         // Sort by time and limit to 10 most recent
         return $activities->sortByDesc('time')->take(10)->values();
     }
@@ -493,7 +493,7 @@ class JobPortalController extends Controller
     public function deleteBatch($id)
     {
         $batch = TrainingBatch::findOrFail($id);
-        
+
         // Check if batch has applications
         if ($batch->applications()->count() > 0) {
             return redirect()->back()
@@ -547,14 +547,14 @@ class JobPortalController extends Controller
     public function getAvailableStudents(Request $request)
     {
         $batchId = $request->get('batch_id');
-        
+
         $students = \App\Models\JobPortalApplication::with(['student.profile', 'batch'])
             ->whereIn('status', ['approved', 'selected', 'interview_scheduled', 'batch_assigned'])
             ->get()
             ->map(function ($application) use ($batchId) {
                 $student = $application->student;
                 $profile = $student->profile;
-                
+
                 return [
                     'id' => $application->id,
                     'name' => $profile ? $profile->first_name . ' ' . $profile->last_name : $student->name,
@@ -578,7 +578,7 @@ class JobPortalController extends Controller
     public function autoAssignToBatch(Request $request, $id)
     {
         $batch = TrainingBatch::findOrFail($id);
-        
+
         $validator = Validator::make($request->all(), [
             'assignment_type' => 'required|in:by_application_number,by_approval_date,manual_selection',
             'student_ids' => 'required_if:assignment_type,manual_selection|array',

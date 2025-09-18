@@ -29,6 +29,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('job_portal_applications', function (Blueprint $table) {
+            // Drop foreign key constraint first
+            $table->dropForeign(['application_closed_by']);
+
+            // Then drop the columns
             $table->dropColumn([
                 'is_second_attempt',
                 'is_application_closed',
