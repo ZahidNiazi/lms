@@ -2,6 +2,7 @@
 
 namespace App\Models\SMS;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -67,7 +68,7 @@ class Performance extends Model
     public function getGradeAttribute(): string
     {
         $percentage = $this->percentage;
-        
+
         return match(true) {
             $percentage >= 90 => 'A+',
             $percentage >= 80 => 'A',
