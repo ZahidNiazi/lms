@@ -2108,7 +2108,27 @@ Route::prefix('sms')->name('sms.')->middleware(['auth'])->group(function () {
     Route::post('/attendance/store', [App\Http\Controllers\SMS\AttendanceController::class, 'storeAttendance'])->name('attendance.store');
 
     // Performance Management
-    Route::get('/performance', [App\Http\Controllers\SMS\SMSController::class, 'performance'])->name('performance.index');
+    Route::get('/performance', [App\Http\Controllers\SMS\PerformanceController::class, 'index'])->name('performance.index');
+    Route::get('/performance/create', [App\Http\Controllers\SMS\PerformanceController::class, 'create'])->name('performance.create');
+    Route::post('/performance', [App\Http\Controllers\SMS\PerformanceController::class, 'store'])->name('performance.store');
+    Route::get('/performance/{id}', [App\Http\Controllers\SMS\PerformanceController::class, 'show'])->name('performance.show');
+    Route::get('/performance/{id}/edit', [App\Http\Controllers\SMS\PerformanceController::class, 'edit'])->name('performance.edit');
+    Route::put('/performance/{id}', [App\Http\Controllers\SMS\PerformanceController::class, 'update'])->name('performance.update');
+    Route::delete('/performance/{id}', [App\Http\Controllers\SMS\PerformanceController::class, 'destroy'])->name('performance.destroy');
+    Route::get('/performance/student/{studentId}', [App\Http\Controllers\SMS\PerformanceController::class, 'studentPerformance'])->name('performance.student-performance');
+
+    // Performance Documents
+    Route::get('/performance/document/{id}/download', [App\Http\Controllers\SMS\PerformanceController::class, 'downloadDocument'])->name('performance.download-document');
+    Route::delete('/performance/document/{id}', [App\Http\Controllers\SMS\PerformanceController::class, 'deleteDocument'])->name('performance.delete-document');
+
+    // Performance Fields Management
+    Route::get('/performance/fields', [App\Http\Controllers\SMS\PerformanceFieldController::class, 'index'])->name('performance.fields.index');
+    Route::get('/performance/fields/create', [App\Http\Controllers\SMS\PerformanceFieldController::class, 'create'])->name('performance.fields.create');
+    Route::post('/performance/fields', [App\Http\Controllers\SMS\PerformanceFieldController::class, 'store'])->name('performance.fields.store');
+    Route::get('/performance/fields/{id}/edit', [App\Http\Controllers\SMS\PerformanceFieldController::class, 'edit'])->name('performance.fields.edit');
+    Route::put('/performance/fields/{id}', [App\Http\Controllers\SMS\PerformanceFieldController::class, 'update'])->name('performance.fields.update');
+    Route::delete('/performance/fields/{id}', [App\Http\Controllers\SMS\PerformanceFieldController::class, 'destroy'])->name('performance.fields.destroy');
+    Route::post('/performance/fields/{id}/toggle-status', [App\Http\Controllers\SMS\PerformanceFieldController::class, 'toggleStatus'])->name('performance.fields.toggle-status');
 
     // Medical Records
     Route::get('/medical', [App\Http\Controllers\SMS\SMSController::class, 'medical'])->name('medical.index');
