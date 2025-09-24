@@ -353,9 +353,9 @@
 
                         <div class="d-flex p-2">
                             @if(!empty($document->file_path) && \Illuminate\Support\Facades\Storage::disk('public')->exists($document->file_path))
-                                <a  href="{{ route('documents.download', $document) }}"
+                                <a  href="{{ route('student.documents.download', $document) }}"
                                     class="action-btn btn-primary btn-sm js-download"
-                                    data-url="{{ route('documents.download', $document) }}"
+                                    data-url="{{ route('student.documents.download', $document) }}"
                                     data-filename="{{ $document->original_name ?? basename($document->file_path) }}"
                                     data-turbo="false" data-turbolinks="false" wire:navigate="false">
                                     <i class="fas fa-download" style="margin:-7px;"></i> Download
