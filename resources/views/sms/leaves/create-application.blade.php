@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMS - Create Leave Application</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -54,7 +54,7 @@
                 <i class="bi bi-arrow-left me-2"></i>
                 SMS - Create Leave Application
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -62,7 +62,7 @@
                         {{ Auth::user()->name }}
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{{ route('sms.dashboard') }}">
+                        <li><a class="dropdown-item" href="{{ route('dashboard') }}">
                             <i class="bi bi-house me-2"></i>Dashboard
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -98,20 +98,30 @@
                     <div class="card-body">
                         <form action="{{ route('sms.leave-applications.store') }}" method="POST">
                             @csrf
-                            
+
                             <div class="mb-4">
                                 <label class="form-label">Student <span class="text-danger">*</span></label>
                                 <select name="student_id" class="form-select @error('student_id') is-invalid @enderror" required>
                                     <option value="">Select Student</option>
-                                    @foreach($students as $student)
-                                        <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
-                                            {{ $student->full_name }} ({{ $student->student_id }})
-                                        </option>
-                                    @endforeach
+                                    @if(isset($students) && $students->count() > 0)
+                                        @foreach($students as $student)
+                                            <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
+                                                {{ $student->name }} ({{ $student->email }})
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>No students available</option>
+                                    @endif
                                 </select>
                                 @error('student_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                @if(isset($students) && $students->count() == 0)
+                                    <div class="form-text text-warning">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        No active students found. Please add students first.
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="mb-4">
@@ -132,16 +142,16 @@
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
                                     <label class="form-label">Start Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" 
+                                    <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror"
                                            value="{{ old('start_date') }}" min="{{ date('Y-m-d') }}" required>
                                     @error('start_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="col-md-6">
                                     <label class="form-label">End Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="end_date" class="form-control @error('end_date') is-invalid @enderror" 
+                                    <input type="date" name="end_date" class="form-control @error('end_date') is-invalid @enderror"
                                            value="{{ old('end_date') }}" min="{{ date('Y-m-d') }}" required>
                                     @error('end_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -151,7 +161,7 @@
 
                             <div class="mb-4">
                                 <label class="form-label">Leave Reasons <span class="text-danger">*</span></label>
-                                <textarea name="leave_reasons" class="form-control @error('leave_reasons') is-invalid @enderror" 
+                                <textarea name="leave_reasons" class="form-control @error('leave_reasons') is-invalid @enderror"
                                           rows="4" placeholder="Please provide detailed reasons for the leave application..." required>{{ old('leave_reasons') }}</textarea>
                                 @error('leave_reasons')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -175,25 +185,25 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         // Calculate total days when dates change
         document.addEventListener('DOMContentLoaded', function() {
             const startDateInput = document.querySelector('input[name="start_date"]');
             const endDateInput = document.querySelector('input[name="end_date"]');
-            
+
             function calculateDays() {
                 if (startDateInput.value && endDateInput.value) {
                     const startDate = new Date(startDateInput.value);
                     const endDate = new Date(endDateInput.value);
                     const timeDiff = endDate.getTime() - startDate.getTime();
                     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
-                    
+
                     // You can display the calculated days somewhere if needed
                     console.log('Total days:', daysDiff);
                 }
             }
-            
+
             startDateInput.addEventListener('change', calculateDays);
             endDateInput.addEventListener('change', calculateDays);
         });

@@ -5,9 +5,10 @@ namespace App\Http\Controllers\SMS;
 use App\Http\Controllers\Controller;
 use App\Models\SMS\Leave;
 use App\Models\SMS\LeaveType;
-use App\Models\SMS\Student;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LeaveController extends Controller
 {
@@ -53,8 +54,12 @@ class LeaveController extends Controller
      */
     public function createLeaveApplication()
     {
-        $students = Student::active()->get();
+        $students = Student::whereIn('status', ['active', 'approved', 'pending'])->orderBy('name')->get();
         $leaveTypes = LeaveType::active()->get();
+
+        // Debug: Log the students count
+        Log::info('Students count: ' . $students->count());
+
         return view('sms.leaves.create-application', compact('students', 'leaveTypes'));
     }
 
@@ -64,7 +69,7 @@ class LeaveController extends Controller
     public function storeLeaveApplication(Request $request)
     {
         $request->validate([
-            'student_id' => 'required|exists:sms_students,id',
+            'student_id' => 'required|exists:students,id',
             'leave_type_id' => 'required|exists:sms_leave_types,id',
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after:start_date',
@@ -95,7 +100,7 @@ class LeaveController extends Controller
     public function approveLeave(Request $request, $id)
     {
         $leave = Leave::findOrFail($id);
-        
+
         $leave->update([
             'status' => 'approved',
             'approved_by' => Auth::id(),
@@ -115,7 +120,7 @@ class LeaveController extends Controller
         ]);
 
         $leave = Leave::findOrFail($id);
-        
+
         $leave->update([
             'status' => 'rejected',
             'rejected_by' => Auth::id(),
@@ -165,7 +170,7 @@ class LeaveController extends Controller
     public function deleteLeaveType($id)
     {
         $leaveType = LeaveType::findOrFail($id);
-        
+
         // Check if any leaves are using this type
         $leaveCount = Leave::where('leave_type_id', $id)->count();
         if ($leaveCount > 0) {

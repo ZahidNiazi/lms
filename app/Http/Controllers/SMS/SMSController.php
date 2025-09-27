@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SMS;
 
 use App\Http\Controllers\Controller;
 use App\Models\SMS\Student;
+use App\Models\Student as MainStudent;
 use App\Models\SMS\TrainingBatch;
 use App\Models\SMS\Leave;
 use App\Models\SMS\Attendance;
@@ -144,7 +145,7 @@ class SMSController extends Controller
         ]);
 
         $data = $request->all();
-        
+
         // Handle photo upload
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
@@ -195,14 +196,14 @@ class SMSController extends Controller
         ]);
 
         $data = $request->all();
-        
+
         // Handle photo upload
         if ($request->hasFile('photo')) {
             // Delete old photo if exists
             if ($student->photo && \Storage::exists('public/' . $student->photo)) {
                 \Storage::delete('public/' . $student->photo);
             }
-            
+
             $photo = $request->file('photo');
             $photoName = time() . '_' . $photo->getClientOriginalName();
             $photo->storeAs('public/student_photos', $photoName);
@@ -248,7 +249,11 @@ class SMSController extends Controller
         }
 
         $leaves = $query->latest()->paginate(20);
-        $students = Student::active()->get();
+        // Fetch from main students table, only those with a batch assigned via training enrollments
+        $students = MainStudent::whereIn('status', ['active', 'approved', 'pending'])
+            ->whereHas('trainingEnrollments')
+            ->orderBy('name')
+            ->get();
 
         return view('sms.leaves.index', compact('leaves', 'students'));
     }

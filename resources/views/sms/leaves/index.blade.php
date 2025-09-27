@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMS - Leave Management</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -82,7 +82,7 @@
                 <i class="bi bi-arrow-left me-2"></i>
                 SMS - Leave Management
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -138,29 +138,29 @@
                             <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
                     </div>
-                    
+
                     <div class="col-md-3">
                         <label class="form-label">Student</label>
                         <select name="student_id" class="form-select">
                             <option value="">All Students</option>
                             @foreach($students as $student)
                                 <option value="{{ $student->id }}" {{ request('student_id') == $student->id ? 'selected' : '' }}>
-                                    {{ $student->full_name }} ({{ $student->student_id }})
+                                    {{ $student->name }} ({{ $student->email }})
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    
+
                     <div class="col-md-2">
                         <label class="form-label">From Date</label>
                         <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
                     </div>
-                    
+
                     <div class="col-md-2">
                         <label class="form-label">To Date</label>
                         <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
                     </div>
-                    
+
                     <div class="col-md-2">
                         <label class="form-label">&nbsp;</label>
                         <div class="d-grid">
@@ -195,8 +195,8 @@
                                 <tr>
                                     <td>
                                         <div>
-                                            <strong>{{ $leave->student->full_name ?? 'Unknown Student' }}</strong>
-                                            <br><small class="text-muted">{{ $leave->student->student_id ?? 'N/A' }}</small>
+                                            <strong>{{ $leave->student->name ?? 'Unknown Student' }}</strong>
+                                            <br><small class="text-muted">ID: {{ $leave->student->id ?? 'N/A' }}</small>
                                         </div>
                                     </td>
                                     <td>{{ $leave->leaveType->name ?? 'Unknown Type' }}</td>
@@ -261,7 +261,7 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         function rejectLeave(leaveId) {
             const reason = prompt('Please provide a reason for rejection:');
@@ -270,21 +270,21 @@
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = `{{ route('sms.leaves.index') }}/${leaveId}/reject`;
-                
+
                 // Add CSRF token
                 const csrfToken = document.createElement('input');
                 csrfToken.type = 'hidden';
                 csrfToken.name = '_token';
                 csrfToken.value = '{{ csrf_token() }}';
                 form.appendChild(csrfToken);
-                
+
                 // Add rejection reason
                 const reasonField = document.createElement('input');
                 reasonField.type = 'hidden';
                 reasonField.name = 'rejection_reason';
                 reasonField.value = reason;
                 form.appendChild(reasonField);
-                
+
                 document.body.appendChild(form);
                 form.submit();
             }
