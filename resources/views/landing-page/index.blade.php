@@ -4,12 +4,12 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>National Management School</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>{{ $settings['title_text'] ?? 'National Management School' }}</title>
+  <meta name="description" content="{{ $settings['meta_description'] ?? '' }}">
+  <meta name="keywords" content="{{ $settings['meta_keywords'] ?? '' }}">
 
   <!-- Favicons -->
-  <link href="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" rel="icon">
+  <link href="{{ $settings['favicon'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png' }}" rel="icon">
   <link href="{{asset('assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
 
   <!-- Fonts -->
@@ -87,8 +87,8 @@
 
       <a href="{{route('landing_page')}}" class="logo d-flex align-items-center me-auto" style="background:none !important;color:black;">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <img src="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" alt="">
-        <h1 class="sitename" style="color:black !important;font-size:20px;"></h1>
+        <img src="{{ $settings['logo_light'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png' }}" alt="">
+        <h1 class="sitename" style="color:black !important;font-size:20px;">{{ $settings['title_text'] ?? 'National Service' }}</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -172,9 +172,9 @@
             <div class="col-12 hero-content" data-aos="fade-right" data-aos-delay="100">
               <div class="d-flex justify-content-center items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="custom-sparkle"
-                    width="24" height="24" viewBox="0 0 24 24" 
-                    fill="none" stroke="currentColor" stroke-width="2" 
-                    stroke-linecap="round" stroke-linejoin="round" 
+                    width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-sparkles w-16 h-16 text-primary animate-float">
                   <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
                   <path d="M20 3v4"></path>
@@ -183,8 +183,8 @@
                   <path d="M5 18H3"></path>
                 </svg>
               </div>
-              <h1 style="text-align:center;" class="color">National Service</h1>
-              <p style="text-align:center;">Building stronger communities through service, education, and opportunity. Join <br> thousands of young Maldivians in shaping our nation's future with purpose and pride.</p>
+              <h1 style="text-align:center;" class="color">{{ $settings['title_text'] ?? 'National Service' }}</h1>
+              <p style="text-align:center;">{{ $settings['description'] ?? 'Building stronger communities through service, education, and opportunity. Join thousands of young Maldivians in shaping our nation\'s future with purpose and pride.' }}</p>
              <div class="action-buttons mt-3 d-flex justify-content-center">
               <a href="#" class="btn btn-primary me-2" style="background: hsla(195, 85%, 55%, 1) !important;border:none;padding:10px 36px !important;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket mr-3 w-5 h-5" data-lov-id="src/pages/Index.tsx:71:18" data-lov-name="Rocket" data-component-path="src/pages/Index.tsx" data-component-line="71" data-component-file="Index.tsx" data-component-name="Rocket" data-component-content="%7B%22className%22%3A%22mr-3%20w-5%20h-5%22%7D"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
@@ -204,11 +204,11 @@
     <div class="row gy-5 mt-5 mb-5 justify-content-center">
       <div class="col-lg-8"> <!-- 👈 ye center aligned container -->
         <div class="row justify-content-center">
-          
+
           <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
             <div class="feature-card" style="box-shadow:none !important; padding:20px !important; border-radius:12px !important; background:#fff !important; text-align:center !important;">
               <div class="feature-content d-flex flex-column align-items-center text-center" style="gap:10px !important;">
-                
+
                 <!-- SVG with card styling -->
                 <div style="padding:15px !important; border-radius:50% !important; background:rgb(59 130 246 / 0.1) !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; margin-bottom:12px !important;">
                   <svg style="color: rgb(59 130 246 / var(--tw-text-opacity, 1)) !important; width:40px !important; height:40px !important;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -220,8 +220,8 @@
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">4,200</p>
-                
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['active_students'] ?? '4,200' }}</p>
+
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Active Students</span>
               </div>
@@ -230,15 +230,15 @@
           <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
             <div class="feature-card" style="box-shadow:none !important; padding:20px !important; border-radius:12px !important; background:#fff !important; text-align:center !important;">
               <div class="feature-content d-flex flex-column align-items-center text-center" style="gap:10px !important;">
-                
+
                 <!-- SVG with card styling -->
                 <div style="padding:15px !important; border-radius:50% !important; background:rgb(59 130 246 / 0.1) !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; margin-bottom:12px !important;">
                   <svg style="color: rgb(34 197 94 / var(--tw-text-opacity, 1)) !important; width:40px !important; height:40px !important;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-award w-8 h-8 text-green-500" data-lov-id="src/pages/Index.tsx:93:18" data-lov-name="stat.icon" data-component-path="src/pages/Index.tsx" data-component-line="93" data-component-file="Index.tsx" data-component-name="stat.icon" data-component-content="%7B%7D"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path><circle cx="12" cy="8" r="6"></circle></svg>
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">8,945</p>
-                
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['completed_training'] ?? '8,945' }}</p>
+
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Completed Training
 </span>
@@ -248,15 +248,15 @@
           <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
             <div class="feature-card" style="box-shadow:none !important; padding:20px !important; border-radius:12px !important; background:#fff !important; text-align:center !important;">
               <div class="feature-content d-flex flex-column align-items-center text-center" style="gap:10px !important;">
-                
+
                 <!-- SVG with card styling -->
                 <div style="padding:15px !important; border-radius:50% !important; background:rgb(59 130 246 / 0.1) !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; margin-bottom:12px !important;">
                   <svg style="color: rgb(168 85 247 / var(--tw-text-opacity, 1)) !important; width:40px !important; height:40px !important;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase w-8 h-8 text-purple-500" data-lov-id="src/pages/Index.tsx:93:18" data-lov-name="stat.icon" data-component-path="src/pages/Index.tsx" data-component-line="93" data-component-file="Index.tsx" data-component-name="stat.icon" data-component-content="%7B%7D"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">6,811</p>
-                
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['job_placements'] ?? '6,811' }}</p>
+
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Job Placements</span>
               </div>
@@ -265,21 +265,21 @@
           <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
             <div class="feature-card" style="box-shadow:none !important; padding:20px !important; border-radius:12px !important; background:#fff !important; text-align:center !important;">
               <div class="feature-content d-flex flex-column align-items-center text-center" style="gap:10px !important;">
-                
+
                 <!-- SVG with card styling -->
                 <div style="padding:15px !important; border-radius:50% !important; background:rgb(59 130 246 / 0.1) !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; margin-bottom:12px !important;">
                   <svg style="color: rgb(249 115 22 / var(--tw-text-opacity, 1)) !important; width:40px !important; height:40px !important;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building2 w-8 h-8 text-orange-500" data-lov-id="src/pages/Index.tsx:93:18" data-lov-name="stat.icon" data-component-path="src/pages/Index.tsx" data-component-line="93" data-component-file="Index.tsx" data-component-name="stat.icon" data-component-content="%7B%7D"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">12</p>
-                
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['training_centers'] ?? '12' }}</p>
+
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Training Centers
 </span>
               </div>
             </div>
-          </div> 
+          </div>
 
           <!-- Repeat 3 more col-lg-3 for other cards -->
 
@@ -302,21 +302,21 @@
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 <div class="col">
                   <div class="value-card">
-                    <div class="value-icon" 
-                        style="border-radius:12px !important; 
-                                padding:15px !important; 
-                                display:inline-flex !important; 
-                                align-items:center !important; 
-                                justify-content:center !important; 
+                    <div class="value-icon"
+                        style="border-radius:12px !important;
+                                padding:15px !important;
+                                display:inline-flex !important;
+                                align-items:center !important;
+                                justify-content:center !important;
                                 background: linear-gradient(90deg, hsl(195deg 91.06% 30.27%) 0%, hsl(195, 85%, 45%) 100%) !important;">
-                      <svg xmlns="http://www.w3.org/2000/svg" 
-                          width="32" height="32" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          stroke-width="2" 
-                          stroke-linecap="round" 
-                          stroke-linejoin="round" 
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                          width="32" height="32"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
                           class="lucide lucide-rocket text-white"
                           style="color:#fff !important;">
                         <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
@@ -329,9 +329,9 @@
                     <p class="m-2">Apply for National Service training programs with streamlined process</p>
                     <button class="get-started-btn" style="background: linear-gradient(90deg, hsl(195deg 91.06% 30.27%) 0%, hsl(195, 85%, 45%) 100%);">
                         Get Started <span style="margin:5px;"></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-sparkles ml-2 w-4 h-4">
                           <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
                           <path d="M20 3v4"></path>
@@ -346,12 +346,12 @@
 
                 <div class="col">
                   <div class="value-card">
-                    <div class="value-icon" 
-                        style="border-radius:12px !important; 
-                                padding:15px !important; 
-                                display:inline-flex !important; 
-                                align-items:center !important; 
-                                justify-content:center !important; 
+                    <div class="value-icon"
+                        style="border-radius:12px !important;
+                                padding:15px !important;
+                                display:inline-flex !important;
+                                align-items:center !important;
+                                justify-content:center !important;
                                 background: linear-gradient(90deg, hsl(86.69deg 85% 55%) 0%, hsl(195, 85%, 45%) 100%) !important;">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user w-8 h-8 text-white" data-lov-id="src/pages/Index.tsx:120:20" data-lov-name="feature.icon" data-component-path="src/pages/Index.tsx" data-component-line="120" data-component-file="Index.tsx" data-component-name="feature.icon" data-component-content="%7B%22className%22%3A%22w-8%20h-8%20text-white%22%7D"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     </div>
@@ -359,9 +359,9 @@
                     <p class="m-2">Track your application status and monitor your progress journey</p>
                     <button class="get-started-btn" style="background: linear-gradient(90deg, hsl(86.69deg 85% 55%) 0%, hsl(195, 85%, 45%) 100%);">
                         Get Started <span style="margin:5px;"></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-sparkles ml-2 w-4 h-4">
                           <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
                           <path d="M20 3v4"></path>
@@ -375,12 +375,12 @@
                 </div>
                 <div class="col">
                   <div class="value-card">
-                    <div class="value-icon" 
-                        style="border-radius:12px !important; 
-                                padding:15px !important; 
-                                display:inline-flex !important; 
-                                align-items:center !important; 
-                                justify-content:center !important; 
+                    <div class="value-icon"
+                        style="border-radius:12px !important;
+                                padding:15px !important;
+                                display:inline-flex !important;
+                                align-items:center !important;
+                                justify-content:center !important;
                                 background: linear-gradient(90deg, hsl(298.38deg 85% 55%) 0%, hsl(195, 85%, 45%) 100%) !important;">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase w-8 h-8 text-white" data-lov-id="src/pages/Index.tsx:120:20" data-lov-name="feature.icon" data-component-path="src/pages/Index.tsx" data-component-line="120" data-component-file="Index.tsx" data-component-name="feature.icon" data-component-content="%7B%22className%22%3A%22w-8%20h-8%20text-white%22%7D"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
                     </div>
@@ -388,9 +388,9 @@
                     <p class="m-2">AppDiscover employment opportunities and launch your career</p>
                     <button class="get-started-btn" style="background: linear-gradient(90deg, hsl(298.38deg 85% 55%) 0%, hsl(195, 85%, 45%) 100%);">
                         Get Started <span style="margin:5px;"></span>
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-sparkles ml-2 w-4 h-4">
                           <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
                           <path d="M20 3v4"></path>
@@ -403,21 +403,21 @@
                 </div>
                 <div class="col">
                   <div class="value-card">
-                    <div class="value-icon" 
-                        style="border-radius:12px !important; 
-                                padding:15px !important; 
-                                display:inline-flex !important; 
-                                align-items:center !important; 
-                                justify-content:center !important; 
+                    <div class="value-icon"
+                        style="border-radius:12px !important;
+                                padding:15px !important;
+                                display:inline-flex !important;
+                                align-items:center !important;
+                                justify-content:center !important;
                                 background: linear-gradient(90deg, hsl(17.77deg 100% 59.81%) 0%, hsl(195, 85%, 45%) 100%) !important;">
-                      <svg xmlns="http://www.w3.org/2000/svg" 
-                          width="32" height="32" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          stroke-width="2" 
-                          stroke-linecap="round" 
-                          stroke-linejoin="round" 
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                          width="32" height="32"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
                           class="lucide lucide-rocket text-white"
                           style="color:#fff !important;">
                         <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
@@ -430,9 +430,9 @@
                     <p class="m-2">Comprehensive administrative management and system oversight</p>
                     <button class="get-started-btn" style="background: linear-gradient(90deg, hsl(17.77deg 100% 59.81%) 0%, hsl(195, 85%, 45%) 100%);">
                         Get Started <span style="margin:5px;"></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-sparkles ml-2 w-4 h-4">
                           <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
                           <path d="M20 3v4"></path>
@@ -461,12 +461,12 @@
         <div class="col-lg-4 col-md-6 footer-about" style="margin-right:180px !important;">
   <a href="{{route('landing_page')}}" class="logo d-flex align-items-center" style="background:none !important;">
     <span class="sitename">
-      <img src="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" alt=""> 
-      National Service
+      <img src="{{ $settings['logo_light'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png' }}" alt="">
+      {{ $settings['title_text'] ?? 'National Service' }}
     </span>
   </a>
   <div class="footer-contact pt-3">
-    <p>Building stronger communities through service, education, and opportunity for all young Maldivians.</p>
+    <p>{{ $settings['footer_text'] ?? 'Building stronger communities through service, education, and opportunity for all young Maldivians.' }}</p>
   </div>
 </div>
 
@@ -494,14 +494,14 @@
     </div>p
 
     <div class="container copyright text-center mt-4">
-      <p>© 2024 National Service. All rights reserved.</p>
+      <p>© {{ date('Y') }} {{ $settings['title_text'] ?? 'National Service' }}. All rights reserved.</p>
     </div>
 
   </footer>
 
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" style="background: linear-gradient(90deg, hsl(195deg 91.06% 30.27%) 0%, hsl(195, 85%, 45%) 100%);
-           color: #fff; 
+           color: #fff;
            border: none;
            padding: 10px 20px;
            border-radius: 6px;

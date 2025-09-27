@@ -2174,3 +2174,59 @@ Route::prefix('national-service-lms')->name('national-service-lms.')->middleware
     Route::get('/reports', [App\Http\Controllers\NationalServiceLMSController::class, 'reports'])->name('reports');
 });
 
+// Settings Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    
+    // Portal Settings
+    Route::get('/settings/portal', [App\Http\Controllers\SettingsController::class, 'portalSettings'])->name('settings.portal');
+    Route::post('/settings/portal', [App\Http\Controllers\SettingsController::class, 'updatePortalSettings'])->name('settings.portal.update');
+    
+    // Theme Settings
+    Route::get('/settings/theme', [App\Http\Controllers\SettingsController::class, 'themeSettings'])->name('settings.theme');
+    Route::post('/settings/theme', [App\Http\Controllers\SettingsController::class, 'updateThemeSettings'])->name('settings.theme.update');
+    
+    // Storage Settings
+    Route::get('/settings/storage', [App\Http\Controllers\SettingsController::class, 'storageSettings'])->name('settings.storage');
+    Route::post('/settings/storage', [App\Http\Controllers\SettingsController::class, 'updateStorageSettings'])->name('settings.storage.update');
+    
+    // Cookie Settings
+    Route::get('/settings/cookies', [App\Http\Controllers\SettingsController::class, 'cookieSettings'])->name('settings.cookies');
+    Route::post('/settings/cookies', [App\Http\Controllers\SettingsController::class, 'updateCookieSettings'])->name('settings.cookies.update');
+    
+    // SEO Settings
+    Route::get('/settings/seo', [App\Http\Controllers\SettingsController::class, 'seoSettings'])->name('settings.seo');
+    Route::post('/settings/seo', [App\Http\Controllers\SettingsController::class, 'updateSeoSettings'])->name('settings.seo.update');
+    
+    // System Setup
+    Route::get('/settings/system-setup', [App\Http\Controllers\SettingsController::class, 'systemSetup'])->name('settings.system-setup');
+    
+    // Email Settings
+    Route::get('/settings/email', [App\Http\Controllers\SettingsController::class, 'emailSettings'])->name('settings.email');
+    Route::post('/settings/email', [App\Http\Controllers\SettingsController::class, 'updateEmailSettings'])->name('settings.email.update');
+    
+    // Zoom Settings
+    Route::get('/settings/zoom', [App\Http\Controllers\SettingsController::class, 'zoomSettings'])->name('settings.zoom');
+    Route::post('/settings/zoom', [App\Http\Controllers\SettingsController::class, 'updateZoomSettings'])->name('settings.zoom.update');
+    
+    // Twilio Settings
+    Route::get('/settings/twilio', [App\Http\Controllers\SettingsController::class, 'twilioSettings'])->name('settings.twilio');
+    Route::post('/settings/twilio', [App\Http\Controllers\SettingsController::class, 'updateTwilioSettings'])->name('settings.twilio.update');
+    
+    // WhatsApp Settings
+    Route::get('/settings/whatsapp', [App\Http\Controllers\SettingsController::class, 'whatsappSettings'])->name('settings.whatsapp');
+    Route::post('/settings/whatsapp', [App\Http\Controllers\SettingsController::class, 'updateWhatsappSettings'])->name('settings.whatsapp.update');
+    
+    // Letter Settings
+    Route::get('/settings/letters', [App\Http\Controllers\SettingsController::class, 'letterSettings'])->name('settings.letters');
+    Route::post('/settings/letters', [App\Http\Controllers\SettingsController::class, 'updateLetterSettings'])->name('settings.letters.update');
+    
+    // Landing Page Settings
+    Route::get('/settings/landing-page', [App\Http\Controllers\SettingsController::class, 'landingPageSettings'])->name('settings.landing-page');
+    Route::post('/settings/landing-page', [App\Http\Controllers\SettingsController::class, 'updateLandingPageSettings'])->name('settings.landing-page.update');
+    
+    // IP Restriction Settings
+    Route::get('/settings/ip-restriction', [App\Http\Controllers\SettingsController::class, 'ipRestrictionSettings'])->name('settings.ip-restriction');
+    Route::post('/settings/ip-restriction', [App\Http\Controllers\SettingsController::class, 'updateIpRestrictionSettings'])->name('settings.ip-restriction.update');
+});
+

@@ -203,6 +203,9 @@
                         <li><a class="dropdown-item" href="{{ route('job-portal.reports.index') }}">
                             <i class="bi bi-graph-up me-2"></i>Reports
                         </a></li>
+                        <li><a class="dropdown-item" href="{{ route('settings.index') }}">
+                            <i class="bi bi-gear me-2"></i>Settings
+                        </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form method="POST" action="{{ route('job-portal.logout') }}" style="display: inline;">
