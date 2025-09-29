@@ -18,33 +18,7 @@ class StudentController extends Controller
         if (Auth::guard('student')->check()) {
             return redirect()->route('student.dashboard');
         }
-
-        // Get settings data using the existing Utility system
-        $allSettings = \App\Models\Utility::getSetting();
-        $settingsArray = [];
-        foreach ($allSettings as $setting) {
-            $settingsArray[$setting->name] = $setting->value;
-        }
-
-        $settings = [
-            'title_text' => $settingsArray['title_text'] ?? 'National Service',
-            'description' => $settingsArray['description'] ?? 'Building stronger communities through service, education, and opportunity. Join thousands of young Maldivians in shaping our nation\'s future with purpose and pride.',
-            'logo_light' => $settingsArray['logo_light'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png',
-            'favicon' => $settingsArray['favicon'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png',
-            'footer_text' => $settingsArray['footer_text'] ?? 'Building stronger communities through service, education, and opportunity for all young Maldivians.',
-            'meta_description' => $settingsArray['meta_description'] ?? '',
-            'meta_keywords' => $settingsArray['meta_keywords'] ?? '',
-        ];
-
-        // Get statistics data
-        $stats = [
-            'active_students' => $settingsArray['active_students'] ?? '4,200',
-            'completed_training' => $settingsArray['completed_training'] ?? '8,945',
-            'job_placements' => $settingsArray['job_placements'] ?? '6,811',
-            'training_centers' => $settingsArray['training_centers'] ?? '12',
-        ];
-
-        return view('landing-page.index', compact('settings', 'stats'));
+        return view('landing-page.index');
     }
 
     // public function jobPortal(){

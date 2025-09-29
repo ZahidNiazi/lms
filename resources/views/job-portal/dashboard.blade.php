@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Portal - Admin Dashboard</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -192,7 +192,7 @@
                 <i class="bi bi-briefcase-fill me-2"></i>
                 Job Portal - Admin Dashboard
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -202,9 +202,6 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{{ route('job-portal.reports.index') }}">
                             <i class="bi bi-graph-up me-2"></i>Reports
-                        </a></li>
-                        <li><a class="dropdown-item" href="{{ route('settings.index') }}">
-                            <i class="bi bi-gear me-2"></i>Settings
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
@@ -237,7 +234,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -251,7 +248,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -265,7 +262,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -295,7 +292,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--success-green);">
@@ -308,7 +305,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--warning-yellow);">
@@ -336,7 +333,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--danger-red);">
@@ -349,7 +346,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--primary-blue);">
@@ -376,7 +373,7 @@
                             <i class="bi bi-arrow-clockwise"></i>
                         </button>
                     </div>
-                    
+
                     @forelse($recentActivities as $activity)
                         <div class="activity-item">
                             <div class="activity-icon" style="background: {{ $activity['icon_color'] }};">
@@ -398,13 +395,13 @@
                     @endforelse
                 </div>
             </div>
-            
+
             <div class="col-md-6">
                 <div class="recent-activity">
                     <h5 class="mb-3">
                         <i class="bi bi-list-ul me-2"></i>Quick Actions
                     </h5>
-                    
+
                     <div class="d-grid gap-2">
                         <a href="{{ route('job-portal.applications.index') }}" class="btn btn-outline-primary">
                             <i class="bi bi-eye me-2"></i>View All Applications
@@ -432,28 +429,28 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         function refreshRecentActivity() {
             const refreshBtn = document.querySelector('[onclick="refreshRecentActivity()"]');
             const icon = refreshBtn.querySelector('i');
-            
+
             // Add spinning animation
             icon.classList.add('bi-arrow-clockwise');
             icon.style.animation = 'spin 1s linear infinite';
-            
+
             // Reload the page to get fresh data
             setTimeout(() => {
                 window.location.reload();
             }, 500);
         }
-        
+
         // Auto-refresh every 5 minutes
         setInterval(() => {
             window.location.reload();
         }, 300000); // 5 minutes
     </script>
-    
+
     <style>
         @keyframes spin {
             from { transform: rotate(0deg); }

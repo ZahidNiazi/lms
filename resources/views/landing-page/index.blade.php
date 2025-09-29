@@ -4,12 +4,12 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>{{ $settings['title_text'] ?? 'National Management School' }}</title>
-  <meta name="description" content="{{ $settings['meta_description'] ?? '' }}">
-  <meta name="keywords" content="{{ $settings['meta_keywords'] ?? '' }}">
+  <title>National Management School</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="{{ $settings['favicon'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png' }}" rel="icon">
+  <link href="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" rel="icon">
   <link href="{{asset('assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
 
   <!-- Fonts -->
@@ -87,8 +87,8 @@
 
       <a href="{{route('landing_page')}}" class="logo d-flex align-items-center me-auto" style="background:none !important;color:black;">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <img src="{{ $settings['logo_light'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png' }}" alt="">
-        <h1 class="sitename" style="color:black !important;font-size:20px;">{{ $settings['title_text'] ?? 'National Service' }}</h1>
+        <img src="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" alt="">
+        <h1 class="sitename" style="color:black !important;font-size:20px;"></h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -183,8 +183,8 @@
                   <path d="M5 18H3"></path>
                 </svg>
               </div>
-              <h1 style="text-align:center;" class="color">{{ $settings['title_text'] ?? 'National Service' }}</h1>
-              <p style="text-align:center;">{{ $settings['description'] ?? 'Building stronger communities through service, education, and opportunity. Join thousands of young Maldivians in shaping our nation\'s future with purpose and pride.' }}</p>
+              <h1 style="text-align:center;" class="color">National Service</h1>
+              <p style="text-align:center;">Building stronger communities through service, education, and opportunity. Join <br> thousands of young Maldivians in shaping our nation's future with purpose and pride.</p>
              <div class="action-buttons mt-3 d-flex justify-content-center">
               <a href="#" class="btn btn-primary me-2" style="background: hsla(195, 85%, 55%, 1) !important;border:none;padding:10px 36px !important;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket mr-3 w-5 h-5" data-lov-id="src/pages/Index.tsx:71:18" data-lov-name="Rocket" data-component-path="src/pages/Index.tsx" data-component-line="71" data-component-file="Index.tsx" data-component-name="Rocket" data-component-content="%7B%22className%22%3A%22mr-3%20w-5%20h-5%22%7D"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
@@ -220,7 +220,7 @@
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['active_students'] ?? '4,200' }}</p>
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">4,200</p>
 
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Active Students</span>
@@ -237,7 +237,7 @@
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['completed_training'] ?? '8,945' }}</p>
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">8,945</p>
 
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Completed Training
@@ -255,7 +255,7 @@
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['job_placements'] ?? '6,811' }}</p>
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">6,811</p>
 
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Job Placements</span>
@@ -272,7 +272,7 @@
                 </div>
 
                 <!-- Bold 4200 -->
-                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">{{ $stats['training_centers'] ?? '12' }}</p>
+                <p style="font-size:26px !important; font-weight:700 !important; margin:0 !important;">12</p>
 
                 <!-- Faded Active Students -->
                 <span style="font-size:14px !important; color:#6c757d !important; opacity:0.8 !important;">Training Centers
@@ -461,12 +461,12 @@
         <div class="col-lg-4 col-md-6 footer-about" style="margin-right:180px !important;">
   <a href="{{route('landing_page')}}" class="logo d-flex align-items-center" style="background:none !important;">
     <span class="sitename">
-      <img src="{{ $settings['logo_light'] ?? 'https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png' }}" alt="">
-      {{ $settings['title_text'] ?? 'National Service' }}
+      <img src="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" alt="">
+      National Service
     </span>
   </a>
   <div class="footer-contact pt-3">
-    <p>{{ $settings['footer_text'] ?? 'Building stronger communities through service, education, and opportunity for all young Maldivians.' }}</p>
+    <p>Building stronger communities through service, education, and opportunity for all young Maldivians.</p>
   </div>
 </div>
 
@@ -494,7 +494,7 @@
     </div>p
 
     <div class="container copyright text-center mt-4">
-      <p>© {{ date('Y') }} {{ $settings['title_text'] ?? 'National Service' }}. All rights reserved.</p>
+      <p>© 2024 National Service. All rights reserved.</p>
     </div>
 
   </footer>
