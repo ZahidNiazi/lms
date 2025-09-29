@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMS - Student Management System</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -193,7 +193,7 @@
                 <i class="bi bi-people-fill me-2"></i>
                 SMS - Student Management System
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -203,9 +203,6 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{{ route('job-portal.dashboard') }}">
                             <i class="bi bi-briefcase me-2"></i>Job Portal
-                        </a></li>
-                        <li><a class="dropdown-item" href="{{ route('settings.index') }}">
-                            <i class="bi bi-gear me-2"></i>Setting
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
@@ -238,7 +235,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -252,7 +249,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -266,7 +263,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -296,7 +293,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--success-green);">
@@ -309,7 +306,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--warning-yellow);">
@@ -337,7 +334,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--danger-red);">
@@ -350,7 +347,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--primary-blue);">
@@ -375,7 +372,7 @@
                         </h5>
                         <a href="{{ route('sms.students.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
                     </div>
-                    
+
                     @forelse($recentStudents as $student)
                         <div class="activity-item">
                             <div class="activity-icon" style="background: var(--primary-blue);">
@@ -397,7 +394,7 @@
                     @endforelse
                 </div>
             </div>
-            
+
             <div class="col-md-6">
                 <div class="recent-activity">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -406,7 +403,7 @@
                         </h5>
                         <a href="{{ route('sms.leaves.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
                     </div>
-                    
+
                     @forelse($recentLeaves as $leave)
                         <div class="activity-item">
                             <div class="activity-icon" style="background: {{ $leave->status === 'pending' ? 'var(--warning-yellow)' : ($leave->status === 'approved' ? 'var(--success-green)' : 'var(--danger-red)') }};">

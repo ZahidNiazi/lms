@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Student;
-use Hash;
-use Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         // Calculate age
         $age = \Carbon\Carbon::parse($request->date_of_birth)->age;
-        
+
         // Check age eligibility
         if ($age < 16 || $age > 28) {
             return back()->withErrors([
@@ -62,7 +62,7 @@ class AuthController extends Controller
 
         // Create job portal application immediately after registration
         $applicationNumber = $this->generateUniqueApplicationNumber();
-        
+
         \App\Models\JobPortalApplication::create([
             'student_id' => $student->id,
             'application_number' => $applicationNumber,
@@ -87,12 +87,12 @@ class AuthController extends Controller
     {
         $year = date('Y');
         $prefix = 'NS-' . $year . '-';
-        
+
         // Get the last application number for this year
         $lastApplication = \App\Models\JobPortalApplication::where('application_number', 'like', $prefix . '%')
             ->orderBy('application_number', 'desc')
             ->first();
-        
+
         if ($lastApplication) {
             // Extract the number part and increment
             $lastNumber = (int) substr($lastApplication->application_number, strlen($prefix));
@@ -100,7 +100,7 @@ class AuthController extends Controller
         } else {
             $newNumber = 1;
         }
-        
+
         return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
@@ -147,11 +147,15 @@ class AuthController extends Controller
             $user = Auth::user();
             if ($user->type === 'super admin') {
                 return redirect()->route('job-portal.dashboard');
-            } else {
-                return back()->withErrors([
-                    'msg' => "You're not super admin.",
-                ]);
             }
+
+            if ($user->type === 'hr-author') {
+                return redirect()->route('sms.dashboard');
+            }
+
+            return back()->withErrors([
+                'msg' => 'You are not authorized for the job portal.',
+            ]);
         }
 
         return back()->withErrors([
