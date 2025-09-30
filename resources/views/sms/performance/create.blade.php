@@ -152,9 +152,12 @@
                                     <select name="student_id" id="student_id" class="form-select @error('student_id') is-invalid @enderror" required>
                                         <option value="">Select Student</option>
                                         @foreach($students as $student)
+                                       
+                                           
+                                       
                                             <option value="{{ $student->id }}" 
                                                     {{ (old('student_id') == $student->id || ($selectedStudent && $selectedStudent->id == $student->id)) ? 'selected' : '' }}>
-                                                {{ $student->full_name }} ({{ $student->student_id }})
+                                                {{ $student->name }} (ID: {{ $student->id }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -381,7 +384,7 @@
                                     <h6 class="mb-0">{{ $selectedStudent->full_name }}</h6>
                                     <small class="text-muted">{{ $selectedStudent->student_id }}</small>
                                     @if($selectedStudent->batch)
-                                        <br><small class="text-muted">{{ $selectedStudent->batch->name }}</small>
+                                        <br><small class="text-muted">{{ $selectedStudent->batch->batch_name }}</small>
                                     @endif
                                 </div>
                             </div>
