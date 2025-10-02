@@ -78,6 +78,10 @@
             box-shadow: var(--card-shadow);
             margin-bottom: 1.5rem;
         }
+        .nav-tabs .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff !important;
+        }
     </style>
 </head>
 
@@ -122,9 +126,12 @@
                 <h2 class="mb-1">Students Management</h2>
                 <p class="text-muted mb-0">Manage student records and information</p>
             </div>
-            <a href="{{ route('sms.students.create') }}" class="btn btn-primary">
+            {{-- <a href="{{ route('sms.students.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Add New Student
-            </a>
+            </a> --}}
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                <i class="bi bi-plus-circle me-2"></i>Add Student
+            </button>
         </div>
 
         <!-- Filters -->
@@ -292,7 +299,159 @@
                 @endif
             </div>
         </div>
+
     </div>
+
+    {{-- Add student Modal --}}
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            
+            <form action="{{ route('sms.students.storeProfile') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Student Application Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                <!-- Nav Tabs -->
+                <ul class="nav nav-tabs" id="studentTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link active text-primary" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">Personal Information</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#address" type="button" role="tab">Address</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="parent-tab" data-bs-toggle="tab" data-bs-target="#parent" type="button" role="tab">Parent Details</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content mt-3" id="studentTabContent">
+                    <!-- Personal Info -->
+                    <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-6">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                        </div>
+                         <div class="col-6">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="dob" class="form-control" required>
+                        <small class="text-muted">Age must be between 16 to 28 years</small>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">National ID</label>
+                        <input type="text" name="nid" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Mobile No</label>
+                        <input type="text" name="mobile_no" class="form-control" required>
+                        </div>
+                       
+                    </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="tab-pane fade" id="address" role="tabpanel">
+                    <h6 class="fw-bold">Permanent Address</h6>
+                    <div class="row g-3">
+                        <div class="col-6">
+                        <label class="form-label">Atoll</label>
+                        <input type="text" name="permanent_atoll" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Island</label>
+                        <input type="text" name="permanent_island" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">District</label>
+                        <input type="text" name="permanent_district" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="permanent_address" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <h6 class="fw-bold">Present Address</h6>
+                    <div class="row g-3">
+                        <div class="col-6">
+                        <label class="form-label">Atoll</label>
+                        <input type="text" name="present_atoll" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Island</label>
+                        <input type="text" name="present_island" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">District</label>
+                        <input type="text" name="present_district" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="present_address" class="form-control" required>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Parent Info -->
+                    <div class="tab-pane fade" id="parent" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="parent_name" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Relation</label>
+                        <input type="text" name="parent_relation" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Atoll</label>
+                        <input type="text" name="parent_atoll" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Island</label>
+                        <input type="text" name="parent_island" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="parent_address" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Mobile No</label>
+                        <input type="text" name="parent_mobile_no" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="parent_email" class="form-control">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save Student</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -2087,6 +2087,7 @@ Route::prefix('sms')->name('sms.')->middleware(['auth'])->group(function () {
     Route::get('/students/{id}/edit', [App\Http\Controllers\SMS\SMSController::class, 'editStudent'])->name('students.edit');
     Route::put('/students/{id}', [App\Http\Controllers\SMS\SMSController::class, 'updateStudent'])->name('students.update');
     Route::delete('/students/{id}', [App\Http\Controllers\SMS\SMSController::class, 'deleteStudent'])->name('students.destroy');
+    Route::post('/students/store', [App\Http\Controllers\SMS\SMSController::class, 'storeStudentProfile'])->name('students.storeProfile');
 
     // Leave Management
     Route::get('/leaves', [App\Http\Controllers\SMS\SMSController::class, 'leaves'])->name('leaves.index');

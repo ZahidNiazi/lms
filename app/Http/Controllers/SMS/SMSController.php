@@ -18,7 +18,7 @@ use App\Models\SMS\Posting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Hash;
 class SMSController extends Controller
 {
     public function __construct()
@@ -90,6 +90,7 @@ class SMSController extends Controller
         }
 
         $students = $query->paginate(20);
+        
         $batches = TrainingBatch::active()->get();
         $companies = Student::distinct()->pluck('company')->filter();
         $platoons = Student::distinct()->pluck('platoon')->filter();
@@ -356,4 +357,107 @@ class SMSController extends Controller
 
         return view('sms.postings.index', compact('postings'));
     }
+
+    public function storeStudentProfile(Request $request)
+    {//dd($request->all());
+        // $request->validate([
+        //     //'student_id' => 'required|exists:students,id',
+        //     'full_name' => 'required|string|max:255',
+        //     'email' => 'required|email|max:255',
+        //     'nid' => 'required|string|max:20',
+        //     'mobile_no' => 'required|string|max:20',
+        //     'dob' => 'required|date|before:today',
+        //     'permanent_atoll' => 'required|string|max:255',
+        //     'permanent_island' => 'required|string|max:255',
+        //     'permanent_district' => 'required|string|max:255',
+        //     'permanent_address' => 'required|string|max:500',
+        //     'present_atoll' => 'required|string|max:255',
+        //     'present_island' => 'required|string|max:255',
+        //     'present_district' => 'required|string|max:255',
+        //     'present_address' => 'required|string|max:500',
+        //     'parent_name' => 'required|string|max:255',
+        //     'parent_relation' => 'required|string|max:255',
+        //     'parent_atoll' => 'required|string|max:255',
+        //     'parent_island' => 'required|string|max:255',
+        //     'parent_address' => 'required|string|max:500',
+        //     'parent_mobile_no' => 'required|string|max:20',
+        //     'parent_email' => 'nullable|email|max:255',
+        // ]);
+
+        $validated = $request->validate([
+           // 'full_name' => 'required|string|max:255',
+            'email'     => 'required|email|unique:students,email',
+            'dob'       => 'required|date',
+        ]);
+
+        $student = \App\Models\Student::create([
+            'name'              => $request->first_name .' '. $request->last_name,
+            'email'             => $validated['email'],
+            'password'          => Hash::make('12345678'),
+            'date_of_birth'     => $validated['dob'],
+        ]);
+
+        $age = \Carbon\Carbon::parse($request->dob)->age;
+        $isUnder18 = $age < 18;
+
+        DB::transaction(function () use ($request, $student, $isUnder18) {
+            // Profile
+            $student->profile()->updateOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'nid' => $request->nid,
+                    'mobile_no' => $request->mobile_no,
+                    'dob' => $request->dob,
+                ]
+            );
+
+            // Permanent address
+            $student->addresses()->updateOrCreate(
+                ['student_id' => $student->id, 'type' => 'permanent'],
+                [
+                    'atoll' => $request->permanent_atoll,
+                    'island' => $request->permanent_island,
+                    'district' => $request->permanent_district,
+                    'address' => $request->permanent_address,
+                ]
+            );
+
+            // Present address
+            $student->addresses()->updateOrCreate(
+                ['student_id' => $student->id, 'type' => 'present'],
+                [
+                    'atoll' => $request->present_atoll,
+                    'island' => $request->present_island,
+                    'district' => $request->present_district,
+                    'address' => $request->present_address,
+                ]
+            );
+
+            // Parent details
+            $student->parentDetail()->updateOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'name' => $request->parent_name,
+                    'relation' => $request->parent_relation,
+                    'atoll' => $request->parent_atoll,
+                    'island' => $request->parent_island,
+                    'address' => $request->parent_address,
+                    'mobile_no' => $request->parent_mobile_no,
+                    'email' => $request->parent_email,
+                ]
+            );
+
+            // Update student main record
+            $student->update([
+                'profile_completed' => true,
+                'is_under_age_18' => $isUnder18,
+                'application_stage' => 'profile_completed',
+            ]);
+        });
+
+        return redirect()->route('sms.students.index')->with('success', 'Student profile saved successfully!');
+    }
+
 }
