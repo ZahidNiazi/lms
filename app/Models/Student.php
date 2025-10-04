@@ -21,7 +21,8 @@ class Student extends Authenticatable
         'is_under_age_18',
         'application_date',
         'rejection_reason',
-        'date_of_birth'
+        'date_of_birth',
+        'by_admin'
     ];
 
     protected $hidden = [

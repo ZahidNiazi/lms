@@ -20,7 +20,10 @@ class MedicalRecord extends Model
         'document_path',
         'remarks',
         'recorded_by',
-        'record_date'
+        'record_date',
+        'medical_condition',
+        'medical_severity_level',
+        'medical_notes'
     ];
 
     protected $casts = [

@@ -318,13 +318,22 @@
                 <!-- Nav Tabs -->
                 <ul class="nav nav-tabs" id="studentTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                    <button class="nav-link active text-primary" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">Personal Information</button>
+                    <button class="nav-link active text-primary" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">Personal</button>
                     </li>
                     <li class="nav-item" role="presentation">
                     <button class="nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#address" type="button" role="tab">Address</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="parent-tab" data-bs-toggle="tab" data-bs-target="#parent" type="button" role="tab">Parent Details</button>
+                        <button class="nav-link" id="parent-tab" data-bs-toggle="tab" data-bs-target="#parent" type="button" role="tab">Parent Details</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="medical-tab" data-bs-toggle="tab" data-bs-target="#medical" type="button" role="tab">Medical Records</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="academic-tab" data-bs-toggle="tab" data-bs-target="#academic" type="button" role="tab">Academic</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="observation-tab" data-bs-toggle="tab" data-bs-target="#observation" type="button" role="tab">Observation</button>
                     </li>
                 </ul>
 
@@ -440,6 +449,102 @@
                         </div>
                     </div>
                     </div>
+
+                    <div class="tab-pane fade" id="medical" role="tabpanel">
+                        <h6 class="fw-bold">Add Medical Record</h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Medical Condition</label>
+                                <input type="text" name="medical_condition" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Medical Severity Level</label>
+                                <select name="medical_severity_level" class="form-control">
+                                    <option value="">-- Select Severity Level --</option>
+                                    <option value="mild">Mild</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="severe">Severe</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label">Medical Notes</label>
+                                <textarea name="medical_notes" class="form-control" rows="3" placeholder="Enter any additional medical details..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="academic" role="tabpanel">
+                            <h6 class="fw-bold">Add Academic Record</h6>
+                            <!-- Document Type -->
+                            <div class="col-12">
+                                <label class="form-label">Document Type</label>
+                                <select name="document_type" class="form-control">
+                                    <option value="">-- Select Document Type --</option>
+                                    <option value="certificate">Certificate</option>
+                                    <option value="diploma">Diploma</option>
+                                    <option value="bachelors">Bachelors</option>
+                                    <option value="masters">Masters</option>
+                                </select>
+                            </div>
+
+                            <!-- Institution / Organization -->
+                            <div class="col-12">
+                                <label class="form-label">Institution / Organization</label>
+                                <input type="text" name="institution" class="form-control" placeholder="Enter institution or organization name">
+                            </div>
+
+                            <!-- Start Date -->
+                            <div class="col-6">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" name="start_date" class="form-control">
+                            </div>
+
+                            <!-- End Date -->
+                            <div class="col-6">
+                                <label class="form-label">End Date</label>
+                                <input type="date" name="end_date" class="form-control">
+                            </div>
+
+                            <!-- Result / Grade -->
+                            <div class="col-12">
+                                <label class="form-label">Result / Grade</label>
+                                <input type="text" name="result" class="form-control" placeholder="Enter grade or result">
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="observation" role="tabpanel">
+                        <h6 class="fw-bold">Add New Observation</h6>
+                        <!-- Observation Type -->
+                        <div class="col-12">
+                            <label class="form-label">Observation Type</label>
+                            <select name="observation_type" class="form-control">
+                                <option value="">-- Select Observation Type --</option>
+                                <option value="behavioral">Behavioral</option>
+                                <option value="academic">Academic</option>
+                                <option value="medical">Medical</option>
+                                <option value="attendance">Attendance</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Severity Level -->
+                        <div class="col-12">
+                            <label class="form-label">Severity Level</label>
+                            <select name="severity_level" class="form-control">
+                                <option value="">-- Select Severity Level --</option>
+                                <option value="mild">Mild</option>
+                                <option value="moderate">Moderate</option>
+                                <option value="severe">Severe</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+
+                        <!-- Observation Notes -->
+                        <div class="col-12">
+                            <label class="form-label">Observation Notes</label>
+                            <textarea name="observation_notes" class="form-control" rows="3" placeholder="Enter detailed notes about the observation..."></textarea>
+                        </div>
+                    </div>
+                    
                 </div>
                 </div>
 
