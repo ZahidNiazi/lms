@@ -42,7 +42,7 @@ class SystemController extends Controller
     public function store(Request $request)
     {
 
-        if (\Auth::user()->can('manage system settings')) {
+        if (\Auth::user()->can('manage system settings')) { 
             if ($request->logo_dark) {
                 $logoName = 'logo-dark.png';
                 $dir = 'uploads/logo/';
