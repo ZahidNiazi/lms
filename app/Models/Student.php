@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use App\Notifications\StudentResetPassword;
 
 class Student extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable, CanResetPassword;
 
     protected $fillable = [
         'name',
@@ -117,5 +120,13 @@ class Student extends Authenticatable
             ->where('status', 'active')
             ->latest()
             ->first();
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new StudentResetPassword($token));
     }
 }

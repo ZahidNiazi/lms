@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>National Management School</title>
+    <title>Forget Password</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -79,66 +79,36 @@
 
     </div>
   </header>
-
   <main class="main">
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact section" style="padding:0!important;">
-
+    <section class="contact section" style="padding:0!important;">
       <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="contact-main-wrapper d-flex justify-content-center align-items-center">
-          <div class="contact-content">
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="contact-content" style="max-width:560px; width:100%">
             <div class="contact-form-container" data-aos="fade-up" data-aos-delay="400">
-              <h2 style="
-              background: linear-gradient(90deg, hsl(195deg 91.06% 30.27%) 0%, hsl(195, 85%, 45%) 100%);
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              background-clip: text;
-              color: transparent;
-            ">
-              Login
-            </h2>
+              <h2 style="background:linear-gradient(90deg, hsl(195deg 91.06% 30.27%) 0%, hsl(195,85%,45%) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Forgot Password</h2>
+
               @if(session('status'))
                 <div class="alert alert-success">{{ session('status') }}</div>
               @endif
-              @if($errors->any())
-                <div class="alert alert-danger mb-3">
-                  {{ $errors->first() }}
-                </div>
-              @endif
-              <form action="{{route('student.login.submit')}}" method="post">
-                @csrf
-                <div class="row">
-                  <div class="col-md-12 form-group pb-2">
-                    <input type="email" name="email" class="form-control inp-style" id="name" placeholder="Enter Email *" required="required">
-                  </div>
-                  <div class="col-md-12 form-group pb-2">
-                    <input type="password" name="password" class="form-control inp-style" id="name" placeholder="Enter Password *" required="required">
-                  </div>
-                </div>
 
+              <form method="POST" action="{{ route('student.password.email') }}">
+                @csrf
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" name="email" value="{{ old('email') }}" required class="form-control inp-style" placeholder="Enter your email">
+                  @error('email')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                </div>
                 <div class="d-flex justify-content-between align-items-center">
-                  <a href="{{ route('student.password.request') }}" class="text-decoration-none">Forgot password?</a>
-                  <button type="submit" class="btn-style" style="background: linear-gradient(90deg, hsl(195deg 91.06% 30.27%) 0%, hsl(195, 85%, 45%) 100%);
-           color: #fff; 
-           border: none;
-           padding: 10px 20px;
-           border-radius: 6px;
-           cursor: pointer;">Login</button>
+                  <a href="{{ route('student.login') }}" class="text-decoration-none">Back to login</a>
+                  <button type="submit" class="btn-style">Send reset link</button>
                 </div>
               </form>
-              
-            </div>
-            <div>
-                <p style="float:right;">Not have an account? <a href="{{route('student.register')}}">Register</a></p>
             </div>
           </div>
         </div>
       </div>
-    </section><!-- /Contact Section -->
-
+    </section>
   </main>
-
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

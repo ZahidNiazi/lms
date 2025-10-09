@@ -169,6 +169,7 @@ use App\Http\Controllers\Student\ApplicationStatusController;
 use App\Http\Controllers\Student\DocumentController as StudentDocumentController;
 use App\Http\Controllers\Student\StudentProfileController;
 use App\Http\Controllers\Student\AuthController;
+use App\Http\Controllers\Student\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ApplicationController;
@@ -2026,6 +2027,12 @@ Route::prefix('student')->name('student.')->group(function () {
         Route::post('register', [AuthController::class, 'postRegister'])->name('register.submit');
         Route::get('login', [AuthController::class, 'getLogin'])->name('login');
         Route::post('login', [AuthController::class, 'postLogin'])->name('login.submit');
+
+        // Password Reset Routes for Students
+        Route::get('password/forgot', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+        Route::post('password/email', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+        Route::get('password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+        Route::post('password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
     });
 
     Route::middleware(['auth:student'])->group(function () {
