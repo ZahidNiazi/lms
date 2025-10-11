@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Mail\TestMail;
 use App\Models\EmailTemplate;
+use App\Models\Atoll;
+use App\Models\Island;
 use App\Models\ExperienceCertificate;
 use App\Models\GenerateOfferLetter;
 use App\Models\IpRestrict;
@@ -33,7 +35,16 @@ class SystemController extends Controller
             }
             $file_size = number_format($file_size / 1000000, 4);
 
-            return view('settings.index', compact('settings', 'admin_payment_setting', 'file_size'));
+            // Atolls and Islands for settings management
+            $atolls = Atoll::where('created_by', \Auth::user()->creatorId())
+                ->orderBy('name')
+                ->get();
+            $islands = Island::with('atoll')
+                ->where('created_by', \Auth::user()->creatorId())
+                ->orderBy('name')
+                ->get();
+
+            return view('settings.index', compact('settings', 'admin_payment_setting', 'file_size', 'atolls', 'islands'));
         } else {
             return redirect()->back()->with('error', 'Permission denied.');
         }

@@ -396,6 +396,15 @@
                                 <div class="float-end"><i class="ti ti-chevron-right"></i></div>
                             </a>
 
+                            <a href="#atoll-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Atoll Management') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
+                            <a href="#island-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Island Management') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
+
                         </div>
                     </div>
                 </div>
@@ -4156,6 +4165,148 @@
                         </div>
                         {{ Form::close() }}
                     </div>
+                    <!-- Atoll (Category) Management -->
+                    <div id="atoll-settings" class="card">
+                        <div class="card-header p-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ __('Atoll Management') }}</h5>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">{{ __('Create Atoll') }}</h6>
+                                    <form method="POST" action="{{ route('atolls.store') }}" class="mb-3">
+                                        @csrf
+                                        <div class="mb-2">
+                                            <label class="form-label">{{ __('Name') }}</label>
+                                            <input type="text" name="name" class="form-control" required placeholder="{{ __('Enter atoll name') }}">
+                                        </div>
+                                        <button class="btn btn-primary" type="submit">{{ __('Add') }}</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="mb-2">{{ __('Atolls') }}</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>{{ __('Name') }}</th>
+                                                    <th class="text-end">{{ __('Actions') }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($atolls as $atoll)
+                                                    <tr>
+                                                        <td class="align-middle">
+                                                            <form method="POST" action="{{ route('atolls.update', $atoll->id) }}" class="d-flex gap-2 align-items-center">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <input type="text" name="name" class="form-control" value="{{ $atoll->name }}" required>
+                                                                <button class="btn btn-sm btn-primary" type="submit">{{ __('Update') }}</button>
+                                                            </form>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <form method="POST" action="{{ route('atolls.destroy', $atoll->id) }}" onsubmit="return confirm('{{ __('Are you sure?') }}');" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="btn btn-sm btn-danger" type="submit">{{ __('Delete') }}</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="2" class="text-center text-muted">{{ __('No atolls found') }}</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Island (Subcategory) Management -->
+                    <div id="island-settings" class="card">
+                        <div class="card-header p-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ __('Island Management') }}</h5>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">{{ __('Create Island') }}</h6>
+                                    <form method="POST" action="{{ route('islands.store') }}" class="mb-3">
+                                        @csrf
+                                        <div class="mb-2">
+                                            <label class="form-label">{{ __('Atoll') }}</label>
+                                            <select name="atoll_id" class="form-control" required>
+                                                <option value="">{{ __('Select Atoll') }}</option>
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->id }}">{{ $atoll->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">{{ __('Name') }}</label>
+                                            <input type="text" name="name" class="form-control" required placeholder="{{ __('Enter island name') }}">
+                                        </div>
+                                        <button class="btn btn-primary" type="submit">{{ __('Add') }}</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="mb-2">{{ __('Islands') }}</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>{{ __('Atoll') }}</th>
+                                                    <th>{{ __('Name') }}</th>
+                                                    <th class="text-end">{{ __('Actions') }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($islands as $island)
+                                                    <tr>
+                                                        <td class="align-middle">
+                                                            <form method="POST" action="{{ route('islands.update', $island->id) }}" class="row g-2 align-items-center">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <div class="col-md-5">
+                                                                    <select name="atoll_id" class="form-control" required>
+                                                                        @foreach($atolls as $atoll)
+                                                                            <option value="{{ $atoll->id }}" {{ $island->atoll_id == $atoll->id ? 'selected' : '' }}>{{ $atoll->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <input type="text" name="name" class="form-control" value="{{ $island->name }}" required>
+                                                                </div>
+                                                                <div class="col-md-2 text-end">
+                                                                    <button class="btn btn-sm btn-primary" type="submit">{{ __('Update') }}</button>
+                                                                </div>
+                                                            </form>
+                                                        </td>
+                                                        <td class="d-none"></td>
+                                                        <td class="text-end">
+                                                            <form method="POST" action="{{ route('islands.destroy', $island->id) }}" onsubmit="return confirm('{{ __('Are you sure?') }}');" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="btn btn-sm btn-danger" type="submit">{{ __('Delete') }}</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="3" class="text-center text-muted">{{ __('No islands found') }}</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {{--  End for all settings tab --}}
 
                 </div>
@@ -4163,3 +4314,14 @@
         </div>
     </div>
 @endsection
+
+@if ($message = Session::get('success'))
+    <script>
+        show_toastr('success', '{!! $message !!}', 'success');
+    </script>
+@endif
+@if ($message = Session::get('error'))
+    <script>
+        show_toastr('error', '{!! $message !!}', 'error');
+    </script>
+@endif

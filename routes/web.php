@@ -174,6 +174,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ApplicationController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AtollController;
+use App\Http\Controllers\IslandController;
 
 /*
 |--------------------------------------------------------------------------
@@ -430,6 +432,10 @@ Route::group(['middleware' => ['verified']], function () {
             Route::post('company-payment-setting', [SystemController::class, 'saveCompanyPaymentSettings'])->name('company.payment.settings');
             Route::post('currency-settings', [SystemController::class, 'saveCurrencySettings'])->name('currency.settings');
             Route::post('company-preview', [SystemController::class, 'currencyPreview'])->name('currency.preview');
+
+            // Atoll & Island Management
+            Route::resource('atolls', AtollController::class)->only(['index','store','update','destroy']);
+            Route::resource('islands', IslandController::class)->only(['index','store','update','destroy']);
 
 
             Route::any('test-mail', [SystemController::class, 'testMail'])->name('test.mail');

@@ -7,6 +7,8 @@ use App\Models\ApplicationStatus;
 use App\Models\Student;
 use App\Models\StudentDocument;
 use App\Models\StudentProfile;
+use App\Models\Atoll;
+use App\Models\Island;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -406,7 +408,27 @@ class StudentController extends Controller
                 ];
             });
 
-        return view('landing-page.student.dashboard', compact('student', 'profile', 'permanentAddress', 'presentAddress', 'parentDetail', 'documents', 'jobPortalApplication', 'interviewSchedule', 'eligibility', 'ongoingPrograms', 'notifications', 'unreadNotificationsCount', 'interviewLocations'));
+        // Fetch Atolls and Islands for address dropdowns
+        $atolls = Atoll::orderBy('name')->get(['id', 'name']);
+        $islands = Island::orderBy('name')->get(['id', 'name', 'atoll_id']);
+
+        return view('landing-page.student.dashboard', compact(
+            'student',
+            'profile',
+            'permanentAddress',
+            'presentAddress',
+            'parentDetail',
+            'documents',
+            'jobPortalApplication',
+            'interviewSchedule',
+            'eligibility',
+            'ongoingPrograms',
+            'notifications',
+            'unreadNotificationsCount',
+            'interviewLocations',
+            'atolls',
+            'islands'
+        ));
     }
 
     /**
