@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\StudentNotification;
 
 class NationalServiceLMSController extends Controller
 {
@@ -131,6 +132,20 @@ class NationalServiceLMSController extends Controller
         } elseif ($request->application_stage === 'rejected') {
             $student->update(['status' => 'rejected']);
         }
+        $application = $student->jobPortalApplication;
+        $stageLabel = ucfirst(str_replace('_', ' ', $request->application_stage));
+        StudentNotification::create([
+                'student_id' => $student->id,
+                'application_id' => $application->id,
+                'type' => 'info',
+                'title' => $stageLabel ?: 'New Message from National Service LMS',
+                'message' => 'Your application status has been updated to ' .$stageLabel,
+                'metadata' => [
+                    'application_number' => $application->application_number,
+                    //'communication_id' => $communication->id,
+                    'sent_by' => Auth::user()->name
+                ]
+            ]);
 
         return redirect()->back()->with('success', 'Application stage updated successfully');
     }

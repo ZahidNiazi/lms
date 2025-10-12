@@ -68,14 +68,23 @@ class StudentController extends Controller
 
     public function profileForm()
     {
+        
         $student = Auth::guard('student')->user();
         $profile = $student->profile;
         $permanentAddress = $student->addresses()->where('type', 'permanent')->first();
         $presentAddress = $student->addresses()->where('type', 'present')->first();
         $parentDetail = $student->parentDetail;
         $documents = $student->documents;
+        $notifications = $student->notifications()
+            ->with('application')
+            ->latest()
+            ->limit(10)
+            ->get();
 
-        return view('landing-page.student.profile-form', compact('student', 'profile', 'permanentAddress', 'presentAddress', 'parentDetail', 'documents'));
+        $unreadNotificationsCount = $student ? $student->notifications()->unread()->count() : 0;
+        //dd($unreadNotificationsCount);
+
+        return view('landing-page.student.profile-form', compact('student', 'profile', 'permanentAddress', 'presentAddress', 'parentDetail', 'documents', 'unreadNotificationsCount','notifications'));
     }
 
     public function submitProfile(Request $request)
