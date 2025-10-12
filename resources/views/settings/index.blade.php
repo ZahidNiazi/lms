@@ -4300,7 +4300,7 @@
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <h6 class="mb-2">{{ __('Create Island') }}</h6>
-                                    <form method="POST" action="{{ route('islands.store') }}" class="mb-3">
+                                    <form method="POST" action="{{ route('islands.store') }}" class="mb-3" style="margin-top:15px;">
                                         @csrf
                                         <div class="mb-2">
                                             <label class="form-label">{{ __('Atoll') }}</label>
@@ -4325,7 +4325,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>{{ __('Atoll') }}</th>
-                                                    <th>{{ __('Name') }}</th>
+                                                    {{-- <th>{{ __('Name') }}</th> --}}
                                                     <th class="text-end">{{ __('Actions') }}</th>
                                                 </tr>
                                             </thead>
@@ -4343,9 +4343,9 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
-                                                                <div class="col-md-5">
+                                                                {{-- <div class="col-md-5">
                                                                     <input type="text" name="name" class="form-control" value="{{ $island->name }}" required>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div class="col-md-2 text-end">
                                                                     <button class="btn btn-sm btn-primary" type="submit">{{ __('Update') }}</button>
                                                                 </div>

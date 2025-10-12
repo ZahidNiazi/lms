@@ -1,343 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-}
-
-.dashboard {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 250px;
-    background: #004080;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-}
-
-.sidebar h2 {
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.sidebar a {
-    color: white;
-    text-decoration: none;
-    padding: 0.75rem 1rem;
-    margin: 0.25rem 0;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-}
-
-.sidebar a:hover, .sidebar a.active {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.sidebar a i {
-    margin-right: 10px;
-}
-
-.main {
-    flex-grow: 1;
-    padding: 2rem;
-    overflow-y: auto;
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.topbar h1 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.icons a {
-    color: #333;
-    margin-left: 1rem;
-}
-
-        .favClass {
-            margin-right: 10px !important;
-        }
-
-        /* Notification badge styling */
-        #notification-badge {
-            font-size: 0.75rem;
-            min-width: 18px;
-            height: 18px;
-            line-height: 18px;
-            padding: 0 6px;
-            z-index: 10;
-        }
-
-        .nav-link.position-relative {
-            overflow: visible;
-        }
-
-.form-section {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-
-.form-section h2 {
-    margin-top: 0;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-.form-group input[type="submit"],
-.btn {
-    background: #004080;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: background 0.3s;
-}
-
-.form-group input[type="submit"]:hover,
-.btn:hover {
-    background: #003366;
-}
-
-.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-}
-
-.btn-primary {
-    background: #004080;
-}
-
-.btn-danger {
-    background: #dc3545;
-}
-
-.alert {
-    padding: 1rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-}
-
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-}
-
-.alert-info {
-    background: #d1ecf1;
-    color: #0c5460;
-}
-
-.alert-warning {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.document-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.document-table th,
-.document-table td {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-.document-table th {
-    background: #f4f4f4;
-}
-
-.status-card {
-    background: white;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.status-header {
-    margin-bottom: 1rem;
-}
-
-.status-incomplete {
-    color: #ffc107;
-}
-
-.status-submitted {
-    color: #17a2b8;
-}
-
-.status-under_review {
-    color: #007bff;
-}
-
-.status-selected_for_interview {
-    color: #6610f2;
-}
-
-.status-accepted {
-    color: #28a745;
-}
-
-.status-rejected {
-    color: #dc3545;
-}
-    </style>
-</head>
-<body>
-    <div class="dashboard">
-        <div class="sidebar">
-            <h2>Student Panel</h2>
-            <a href="{{ route('student.profile.form') }}" class="{{ request()->routeIs('student.profile.*') ? 'active' : '' }}">
-                <i class="fa fa-file-alt"></i> Profile Form
-            </a>
-            <a href="javascript:void(0)" onclick="switchToDocumentsTab()" class="{{ session('active_tab') == 'documents' ? 'active' : '' }}">
-                <i class="fa fa-file-upload"></i> Documents
-            </a>
-            <a href="{{ route('student.status') }}" class="{{ request()->routeIs('student.status') ? 'active' : '' }}">
-                <i class="fa fa-info-circle"></i> Application Status
-            </a>
-        </div>
-        <div class="main">
-            <div class="topbar">
-                <h1>Welcome, {{ Auth::guard('student')->user()->name }}</h1>
-                <div class="icons">
-                    <a href=""><i class="fas fa-bell favClass" title="Notifications"></i></a>
-                    <a href=""><i class="fas fa-cog favClass" title="Settings"></i></a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt favClass" title="Logout"></i>
-                    </a>
-                </div>
-            </div>
-
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @yield('content')
-        </div>
-    </div>
-    <script>
-        // Document type selector functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const typeSelector = document.querySelector('.document-type-selector');
-    if (typeSelector) {
-        typeSelector.addEventListener('change', function() {
-            const type = this.value;
-            const fieldsContainer = document.getElementById('document-fields');
-            let html = '';
-
-            switch(type) {
-                case 'school_leaving':
-                    html = `
-                        <div class="form-group">
-                            <label for="school_name">School Name</label>
-                            <input type="text" id="school_name" name="school_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="year">Year</label>
-                            <input type="text" id="year" name="year" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="report_number">Report Number</label>
-                            <input type="text" id="report_number" name="report_number" required>
-                        </div>
-                    `;
-                    break;
-
-                case 'olevel':
-                case 'alevel':
-                    html = `
-                        <div class="form-group">
-                            <label for="school_name">School Name</label>
-                            <input type="text" id="school_name" name="school_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="year">Year</label>
-                            <input type="text" id="year" name="year" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="subjects">Subjects</label>
-                            <input type="text" id="subjects" name="subjects" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="result">Result</label>
-                            <input type="text" id="result" name="result" required>
-                        </div>
-                    `;
-                    break;
-
-                case 'police_report':
-                    html = `
-                        <div class="form-group">
-                            <label for="report_number">Report Number</label>
-                            <input type="text" id="report_number" name="report_number" required>
-                        </div>
-                    `;
-                    break;
-
-                default:
-                    html = '';
-            }
-
-            fieldsContainer.innerHTML = html;
-        });
-    }
-});
-    </script>
-</body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -597,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card mb-4">
                         <div class="card-body">
                             <h2 class="mb-4">Student Application Form</h2>
-                            <form method="POST" action="{{ route('student.profile.submit') }}">
+                            <form id="profileForm" method="POST" action="{{ route('student.profile.submit') }}">
                                 @csrf
 
                                 <h4 class="mb-3">Personal Information</h4>
@@ -633,11 +293,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <option value="">Select Atoll</option>
                                             @php
                                                 $permanentAtollName = old('permanent_atoll', $permanentAddress->atoll ?? '');
-                                                $selectedPermanentAtollId = optional($atolls->firstWhere('name', $permanentAtollName))->id;
+                                                $selectedPermanentAtollId = isset($atolls) ? optional($atolls->firstWhere('name', $permanentAtollName))->id : null;
                                             @endphp
-                                            @foreach($atolls as $atoll)
-                                                <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $permanentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
-                                            @endforeach
+                                            @isset($atolls)
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $permanentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
+                                                @endforeach
+                                            @endisset
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -645,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <select name="permanent_island" id="permanent_island" class="form-select" required {{ empty($permanentAtollName) ? 'disabled' : '' }}>
                                             <option value="">Select Island</option>
                                             @php $permanentIslandName = old('permanent_island', $permanentAddress->island ?? ''); @endphp
-                                            @if(!empty($selectedPermanentAtollId))
+                                            @if(!empty($selectedPermanentAtollId) && isset($islands))
                                                 @foreach($islands->where('atoll_id', $selectedPermanentAtollId) as $island)
                                                     <option value="{{ $island->name }}" {{ $permanentIslandName === $island->name ? 'selected' : '' }}>{{ $island->name }}</option>
                                                 @endforeach
@@ -670,11 +332,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <option value="">Select Atoll</option>
                                             @php
                                                 $presentAtollName = old('present_atoll', $presentAddress->atoll ?? '');
-                                                $selectedPresentAtollId = optional($atolls->firstWhere('name', $presentAtollName))->id;
+                                                $selectedPresentAtollId = isset($atolls) ? optional($atolls->firstWhere('name', $presentAtollName))->id : null;
                                             @endphp
-                                            @foreach($atolls as $atoll)
-                                                <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $presentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
-                                            @endforeach
+                                            @isset($atolls)
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $presentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
+                                                @endforeach
+                                            @endisset
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -682,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <select name="present_island" id="present_island" class="form-select" required {{ empty($presentAtollName) ? 'disabled' : '' }}>
                                             <option value="">Select Island</option>
                                             @php $presentIslandName = old('present_island', $presentAddress->island ?? ''); @endphp
-                                            @if(!empty($selectedPresentAtollId))
+                                            @if(!empty($selectedPresentAtollId) && isset($islands))
                                                 @foreach($islands->where('atoll_id', $selectedPresentAtollId) as $island)
                                                     <option value="{{ $island->name }}" {{ $presentIslandName === $island->name ? 'selected' : '' }}>{{ $island->name }}</option>
                                                 @endforeach
@@ -715,11 +379,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <option value="">Select Atoll</option>
                                             @php
                                                 $parentAtollName = old('parent_atoll', $parentDetail->atoll ?? '');
-                                                $selectedParentAtollId = optional($atolls->firstWhere('name', $parentAtollName))->id;
+                                                $selectedParentAtollId = isset($atolls) ? optional($atolls->firstWhere('name', $parentAtollName))->id : null;
                                             @endphp
-                                            @foreach($atolls as $atoll)
-                                                <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $parentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
-                                            @endforeach
+                                            @isset($atolls)
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $parentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
+                                                @endforeach
+                                            @endisset
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -727,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <select name="parent_island" id="parent_island" class="form-select" required {{ empty($parentAtollName) ? 'disabled' : '' }}>
                                             <option value="">Select Island</option>
                                             @php $parentIslandName = old('parent_island', $parentDetail->island ?? ''); @endphp
-                                            @if(!empty($selectedParentAtollId))
+                                            @if(!empty($selectedParentAtollId) && isset($islands))
                                                 @foreach($islands->where('atoll_id', $selectedParentAtollId) as $island)
                                                     <option value="{{ $island->name }}" {{ $parentIslandName === $island->name ? 'selected' : '' }}>{{ $island->name }}</option>
                                                 @endforeach
@@ -832,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <label for="type" class="form-label">Document Type</label>
                                     <select id="type" name="type" class="form-select" required>
                                         <option value="">Select Document Type</option>
-                                        @if($student->is_under_age_18)
+                                        @if(isset($student) && $student->is_under_age_18)
                                             <option value="parent_consent">Parent Consent Form</option>
                                         @endif
                                         <option value="photo">Photo</option>
@@ -1258,6 +924,7 @@ function updateDocStatus(input) {
 
 (function() {
   const form = document.getElementById('profileForm');
+  if (!form) { console.warn('profileForm not found on page; skipping validation init'); return; }
 
   // utility to show feedback
   function setInvalid(input, message) {
@@ -1535,13 +1202,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Document upload form handling
     const documentForm = document.getElementById('document-upload-form');
+    const fileInputEl = document.getElementById('file');
+    const uploadBtn = document.getElementById('upload-btn');
+
+    // Immediate validation on file choose (2MB max)
+    if (fileInputEl) {
+        fileInputEl.addEventListener('change', function () {
+            const f = this.files && this.files[0] ? this.files[0] : null;
+            if (f && f.size > 2 * 1024 * 1024) {
+                // Mark invalid and keep button disabled
+                this.setCustomValidity('File must be less than 2 MB');
+                this.reportValidity();
+                window.showAlert('Please upload a file less than 2 MB.', 'warning');
+                if (uploadBtn) uploadBtn.disabled = true;
+            } else {
+                // Clear invalid state and enable button
+                this.setCustomValidity('');
+                if (uploadBtn) uploadBtn.disabled = false;
+            }
+        });
+    }
+
     if (documentForm) {
         documentForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const uploadBtn = document.getElementById('upload-btn');
             const btnText = uploadBtn.querySelector('.btn-text');
             const spinner = uploadBtn.querySelector('.spinner-border');
+
+            // Size validation BEFORE showing loading state
+            const fileField = this.querySelector('#file');
+            const fileObj = fileField && fileField.files ? fileField.files[0] : null;
+            if (!fileObj) {
+                fileField.setCustomValidity('Please select a file to upload.');
+                fileField.reportValidity();
+                window.showAlert('Please select a file to upload.', 'warning');
+                if (uploadBtn) uploadBtn.disabled = false;
+                return;
+            }
+            if (fileObj.size > 2 * 1024 * 1024) {
+                fileField.setCustomValidity('File must be less than 2 MB');
+                fileField.reportValidity();
+                window.showAlert('Please upload a file less than 2 MB.', 'warning');
+                if (uploadBtn) uploadBtn.disabled = true;
+                return;
+            }
+
+            // Clear any previous validity message
+            fileField.setCustomValidity('');
 
             // Show loading state
             btnText.textContent = 'Uploading...';
@@ -2003,7 +1711,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Dependent Atoll -> Island selects for Application form
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        const islands = @json($islands->map(fn($i) => ['id' => $i->id, 'name' => $i->name, 'atoll_id' => $i->atoll_id]));
+        const islands = @json(isset($islands) ? $islands->map(function ($i) { return ['id' => $i->id, 'name' => $i->name, 'atoll_id' => $i->atoll_id]; }) : []);
 
         // Build islands grouped by atoll_id
         const islandsByAtoll = islands.reduce((acc, it) => {
