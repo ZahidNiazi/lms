@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\StudentNotification;
+use Twilio\Rest\Client;
 
 class NationalServiceLMSController extends Controller
 {
@@ -146,6 +147,27 @@ class NationalServiceLMSController extends Controller
                     'sent_by' => Auth::user()->name
                 ]
             ]);
+
+        try {
+            $settings = Utility::settings();
+
+            $twilioSid   = $settings['twilio_sid']   ?? null;
+            $twilioToken = $settings['twilio_token'] ?? null;
+            $twilioFrom  = $settings['twilio_from']  ?? null;
+
+            if ($twilioSid && $twilioToken && $twilioFrom && !empty($student->phone)) {
+                $client = new Client($twilioSid, $twilioToken);
+
+                $messageBody = "Hello {$student->first_name}, your application status has been updated to {$stageLabel}.";
+
+                $client->messages->create($student->phone, [
+                    'from' => $twilioFrom,
+                    'body' => $messageBody,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Twilio SMS failed: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Application stage updated successfully');
     }

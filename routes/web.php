@@ -443,6 +443,7 @@ Route::group(['middleware' => ['verified']], function () {
 
             Route::post('stripe-settings', [SystemController::class, 'savePaymentSettings'])->name('payment.settings');
             Route::post('pusher-setting', [SystemController::class, 'savePusherSettings'])->name('pusher.setting');
+            Route::post('twilio-setting', [SystemController::class, 'saveTwilioSettingsS'])->name('twilio-s.setting');
             Route::post('recaptcha-settings', [SystemController::class, 'recaptchaSettingStore'])->name('recaptcha.settings.store')->middleware(['auth', 'XSS']);
 
             Route::post('seo-settings', [SystemController::class, 'seoSettings'])->name('seo.settings.store')->middleware(['auth', 'XSS']);

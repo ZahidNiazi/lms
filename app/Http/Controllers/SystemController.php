@@ -1808,6 +1808,33 @@ class SystemController extends Controller
             return redirect()->back()->with('success', __('Pusher Settings updated successfully'));
         }
     }
+    
+
+    public function saveTwilioSettingsS(Request $request)
+    {
+        $post = [];
+        $post['twilio_sid'] = $request->input('twilio_sid');
+        $post['twilio_token'] = $request->input('twilio_token');
+        $post['twilio_from'] = $request->input('twilio_from');
+        if (isset($post) && !empty($post) && count($post) > 0) {
+            $created_at = $updated_at = date('Y-m-d H:i:s');
+
+            foreach ($post as $key => $data) {
+                DB::insert(
+                    'INSERT INTO settings (`value`, `name`,`created_by`,`created_at`,`updated_at`) values (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updated_at` = VALUES(`updated_at`) ',
+                    [
+                        $data,
+                        $key,
+                        Auth::user()->id,
+                        $created_at,
+                        $updated_at,
+                    ]
+                );
+            }
+        }
+
+        return redirect()->back()->with('success', __('Twilio updated successfully.'));
+    }
 
     public function saveSlackSettings(Request $request)
     {

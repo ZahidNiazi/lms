@@ -371,6 +371,10 @@
                                 class="list-group-item list-group-item-action border-0">{{ __('Pusher Settings') }}
                                 <div class="float-end"><i class="ti ti-chevron-right"></i></div>
                             </a>
+                            <a href="#twellio-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Twilio Settings') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
                             <a href="#recaptcha_settings"
                                 class="list-group-item list-group-item-action border-0">{{ __('ReCaptcha Settings') }}
                                 <div class="float-end"><i class="ti ti-chevron-right"></i></div>
@@ -3558,7 +3562,7 @@
                         </form>
                     </div>
 
-                    <!--Pusher Settings-->
+                    <!--Pusher Settings--> 
                     <div id="pusher-settings" class="card">
                         <div class="card-header p-3">
                             <h5>{{ __('Pusher Settings') }}</h5>
@@ -3611,6 +3615,68 @@
                                         @enderror
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="card-footer p-3 text-end">
+                            <div class="form-group mb-0">
+                                <input class="btn btn-print-invoice  btn-primary" type="submit"
+                                    value="{{ __('Save Changes') }}">
+                            </div>
+                        </div>
+                        {{ Form::close() }}
+                    </div>
+                    <div id="twellio-settings" class="card">
+                        <div class="card-header p-3">
+                            <h5>{{ __('Twilio Settings') }}</h5>
+                        </div>
+                        {{ Form::model($settings, ['route' => 'twilio-s.setting', 'class' => 'mb-0', 'method' => 'post']) }}
+                        @csrf
+                        <div class="card-body p-3">
+                            <div class="row row-gap-1">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('twilio_sid', __('TWILIO SID'), ['class' => 'form-label']) }}
+                                        {{ Form::text('twilio_sid', null, ['class' => 'form-control font-style', 'placeholder' => __('Twilio SID')]) }}
+                                        @error('twilio_sid')
+                                            <span class="invalid-twilio_sid" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('twilio_token', __('TWILIO AUTH TOKEN'), ['class' => 'form-label']) }}
+                                        {{ Form::text('twilio_token', null, ['class' => 'form-control font-style', 'placeholder' => __('Twilio AUTH TOKEN')]) }}
+                                        @error('twilio_token')
+                                            <span class="invalid-twilio_token" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('twilio_from', __('TWILIO PHONE NUMBER'), ['class' => 'form-label']) }}
+                                        {{ Form::text('twilio_from', null, ['class' => 'form-control font-style', 'placeholder' => __('Twilio PHONE NUMBER')]) }}
+                                        @error('twilio_from')
+                                            <span class="invalid-twilio_from" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                {{-- <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('pusher_app_cluster', __('Pusher App Cluster'), ['class' => 'form-label']) }}
+                                        {{ Form::text('pusher_app_cluster', null, ['class' => 'form-control font-style', 'placeholder' => __('Pusher App Cluster')]) }}
+                                        @error('pusher_app_cluster')
+                                            <span class="invalid-pusher_app_cluster" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="card-footer p-3 text-end">
