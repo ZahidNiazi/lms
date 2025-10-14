@@ -151,10 +151,8 @@ class SMSController extends Controller
 
         // Handle photo upload
         if ($request->hasFile('photo')) {
-            $photo = $request->file('photo');
-            $photoName = time() . '_' . $photo->getClientOriginalName();
-            $photo->storeAs('public/student_photos', $photoName);
-            $data['photo'] = 'student_photos/' . $photoName;
+            $path = $request->file('photo')->store('student-profiles', 'public');
+            $data['photo'] = $path;
         }
 
         // Calculate age
@@ -203,14 +201,12 @@ class SMSController extends Controller
         // Handle photo upload
         if ($request->hasFile('photo')) {
             // Delete old photo if exists
-            if ($student->photo && \Storage::exists('public/' . $student->photo)) {
-                \Storage::delete('public/' . $student->photo);
+            if ($student->photo) {
+                \Storage::disk('public')->delete($student->photo);
             }
 
-            $photo = $request->file('photo');
-            $photoName = time() . '_' . $photo->getClientOriginalName();
-            $photo->storeAs('public/student_photos', $photoName);
-            $data['photo'] = 'student_photos/' . $photoName;
+            $path = $request->file('photo')->store('student-profiles', 'public');
+            $data['photo'] = $path;
         }
 
         // Calculate age
@@ -321,7 +317,53 @@ class SMSController extends Controller
         $medicalRecords = $query->latest()->paginate(20);
         $students = Student::active()->get();
 
-        return view('sms.medical.index', compact('medicalRecords', 'students'));
+        $studentsWithMedicalRecords = MedicalRecord::pluck('student_id');
+
+        $studentsWithoutMedicalRecords = Student::whereNotIn('id', $studentsWithMedicalRecords)->get();
+
+        return view('sms.medical.index', compact('medicalRecords', 'students', 'studentsWithoutMedicalRecords'));
+    }
+
+    public function storeMedical(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:sms_students,id',
+            'record_date' => 'required|date',
+            'description' => 'required|string',
+            'attachments' => 'nullable|string',
+        ]);
+
+        MedicalRecord::create($request->all());
+
+        return redirect()->route('sms.medical.index')->with('success', 'Medical record created successfully.');
+    }
+
+    public function showMedical($id)
+    {
+        $medicalRecord = MedicalRecord::with('student')->findOrFail($id);
+        return response()->json($medicalRecord);
+    }
+
+    public function updateMedical(Request $request, $id)
+    {
+        $request->validate([
+            'record_date' => 'required|date',
+            'description' => 'required|string',
+            'attachments' => 'nullable|string',
+        ]);
+
+        $medicalRecord = MedicalRecord::findOrFail($id);
+        $medicalRecord->update($request->all());
+
+        return redirect()->route('sms.medical.index')->with('success', 'Medical record updated successfully.');
+    }
+
+    public function destroyMedical($id)
+    {
+        $medicalRecord = MedicalRecord::findOrFail($id);
+        $medicalRecord->delete();
+
+        return redirect()->route('sms.medical.index')->with('success', 'Medical record deleted successfully.');
     }
 
     /**

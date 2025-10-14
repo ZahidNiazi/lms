@@ -410,7 +410,7 @@
                                 <i class="bi bi-calendar-{{ $leave->status === 'pending' ? 'plus' : ($leave->status === 'approved' ? 'check' : 'x') }}"></i>
                             </div>
                             <div class="activity-content">
-                                <p class="activity-title">{{ $leave->student->full_name ?? 'Unknown Student' }}</p>
+                                <p class="activity-title">{{ $leave->student->name ?? 'Unknown Student' }}</p>
                                 <p class="activity-subtitle">{{ $leave->leaveType->name ?? 'Unknown Type' }} - {{ ucfirst($leave->status) }}</p>
                                 <p class="activity-time">{{ $leave->created_at->diffForHumans() }}</p>
                             </div>

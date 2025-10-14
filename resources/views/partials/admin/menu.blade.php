@@ -1663,14 +1663,14 @@
                     @include('landingpage::menu.landingpage')
                 @endif -->
 
-                @if (\Auth::user()->type == 'super admin')
+                {{-- @if (\Auth::user()->type == 'super admin')
                     <li class="dash-item dash-hasmenu {{ request()->is('national-service-lms*') ? 'active' : '' }}">
                         <a href="{{ route('national-service-lms.dashboard') }}" class="dash-link">
                             <span class="dash-micon"><i class="ti ti-users"></i></span><span
                                 class="dash-mtext">{{ __('National Service LMS') }}</span>
                         </a>
                     </li>
-                @endif
+                @endif --}}
 
                 {{-- === National Service LMS – standalone links === --}}
                 @if (\Auth::user()->type == 'super admin')
