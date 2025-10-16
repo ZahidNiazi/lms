@@ -156,13 +156,13 @@ class NationalServiceLMSController extends Controller
             $twilioSid   = $settings['twilio_sid']   ?? null;
             $twilioToken = $settings['twilio_token'] ?? null;
             $twilioFrom  = $settings['twilio_from']  ?? null;
-
-            if ($twilioSid && $twilioToken && $twilioFrom && !empty($student->phone)) {
+            $mobileNo = $student->profile->mobile_no ?? null;
+            if ($twilioSid && $twilioToken && $twilioFrom && !empty($mobileNo)) {
                 $client = new Client($twilioSid, $twilioToken);
 
                 $messageBody = "Hello {$student->first_name}, your application status has been updated to {$stageLabel}.";
 
-                $client->messages->create($student->phone, [
+                $client->messages->create($mobileNo, [
                     'from' => $twilioFrom,
                     'body' => $messageBody,
                 ]);
