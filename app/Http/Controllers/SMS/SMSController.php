@@ -114,9 +114,11 @@ class SMSController extends Controller
             'awards',
             'warnings',
             'assessments.subject',
-            'documents'
+            'documents',
+            'AcademiclRecords',
+            'Observation'
         ])->findOrFail($id);
-
+//dd($student);
         return view('sms.students.show', compact('student'));
     }
 
