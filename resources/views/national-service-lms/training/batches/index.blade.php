@@ -87,7 +87,8 @@
                     <p class="mb-1"><strong>Start Date:</strong> {{ $batch->start_date->format('d/m/Y') }}</p>
                     <p class="mb-1"><strong>End Date:</strong> {{ $batch->end_date->format('d/m/Y') }}</p>
                     <p class="mb-1"><strong>Capacity:</strong> {{ $batch->capacity }}</p>
-                    <p class="mb-1"><strong>Enrolled:</strong> {{ $batch->enrolled_count }}</p>
+                    {{-- <p class="mb-1"><strong>Enrolled:</strong> {{ $batch->enrolled_count }}</p> --}}
+                     <p class="mb-1"><strong>Enrolled:</strong> {{ $batch->applications_count }}</p>
                     @if($batch->description)
                         <p class="mb-1"><strong>Description:</strong> {{ Str::limit($batch->description, 100) }}</p>
                     @endif

@@ -176,8 +176,9 @@ class NationalServiceLMSController extends Controller
 
     public function trainingBatches()
     {
-        $batches = TrainingBatch::withCount('enrollments')->latest()->paginate(20);
-
+        $batches = TrainingBatch::withCount('applications')->latest()->paginate(20);
+        //$batches = TrainingBatch::withCount('applications')->latest()->paginate(20);
+        //dd($batches);
         return view('national-service-lms.training.batches.index', compact('batches'));
     }
 
