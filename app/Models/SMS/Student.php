@@ -89,6 +89,14 @@ class Student extends Model
     {
         return $this->hasMany(MedicalRecord::class);
     }
+    public function AcademiclRecords(): HasMany
+    {
+        return $this->hasMany(SmsAcademic::class);
+    }
+    public function Observation(): HasMany
+    {
+        return $this->hasMany(SmsObservation::class);
+    }
 
     public function awards(): HasMany
     {
