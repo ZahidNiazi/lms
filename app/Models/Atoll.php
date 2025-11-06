@@ -16,6 +16,6 @@ class Atoll extends Model
 
     public function islands()
     {
-        return $this->hasMany(Island::class);
+        return $this->hasMany(Island::class, 'atoll_id');
     }
 }

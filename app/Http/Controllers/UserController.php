@@ -29,7 +29,7 @@ class UserController extends Controller
 {
 
     public function index()
-    {
+    { 
         User::defaultEmail();
 
         $user = \Auth::user();

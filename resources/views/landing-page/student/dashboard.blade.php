@@ -256,8 +256,30 @@
                     </div>
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h2 class="mb-4">Student Application Form</h2>
-                            <form id="profileForm" method="POST" action="{{ route('student.profile.submit') }}">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <strong>There were some errors with your submission:</strong>
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                            {{-- <h2 class="mb-4">Student Application Form</h2> --}}
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="mb-0">Student Application Form</h2>
+
+                                @if(isset($profile) && $profile->profile_picture)
+                                    <div class="profile-pic-wrapper">
+                                        <img src="{{ asset($profile->profile_picture) }}" 
+                                            alt="Profile Picture" 
+                                            width="120" height="120"
+                                            class="rounded border object-fit-cover">
+                                    </div>
+                                @endif
+                            </div>
+                            <form id="profileForm" method="POST" action="{{ route('student.profile.submit') }}" enctype="multipart/form-data" >
                                 @csrf
 
                                 <h4 class="mb-3">Personal Information</h4>
@@ -282,38 +304,53 @@
                                         <label for="dob" class="form-label">Date of Birth</label>
                                         <input type="date" id="dob" name="dob" class="form-control" value="{{ old('dob', $profile->dob ?? '') }}" required>
                                         <small class="text-muted">Age must be between 16 to 28 years</small>
+                                        @error('dob')
+                                            <div class="text-danger small">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="profile_picture" class="form-label">Profile Picture</label>
+                                            <input type="file" id="profile_picture" name="profile_picture" class="form-control" 
+                                            {{ isset($profile) && $profile->profile_picture ? '' : 'required' }}>
                                     </div>
                                 </div>
 
                                 <h4 class="mt-4 mb-3">Permanent Address</h4>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Atoll</label>
-                                        <select name="permanent_atoll" id="permanent_atoll" class="form-select" required>
-                                            <option value="">Select Atoll</option>
-                                            @php
-                                                $permanentAtollName = old('permanent_atoll', $permanentAddress->atoll ?? '');
-                                                $selectedPermanentAtollId = isset($atolls) ? optional($atolls->firstWhere('name', $permanentAtollName))->id : null;
-                                            @endphp
-                                            @isset($atolls)
+                                
+                                    <h4 class="mt-4">Permanent Address</h4>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Atoll</label>
+                                            <select name="permanent_atoll_id" id="permanent_atoll" class="form-select">
+                                                <option value="">Select Atoll</option>
                                                 @foreach($atolls as $atoll)
-                                                    <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $permanentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
+                                                    <option value="{{ $atoll->id }}" {{ optional($student->permanentAddress)->atoll_id == $atoll->id ? 'selected' : '' }}>
+                                                        {{ $atoll->name }}
+                                                    </option>
                                                 @endforeach
-                                            @endisset
-                                        </select>
+                                            </select>
+                                        </div>
+                                        
+                                        {{-- Permanent Island --}}
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Permanent Island</label>
+                                            <select name="permanent_island_id" id="permanent_island" class="form-select" required>
+                                                <option value="">Select Island</option>
+                                                @if($permanentAddress && $permanentAddress->atoll && $permanentAddress->atoll->islands)
+                                                    @foreach($permanentAddress->atoll->islands as $island)
+                                                        <option value="{{ $island->id }}" 
+                                                            {{ old('permanent_island_id', optional($permanentAddress)->island_id) == $island->id ? 'selected' : '' }}>
+                                                            {{ $island->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Island</label>
-                                        <select name="permanent_island" id="permanent_island" class="form-select" required {{ empty($permanentAtollName) ? 'disabled' : '' }}>
-                                            <option value="">Select Island</option>
-                                            @php $permanentIslandName = old('permanent_island', $permanentAddress->island ?? ''); @endphp
-                                            @if(!empty($selectedPermanentAtollId) && isset($islands))
-                                                @foreach($islands->where('atoll_id', $selectedPermanentAtollId) as $island)
-                                                    <option value="{{ $island->name }}" {{ $permanentIslandName === $island->name ? 'selected' : '' }}>{{ $island->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
+
+
+
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">District</label>
                                         <input type="text" name="permanent_district" class="form-control" value="{{ old('permanent_district', $permanentAddress->district ?? '') }}" required>
@@ -326,33 +363,37 @@
 
                                 <h4 class="mt-4 mb-3">Present Address</h4>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Atoll</label>
-                                        <select name="present_atoll" id="present_atoll" class="form-select" required>
-                                            <option value="">Select Atoll</option>
-                                            @php
-                                                $presentAtollName = old('present_atoll', $presentAddress->atoll ?? '');
-                                                $selectedPresentAtollId = isset($atolls) ? optional($atolls->firstWhere('name', $presentAtollName))->id : null;
-                                            @endphp
-                                            @isset($atolls)
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Atoll</label>
+                                            <select name="present_atoll_id" id="present_atoll" class="form-select">
+                                                <option value="">Select Atoll</option>
                                                 @foreach($atolls as $atoll)
-                                                    <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $presentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
+                                                    <option value="{{ $atoll->id }}" {{ optional($student->presentAddress)->atoll_id == $atoll->id ? 'selected' : '' }}>
+                                                        {{ $atoll->name }}
+                                                    </option>
                                                 @endforeach
-                                            @endisset
-                                        </select>
+                                            </select>
+                                        </div>
+                                            {{-- Present Island --}}
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Present Island</label>
+                                            <select name="present_island_id" id="present_island" class="form-select" required>
+                                                <option value="">Select Island</option>
+                                                @if($presentAddress && $presentAddress->atoll && $presentAddress->atoll->islands)
+                                                    @foreach($presentAddress->atoll->islands as $island)
+                                                        <option value="{{ $island->id }}" 
+                                                            {{ old('present_island_id', optional($presentAddress)->island_id) == $island->id ? 'selected' : '' }}>
+                                                            {{ $island->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Island</label>
-                                        <select name="present_island" id="present_island" class="form-select" required {{ empty($presentAtollName) ? 'disabled' : '' }}>
-                                            <option value="">Select Island</option>
-                                            @php $presentIslandName = old('present_island', $presentAddress->island ?? ''); @endphp
-                                            @if(!empty($selectedPresentAtollId) && isset($islands))
-                                                @foreach($islands->where('atoll_id', $selectedPresentAtollId) as $island)
-                                                    <option value="{{ $island->name }}" {{ $presentIslandName === $island->name ? 'selected' : '' }}>{{ $island->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">District</label>
                                         <input type="text" name="present_district" class="form-control" value="{{ old('present_district', $presentAddress->district ?? '') }}" required>
@@ -373,33 +414,38 @@
                                         <label class="form-label">Relation</label>
                                         <input type="text" name="parent_relation" class="form-control" value="{{ old('parent_relation', $parentDetail->relation ?? '') }}" required>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Atoll</label>
-                                        <select name="parent_atoll" id="parent_atoll" class="form-select" required>
-                                            <option value="">Select Atoll</option>
-                                            @php
-                                                $parentAtollName = old('parent_atoll', $parentDetail->atoll ?? '');
-                                                $selectedParentAtollId = isset($atolls) ? optional($atolls->firstWhere('name', $parentAtollName))->id : null;
-                                            @endphp
-                                            @isset($atolls)
+                                    
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Parent Atoll</label>
+                                            <select name="parent_atoll_id" id="parent_atoll" class="form-select">
+                                                <option value="">Select Atoll</option>
                                                 @foreach($atolls as $atoll)
-                                                    <option value="{{ $atoll->name }}" data-atoll-id="{{ $atoll->id }}" {{ $parentAtollName === $atoll->name ? 'selected' : '' }}>{{ $atoll->name }}</option>
+                                                    <option value="{{ $atoll->id }}" {{ optional($student->parentDetail)->parent_atoll_id == $atoll->id ? 'selected' : '' }}>
+                                                        {{ $atoll->name }}
+                                                    </option>
                                                 @endforeach
-                                            @endisset
-                                        </select>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Parent Island</label>
+                                            <select name="parent_island_id" id="parent_island" class="form-select">
+                                                <option value="">Select Island</option>
+                                                @if(optional(optional($student->parentDetail)->parentAtoll)->islands)
+                                                    @foreach(optional(optional($student->parentDetail)->parentAtoll)->islands as $island)
+                                                        <option value="{{ $island->id }}"
+                                                            {{ optional($student->parentDetail)->parent_island_id == $island->id ? 'selected' : '' }}>
+                                                            {{ $island->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Island</label>
-                                        <select name="parent_island" id="parent_island" class="form-select" required {{ empty($parentAtollName) ? 'disabled' : '' }}>
-                                            <option value="">Select Island</option>
-                                            @php $parentIslandName = old('parent_island', $parentDetail->island ?? ''); @endphp
-                                            @if(!empty($selectedParentAtollId) && isset($islands))
-                                                @foreach($islands->where('atoll_id', $selectedParentAtollId) as $island)
-                                                    <option value="{{ $island->name }}" {{ $parentIslandName === $island->name ? 'selected' : '' }}>{{ $island->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
+
+
+
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">Address</label>
                                         <input type="text" name="parent_address" class="form-control" value="{{ old('parent_address', $parentDetail->address ?? '') }}" required>
@@ -1707,75 +1753,36 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 </html>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-// Dependent Atoll -> Island selects for Application form
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        const islands = @json(isset($islands) ? $islands->map(function ($i) { return ['id' => $i->id, 'name' => $i->name, 'atoll_id' => $i->atoll_id]; }) : []);
+function loadIslands(atollSelectId, islandSelectId) {
+    const atollId = $('#' + atollSelectId).val();
+    const $islandSelect = $('#' + islandSelectId);
+    $islandSelect.html('<option value="">Loading...</option>');
 
-        // Build islands grouped by atoll_id
-        const islandsByAtoll = islands.reduce((acc, it) => {
-            (acc[it.atoll_id] ||= []).push(it);
-            return acc;
-        }, {});
+    if (atollId) {
+        // Use Laravel's route helper inside Blade
+        const url = "{{ route('student.get.islands', ':atoll_id') }}".replace(':atoll_id', atollId);
 
-        function populateIslands(atollSelect, islandSelect) {
-            if (!atollSelect || !islandSelect) return;
-            const selOpt = atollSelect.options[atollSelect.selectedIndex];
-            const atollId = selOpt ? selOpt.getAttribute('data-atoll-id') : null;
-
-            // Reset islands
-            islandSelect.innerHTML = '';
-            const def = document.createElement('option');
-            def.value = '';
-            def.textContent = 'Select Island';
-            islandSelect.appendChild(def);
-
-            if (!atollId || !islandsByAtoll[atollId] || islandsByAtoll[atollId].length === 0) {
-                islandSelect.disabled = true;
-                return;
-            }
-
-            islandsByAtoll[atollId].forEach(island => {
-                const opt = document.createElement('option');
-                // Keep name as value to match existing DB columns
-                opt.value = island.name;
-                opt.textContent = island.name;
-                islandSelect.appendChild(opt);
+        $.get(url, function(data) {
+            let options = '<option value="">Select Island</option>';
+            data.forEach(island => {
+                options += `<option value="${island.id}">${island.name}</option>`;
             });
-
-            islandSelect.disabled = false;
-        }
-
-        function attachDependent(atollId, islandId) {
-            const atollSelect = document.getElementById(atollId);
-            const islandSelect = document.getElementById(islandId);
-            if (!atollSelect || !islandSelect) return;
-
-            // On change, repopulate
-            atollSelect.addEventListener('change', function() {
-                populateIslands(atollSelect, islandSelect);
-            });
-
-            // Initial population only when an atoll is preselected or islands are empty/disabled
-            const hasSelection = atollSelect.value && atollSelect.value.trim() !== '';
-            if (hasSelection && (islandSelect.disabled || islandSelect.options.length <= 1)) {
-                // Preserve previously selected island name if present
-                const prev = islandSelect.value;
-                populateIslands(atollSelect, islandSelect);
-                if (prev) {
-                    for (const opt of islandSelect.options) {
-                        if (opt.value === prev) { opt.selected = true; break; }
-                    }
-                }
-            }
-        }
-
-        attachDependent('permanent_atoll', 'permanent_island');
-        attachDependent('present_atoll', 'present_island');
-        attachDependent('parent_atoll', 'parent_island');
-    } catch (e) {
-        console.error('Atoll/Island init error:', e);
+            $islandSelect.html(options);
+        });
+    } else {
+        $islandSelect.html('<option value="">Select Island</option>');
     }
+}
+
+$(document).ready(function() {
+    $('#permanent_atoll').change(() => loadIslands('permanent_atoll', 'permanent_island'));
+    $('#present_atoll').change(() => loadIslands('present_atoll', 'present_island'));
+    $('#parent_atoll').change(() => loadIslands('parent_atoll', 'parent_island'));
 });
 </script>
+
+

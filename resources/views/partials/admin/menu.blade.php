@@ -85,7 +85,7 @@
                             <span class="dash-mtext">{{ __('Dashboard') }}</span>
                             <span class="dash-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="dash-submenu">
-                            @if ($userPlan->account == 1 && Gate::check('show account dashboard'))
+                            @if ($userPlan && $userPlan->account == 1 && Gate::check('show account dashboard'))
                                 <li
                                     class="dash-item dash-hasmenu {{ Request::segment(1) == null || Request::segment(1) == 'account-dashboard' || Request::segment(1) == 'report' || Request::segment(1) == 'reports-monthly-cashflow' || Request::segment(1) == 'reports-quarterly-cashflow' ? ' active dash-trigger' : '' }}">
                                     <a class="dash-link" href="#">{{ __('Accounting ') }}<span
@@ -207,7 +207,7 @@
                                 </li>
                             @endif
 
-                            @if ($userPlan->hrm == 1)
+                            @if ($userPlan && $userPlan->hrm == 1)
                                 @can('show hrm dashboard')
                                     <li
                                         class="dash-item dash-hasmenu {{ Request::segment(1) == 'hrm-dashboard' || Request::segment(1) == 'reports-payroll' || Request::segment(1) == 'report-leave' || Request::segment(1) == 'reports-monthly-attendance' ? ' active dash-trigger' : '' }}">
@@ -254,7 +254,7 @@
                                 @endcan
                             @endif
 
-                            @if ($userPlan->crm == 1)
+                            @if ($userPlan && $userPlan->crm == 1)
                                 @can('show crm dashboard')
                                     <li
                                         class="dash-item dash-hasmenu {{ Request::segment(1) == 'crm-dashboard' || Request::segment(1) == 'reports-lead' || Request::segment(1) == 'reports-deal' ? ' active dash-trigger' : '' }}">
@@ -289,7 +289,7 @@
                                 @endcan
                             @endif
 
-                            @if ($userPlan->project == 1)
+                            @if ($userPlan && $userPlan->project == 1)
                                 @can('show project dashboard')
                                     <li
                                         class="dash-item {{ Request::route()->getName() == 'project.dashboard' ? ' active' : '' }}">
@@ -299,7 +299,7 @@
                                 @endcan
                             @endif
 
-                            @if ($userPlan->pos == 1)
+                            @if ($userPlan && $userPlan->pos == 1)
                                 @can('show pos dashboard')
                                     <li
                                         class="dash-item dash-hasmenu {{
@@ -1719,6 +1719,28 @@
                                 class="dash-mtext">{{ __('Settings') }}</span>
                         </a>
                     </li>
+                    <li class="dash-item dash-hasmenu {{ Request::route()->getName() == 'users-management.index' ? 'active' : '' }}">
+                        <a href="{{ route('users-management.index') }}" class="dash-link">
+                            <span class="dash-micon"><i class="ti ti-user-check"></i></span>
+                            <span class="dash-mtext">{{ __('User Management') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="dash-item dash-hasmenu {{ Request::route()->getName() == 'role-management.index' ? 'active' : '' }}">
+                        <a href="{{ route('role-management.index') }}" class="dash-link">
+                            <span class="dash-micon"><i class="ti ti-lock"></i></span>
+                            <span class="dash-mtext">{{ __('Roles Management') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="dash-item dash-hasmenu {{ Request::route()->getName() == 'permission-management.index' ? 'active' : '' }}">
+                        <a href="{{ route('permission-management.index') }}" class="dash-link">
+                            <span class="dash-micon"><i class="ti ti-key"></i></span>
+                            <span class="dash-mtext">{{ __('Permissions') }}</span>
+                        </a>
+                    </li>
+
+
                 @endif
                @endif
 

@@ -176,6 +176,11 @@ use App\Http\Controllers\ApplicationController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AtollController;
 use App\Http\Controllers\IslandController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\PlatoonController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\RoleManagementController;
+use App\Http\Controllers\PermissionManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -416,6 +421,16 @@ Route::group(['middleware' => ['verified']], function () {
         ],
         function () {
             Route::resource('systems', SystemController::class)->except(['create', 'show']);
+            Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+            Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
+            Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
+            Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+
+            Route::get('/platoons', [PlatoonController::class, 'index'])->name('platoons.index');
+            Route::post('/platoons', [PlatoonController::class, 'store'])->name('platoons.store');
+            Route::put('/platoons/{platoon}', [PlatoonController::class, 'update'])->name('platoons.update');
+            Route::delete('/platoons/{platoon}', [PlatoonController::class, 'destroy'])->name('platoons.destroy');
+
             Route::post('email-settings', [SystemController::class, 'saveEmailSettings'])->name('email.settings');
             Route::post('company-email-settings', [SystemController::class, 'saveCompanyEmailSettings'])->name('company.email.settings');
 
@@ -1274,6 +1289,10 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('/change/mode', [UserController::class, 'changeMode'])->name('change.mode')->middleware(['auth', 'XSS']);
     Route::get('dashboard-view', [DashboardController::class, 'filterView'])->name('dashboard.view')->middleware(['auth', 'XSS']);
     Route::get('dashboard', [DashboardController::class, 'clientView'])->name('client.dashboard.view')->middleware(['auth', 'XSS']);
+    Route::resource('users-management', UserManagementController::class)->middleware(['auth', 'XSS']);
+    Route::resource('role-management', RoleManagementController::class)->parameters(['role-management' => 'role'])->middleware(['auth', 'XSS']);
+    Route::resource('permission-management', PermissionManagementController::class)->parameters(['permission-management' => 'permission'])->middleware(['auth', 'XSS']);
+
 
     // saas
     Route::resource('users', UserController::class)->middleware(['auth', 'XSS', 'revalidate']);
@@ -2046,6 +2065,7 @@ Route::prefix('student')->name('student.')->group(function () {
         Route::get('dashboard', [App\Http\Controllers\Student\StudentController::class, 'dashboard'])->name('dashboard');
         // Profile routes
         Route::get('/profile', [App\Http\Controllers\Student\StudentController::class, 'profileForm'])->name('profile.form');
+        Route::get('/get-islands/{atoll_id}', [App\Http\Controllers\Student\StudentController::class, 'getIslands'])->name('get.islands');
         Route::post('/profile', [App\Http\Controllers\Student\StudentController::class, 'submitProfile'])->name('profile.submit');
 
         // Documents routes
@@ -2102,6 +2122,7 @@ Route::prefix('sms')->name('sms.')->middleware(['auth'])->group(function () {
     Route::put('/students/{id}', [App\Http\Controllers\SMS\SMSController::class, 'updateStudent'])->name('students.update');
     Route::delete('/students/{id}', [App\Http\Controllers\SMS\SMSController::class, 'deleteStudent'])->name('students.destroy');
     Route::post('/students/store', [App\Http\Controllers\SMS\SMSController::class, 'storeStudentProfile'])->name('students.storeProfile');
+     Route::get('/get-islands/{atoll_id}', [App\Http\Controllers\Student\StudentController::class, 'getIslands'])->name('get.islands');
 
     // Leave Management
     Route::get('/leaves', [App\Http\Controllers\SMS\SMSController::class, 'leaves'])->name('leaves.index');
@@ -2187,5 +2208,7 @@ Route::prefix('national-service-lms')->name('national-service-lms.')->middleware
 
     // Reports
     Route::get('/reports', [App\Http\Controllers\NationalServiceLMSController::class, 'reports'])->name('reports');
+
+    
 });
 

@@ -36,15 +36,16 @@ class SystemController extends Controller
             $file_size = number_format($file_size / 1000000, 4);
 
             // Atolls and Islands for settings management
-            $atolls = Atoll::where('created_by', \Auth::user()->creatorId())
+            $atolls = Atoll::with('islands')->where('created_by', \Auth::user()->creatorId())
                 ->orderBy('name')
                 ->get();
-            $islands = Island::with('atoll')
-                ->where('created_by', \Auth::user()->creatorId())
-                ->orderBy('name')
-                ->get();
+            
+            // $islands = Island::with('atoll')
+            //     ->where('created_by', \Auth::user()->creatorId())
+            //     ->orderBy('name')
+            //     ->get();
 
-            return view('settings.index', compact('settings', 'admin_payment_setting', 'file_size', 'atolls', 'islands'));
+            return view('settings.index', compact('settings', 'admin_payment_setting', 'file_size', 'atolls', ));
         } else {
             return redirect()->back()->with('error', 'Permission denied.');
         }

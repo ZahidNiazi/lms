@@ -204,7 +204,7 @@
         <!-- Students Table -->
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
+                {{-- <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -289,6 +289,98 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div> --}}
+                <div class="row">
+                    @forelse($students as $student)
+                        <div class="col-xl-4 col-lg-6 mb-4">
+                            <div class="student-card border rounded-3 p-3 shadow-sm h-100">
+
+                                {{-- Header --}}
+                                <div class="student-head mb-3 d-flex justify-content-between align-items-start">
+                                    <div class="d-flex align-items-center gap-3">
+                                        @if($student->photo && file_exists(public_path($student->photo)))
+                                            <img src="{{ asset($student->photo) }}"
+                                                alt="{{ $student->full_name }}"
+                                                class="rounded-circle object-cover"
+                                                style="width: 45px; height: 45px; object-fit: cover;">
+                                        @else
+                                            <div class="avatar bg-primary text-white rounded-circle d-flex justify-content-center align-items-center"
+                                                style="width: 45px; height: 45px; font-weight: 600; font-size: 18px;">
+                                                {{ strtoupper(substr($student->full_name, 0, 1)) }}
+                                            </div>
+                                        @endif
+
+                                        <div>
+                                            <h5 class="mb-0 fw-bold">{{ $student->full_name }}</h5>
+                                            <small class="text-muted">
+                                                ID: {{ $student->student_id }}
+                                                @if($student->created_at)
+                                                    • Applied {{ $student->created_at->diffForHumans() }}
+                                                @endif
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    {{-- Status --}}
+                                    <span class="status-badge {{ $student->is_active ? 'bg-success text-white' : 'bg-secondary text-white' }} px-2 py-1 rounded">
+                                        {{ $student->is_active ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </div>
+
+                                <hr>
+
+                                {{-- Body Info --}}
+                                <div class="student-info mb-3">
+                                    <p class="mb-1"><strong>Email:</strong> {{ $student->email }}</p>
+                                    <p class="mb-1"><strong>Batch:</strong>
+                                        @if($student->batch)
+                                            <span class="badge bg-info">{{ $student->batch->batch_name }}</span>
+                                        @else
+                                            <span class="text-muted">No Batch</span>
+                                        @endif
+                                    </p>
+                                    <p class="mb-1"><strong>Company:</strong> {{ $student->company->name ?? 'N/A' }}</p>
+                                    <p class="mb-1"><strong>Platoon:</strong> {{ $student->platoon->name ?? 'N/A' }}</p>
+                                    {{-- <p class="mb-1"><strong>Status:</strong>
+                                        <span class="status-badge {{ $student->is_active ? 'bg-success' : 'bg-secondary' }} px-2 py-1 rounded">
+                                            {{ $student->is_active ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </p> --}}
+                                </div>
+
+                                {{-- Footer --}}
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        Applied: {{ optional($student->created_at)->format('d/m/Y') }}
+                                    </small>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('sms.students.show', $student->id) }}" class="btn btn-outline-primary btn-sm" title="View">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ route('sms.students.edit', $student->id) }}" class="btn btn-outline-warning btn-sm" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Delete"
+                                                onclick="deleteStudent({{ $student->id }})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-people display-4 d-block mb-3"></i>
+                                <h5>No students found</h5>
+                                <p>Start by adding your first student or adjust your search filters.</p>
+                                <a href="{{ route('sms.students.create') }}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Add Student
+                                </a>
+                            </div>
+                        </div>
+                    @endforelse
                 </div>
 
                 <!-- Pagination -->
@@ -307,7 +399,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
             
-            <form action="{{ route('sms.students.storeProfile') }}" method="POST">
+            <form action="{{ route('sms.students.storeProfile') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Student Application Form</h5>
@@ -367,6 +459,10 @@
                         <label class="form-label">Mobile No</label>
                         <input type="text" name="mobile_no" class="form-control" required>
                         </div>
+                        <div class="col-6">
+                        <label class="form-label">Profile Picture</label>
+                        <input type="file" name="profile_picture" class="form-control" required>
+                        </div>
                        
                     </div>
                     </div>
@@ -375,13 +471,20 @@
                     <div class="tab-pane fade" id="address" role="tabpanel">
                     <h6 class="fw-bold">Permanent Address</h6>
                     <div class="row g-3">
-                        <div class="col-6">
+                         <div class="col-6">
                         <label class="form-label">Atoll</label>
-                        <input type="text" name="permanent_atoll" class="form-control" required>
+                        <select name="permanent_atoll" id="permanent_atoll" class="form-select" required>
+                            <option value="">Select Atoll</option>
+                            @foreach($atolls as $atoll)
+                            <option value="{{ $atoll->id }}">{{ $atoll->name }}</option>
+                            @endforeach
+                        </select>
                         </div>
                         <div class="col-6">
                         <label class="form-label">Island</label>
-                        <input type="text" name="permanent_island" class="form-control" required>
+                        <select name="permanent_island" id="permanent_island" class="form-select" required>
+                            <option value="">Select Island</option>
+                        </select>
                         </div>
                         <div class="col-6">
                         <label class="form-label">District</label>
@@ -399,11 +502,18 @@
                     <div class="row g-3">
                         <div class="col-6">
                         <label class="form-label">Atoll</label>
-                        <input type="text" name="present_atoll" class="form-control" required>
+                        <select name="present_atoll" id="present_atoll" class="form-select" required>
+                            <option value="">Select Atoll</option>
+                            @foreach($atolls as $atoll)
+                            <option value="{{ $atoll->id }}">{{ $atoll->name }}</option>
+                            @endforeach
+                        </select>
                         </div>
                         <div class="col-6">
                         <label class="form-label">Island</label>
-                        <input type="text" name="present_island" class="form-control" required>
+                        <select name="present_island" id="present_island" class="form-select" required>
+                            <option value="">Select Island</option>
+                        </select>
                         </div>
                         <div class="col-6">
                         <label class="form-label">District</label>
@@ -429,12 +539,20 @@
                         </div>
                         <div class="col-6">
                         <label class="form-label">Atoll</label>
-                        <input type="text" name="parent_atoll" class="form-control" required>
+                        <select name="parent_atoll" id="parent_atoll" class="form-select" required>
+                            <option value="">Select Atoll</option>
+                            @foreach($atolls as $atoll)
+                            <option value="{{ $atoll->id }}">{{ $atoll->name }}</option>
+                            @endforeach
+                        </select>
                         </div>
                         <div class="col-6">
                         <label class="form-label">Island</label>
-                        <input type="text" name="parent_island" class="form-control" required>
+                        <select name="parent_island" id="parent_island" class="form-select" required>
+                            <option value="">Select Island</option>
+                        </select>
                         </div>
+
                         <div class="col-12">
                         <label class="form-label">Address</label>
                         <input type="text" name="parent_address" class="form-control" required>
@@ -475,40 +593,42 @@
                     </div>
                     <div class="tab-pane fade" id="academic" role="tabpanel">
                             <h6 class="fw-bold">Add Academic Record</h6>
-                            <!-- Document Type -->
-                            <div class="col-12">
-                                <label class="form-label">Document Type</label>
-                                <select name="document_type" class="form-control">
-                                    <option value="">-- Select Document Type --</option>
-                                    <option value="certificate">Certificate</option>
-                                    <option value="diploma">Diploma</option>
-                                    <option value="bachelors">Bachelors</option>
-                                    <option value="masters">Masters</option>
-                                </select>
-                            </div>
+                            <div class="row g-3">
+                                <!-- Document Type -->
+                                <div class="col-12">
+                                    <label class="form-label">Document Type</label>
+                                    <select name="document_type" class="form-control">
+                                        <option value="">-- Select Document Type --</option>
+                                        <option value="certificate">Certificate</option>
+                                        <option value="diploma">Diploma</option>
+                                        <option value="bachelors">Bachelors</option>
+                                        <option value="masters">Masters</option>
+                                    </select>
+                                </div>
 
-                            <!-- Institution / Organization -->
-                            <div class="col-12">
-                                <label class="form-label">Institution / Organization</label>
-                                <input type="text" name="institution" class="form-control" placeholder="Enter institution or organization name">
-                            </div>
+                                <!-- Institution / Organization -->
+                                <div class="col-12">
+                                    <label class="form-label">Institution / Organization</label>
+                                    <input type="text" name="institution" class="form-control" placeholder="Enter institution or organization name">
+                                </div>
 
-                            <!-- Start Date -->
-                            <div class="col-6">
-                                <label class="form-label">Start Date</label>
-                                <input type="date" name="start_date" class="form-control">
-                            </div>
+                                <!-- Start Date -->
+                                <div class="col-6">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="date" name="start_date" class="form-control">
+                                </div>
 
-                            <!-- End Date -->
-                            <div class="col-6">
-                                <label class="form-label">End Date</label>
-                                <input type="date" name="end_date" class="form-control">
-                            </div>
+                                <!-- End Date -->
+                                <div class="col-6">
+                                    <label class="form-label">End Date</label>
+                                    <input type="date" name="end_date" class="form-control">
+                                </div>
 
-                            <!-- Result / Grade -->
-                            <div class="col-12">
-                                <label class="form-label">Result / Grade</label>
-                                <input type="text" name="result" class="form-control" placeholder="Enter grade or result">
+                                <!-- Result / Grade -->
+                                <div class="col-12">
+                                    <label class="form-label">Result / Grade</label>
+                                    <input type="text" name="result" class="form-control" placeholder="Enter grade or result">
+                                </div>
                             </div>
                     </div>
                     <div class="tab-pane fade" id="observation" role="tabpanel">
@@ -588,5 +708,51 @@
             }
         }
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+        function loadIslands(atollSelector, islandSelector) {
+            var atollId = $(atollSelector).val();
+            var $islandSelect = $(islandSelector);
+            $islandSelect.empty().append('<option value="">Select Island</option>');
+
+            if (atollId) {
+            const url = "{{ route('sms.get.islands', ':atoll_id') }}".replace(':atoll_id', atollId);
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (response) {
+                if (response.length > 0) {
+                    response.forEach(function (island) {
+                    $islandSelect.append('<option value="' + island.id + '">' + island.name + '</option>');
+                    });
+                }
+                },
+                error: function (xhr) {
+                console.error('Error fetching islands:', xhr.responseText);
+                }
+            });
+            }
+        }
+
+        // Bind change events for all 3 address groups
+        $('#permanent_atoll').on('change', function () {
+            loadIslands('#permanent_atoll', '#permanent_island');
+        });
+
+        $('#present_atoll').on('change', function () {
+            loadIslands('#present_atoll', '#present_island');
+        });
+
+        $('#parent_atoll').on('change', function () {
+            loadIslands('#parent_atoll', '#parent_island');
+        });
+
+        });
+    </script>
+
+
 </body>
 </html>

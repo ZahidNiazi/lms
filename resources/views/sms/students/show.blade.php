@@ -145,7 +145,7 @@
             <div class="col-md-4">
                 <div class="info-section text-center">
                     @if($student->photo)
-                        <img src="{{ \Storage::url($student->photo) }}" alt="Student Photo" class="student-photo mb-3">
+                        <img src="{{ asset($student->photo) }}" alt="Student Photo" class="student-photo mb-3">
                     @else
                         <div class="student-photo bg-light d-flex align-items-center justify-content-center mb-3 mx-auto">
                             <i class="bi bi-person display-4 text-muted"></i>
@@ -263,11 +263,11 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Atoll:</span>
-                                <span class="info-value">{{ $student->permanent_atoll ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->permanentAtoll->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Island:</span>
-                                <span class="info-value">{{ $student->permanent_island ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->permanentIsland->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">District:</span>
@@ -282,11 +282,11 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Atoll:</span>
-                                <span class="info-value">{{ $student->present_atoll ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->presentAtoll->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Island:</span>
-                                <span class="info-value">{{ $student->present_island ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->presentIsland->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">District:</span>
@@ -323,6 +323,16 @@
                                 <span class="info-value">{{ $student->parent_contact_no ?? 'N/A' }}</span>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">Atoll:</span>
+                                <span class="info-value">{{ $student->parentAtoll->name ?? 'N/A' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Islands:</span>
+                                <span class="info-value">{{ $student->parentIsland->name ?? 'N/A' }}</span>
+                            </div>
+                        </div>
                     </div>
                     @if($student->parent_address)
                         <div class="info-item">
@@ -352,11 +362,11 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Company:</span>
-                                <span class="info-value">{{ $student->company ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->company->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Platoon:</span>
-                                <span class="info-value">{{ $student->platoon ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->platoon->name ?? 'N/A' }}</span>
                             </div>
                         </div>
                         <div class="col-md-6">

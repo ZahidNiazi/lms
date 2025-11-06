@@ -281,6 +281,7 @@
 
         <!-- Main Features -->
         <div class="row mb-4">
+            {{-- @can('hr student management') --}}
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--primary-blue);">
@@ -293,6 +294,7 @@
                     </a>
                 </div>
             </div>
+            {{-- @endcan --}}
 
             <div class="col-md-4 mb-3">
                 <div class="feature-card">

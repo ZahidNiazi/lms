@@ -41,7 +41,7 @@ class SMSStudent extends Model
         'pay_amount',
         'current_emp_location',
         'last_login',
-        'status'
+        'status',
     ];
 
     protected $casts = [

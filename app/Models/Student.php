@@ -129,4 +129,15 @@ class Student extends Authenticatable
     {
         $this->notify(new StudentResetPassword($token));
     }
+
+    public function permanentAddress()
+    {
+        return $this->hasOne(Address::class)->where('type', 'permanent');
+    }
+
+    public function presentAddress()
+    {
+        return $this->hasOne(Address::class)->where('type', 'present');
+    }
+    
 }
