@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Portal - Applications Management</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -105,7 +105,7 @@
                 <i class="bi bi-arrow-left me-2"></i>
                 Job Portal - Applications Management
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -137,7 +137,7 @@
             <h5 class="mb-3">
                 <i class="bi bi-funnel me-2"></i>Filter Applications
             </h5>
-            
+
             <form method="GET" action="{{ route('job-portal.applications.index') }}">
                 <div class="row">
                     <div class="col-md-3">
@@ -151,26 +151,26 @@
                             @endforeach
                         </select>
                     </div>
-                    
+
                     <div class="col-md-3">
                         <label class="form-label">Search</label>
-                        <input type="text" name="search" class="form-control" 
+                        <input type="text" name="search" class="form-control"
                                placeholder="Name, Email, or Application Number"
                                value="{{ request('search') }}">
                     </div>
-                    
+
                     <div class="col-md-2">
                         <label class="form-label">Date From</label>
-                        <input type="date" name="date_from" class="form-control" 
+                        <input type="date" name="date_from" class="form-control"
                                value="{{ request('date_from') }}">
                     </div>
-                    
+
                     <div class="col-md-2">
                         <label class="form-label">Date To</label>
-                        <input type="date" name="date_to" class="form-control" 
+                        <input type="date" name="date_to" class="form-control"
                                value="{{ request('date_to') }}">
                     </div>
-                    
+
                     <div class="col-md-2">
                         <label class="form-label">&nbsp;</label>
                         <div class="d-grid">
@@ -191,7 +191,7 @@
                         <i class="bi bi-file-earmark-text me-2"></i>
                         Applications ({{ $applications->total() }})
                     </h4>
-                    
+
                     <div>
                         <a href="{{ route('job-portal.dashboard') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
@@ -208,40 +208,40 @@
                                     <br>
                                     <small class="text-muted">{{ $application->created_at->format('M d, Y') }}</small>
                                 </div>
-                                
+
                                 <div class="col-md-3">
                                     <h6 class="mb-1">{{ $application->student->name }}</h6>
                                     <small class="text-muted">{{ $application->student->email }}</small>
                                     <br>
                                     <small class="text-muted">{{ $application->student->profile->mobile_no ?? 'N/A' }}</small>
                                 </div>
-                                
+
                                 <div class="col-md-2">
                                     @php
                                         $address = $application->student->addresses->first();
                                     @endphp
                                     <small>
-                                        {{ $address->island ?? 'N/A' }}, {{ $address->atoll ?? '' }}
+                                        {{ $address->island->name ?? 'N/A' }}, {{ $address->atoll->name ?? '' }}
                                     </small>
                                 </div>
-                                
+
                                 <div class="col-md-2">
                                     <span class="status-badge status-{{ str_replace('_', '-', $application->status) }}">
                                         {{ ucfirst(str_replace('_', ' ', $application->status)) }}
                                     </span>
                                 </div>
-                                
+
                                 <div class="col-md-3">
                                     <div class="d-flex flex-wrap">
                                         @if(in_array($application->status, ['pending_review', 'document_review']))
-                                            <a href="{{ route('job-portal.applications.show', $application->id) }}" 
+                                            <a href="{{ route('job-portal.applications.show', $application->id) }}"
                                                class="action-btn btn-review">
                                                 <i class="bi bi-eye me-1"></i>Review
                                             </a>
                                         @endif
 
                                         @if($application->status === 'approved')
-                                            <a href="{{ route('job-portal.applications.schedule-interview', $application->id) }}" 
+                                            <a href="{{ route('job-portal.applications.schedule-interview', $application->id) }}"
                                                class="action-btn btn-interview">
                                                 <i class="bi bi-calendar-plus me-1"></i>Schedule Interview
                                             </a>
@@ -256,7 +256,7 @@
                                             </form>
                                         @endif
 
-                                        <a href="{{ route('job-portal.applications.show', $application->id) }}" 
+                                        <a href="{{ route('job-portal.applications.show', $application->id) }}"
                                            class="action-btn btn-outline-primary">
                                             <i class="bi bi-eye me-1"></i>View Details
                                         </a>

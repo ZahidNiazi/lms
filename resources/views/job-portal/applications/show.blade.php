@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Portal - Application Details</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -118,7 +118,7 @@
                 <i class="bi bi-arrow-left me-2"></i>
                 Application Details: {{ $application->application_number }}
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -197,7 +197,7 @@
                         @foreach($application->student->addresses as $address)
                             <div class="mb-3">
                                 <strong>{{ ucfirst($address->type) }} Address:</strong>
-                                {{ $address->address }}, {{ $address->island }}, {{ $address->atoll }}
+                                {{ $address->address }}, {{ $address->island->name }}, {{ $address->atoll->name }}
                             </div>
                         @endforeach
                     @endif
@@ -217,7 +217,7 @@
                         <div class="alert alert-info">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <strong>Preferred Location:</strong> 
+                                    <strong>Preferred Location:</strong>
                                     @if($application->preferredInterviewLocation)
                                         {{ $application->preferredInterviewLocation->name }}
                                         <br><small class="text-muted">{{ $application->preferredInterviewLocation->getFullAddress() }}</small>
@@ -308,7 +308,7 @@
                         <h5 class="mb-4">
                             <i class="bi bi-clipboard-check me-2"></i>Review History
                         </h5>
-                        
+
                         @foreach($application->reviews as $review)
                             <div class="border-start border-3 border-primary ps-3 mb-3">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -333,7 +333,7 @@
                 <!-- Action Buttons -->
                 <div class="action-buttons">
                     <h6 class="mb-3">Quick Actions</h6>
-                    
+
                     <!-- Document Review -->
                     <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#reviewModal">
                         <i class="bi bi-clipboard-check me-2"></i>Review Application
