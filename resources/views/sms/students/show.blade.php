@@ -144,8 +144,9 @@
             <!-- Student Photo and Basic Info -->
             <div class="col-md-4">
                 <div class="info-section text-center">
-                    @if($student->photo)
-                        <img src="{{ asset($student->photo) }}" alt="Student Photo" class="student-photo mb-3">
+                    @if (!empty($student->photo))
+                    
+                        <img src="{{ asset('storage/uploads/students/' . $student->photo) }}" alt="Student Photo" class="student-photo mb-3">
                     @else
                         <div class="student-photo bg-light d-flex align-items-center justify-content-center mb-3 mx-auto">
                             <i class="bi bi-person display-4 text-muted"></i>

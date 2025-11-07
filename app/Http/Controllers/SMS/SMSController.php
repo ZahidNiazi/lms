@@ -24,6 +24,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Utility;
+
 class SMSController extends Controller
 {
     public function __construct()
@@ -219,40 +221,46 @@ class SMSController extends Controller
             // 'present_island' => 'nullable|exists:islands,id',
             // 'parent_atoll' => 'nullable|exists:atolls,id',
             // 'parent_island' => 'nullable|exists:islands,id',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            //'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->all();
         
+        $data = [];
+        
         if ($request->hasFile('photo')) {
-
-            // Delete old photo if it exists
-            if ($student->photo && file_exists(public_path($student->photo))) {
-                unlink(public_path($student->photo));
+            // Delete old photo if exists
+            if (!empty($student->photo)) {
+                $oldPath = storage_path('app/public/uploads/students/' . $student->photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            // Create destination folder if not exists
-            $destinationPath = public_path('sms_students_profile');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
+            // Validate file
+            $request->validate([
+                'photo' => 'mimes:jpg,jpeg,png,gif|max:2048',
+            ]);
 
-            // Move uploaded file
-            $file = $request->file('photo');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move($destinationPath, $fileName);
+            // Generate unique filename
+            $fileName = time() . '-photo.' . $request->file('photo')->getClientOriginalExtension();
 
-            // Save relative path in DB
-            $data['photo'] = 'sms_students_profile/' . $fileName;
+            // Store file in storage/app/public/uploads/students
+            $path = $request->file('photo')->storeAs('uploads/students', $fileName, 'public');
+
+            // Save only filename in DB (optional but clean)
+            $data['photo'] = $fileName;
         }
+
+
+
 
         // Calculate age
         if ($request->date_of_birth) {
             $data['age'] = \Carbon\Carbon::parse($request->date_of_birth)->age;
         }
-        //$data['martial_status'] = $request->martial_status;
-        //$data['kids'] = $request->kids ?? NULL;
-        $data = [
+
+        $data = array_merge($data,[
             'martial_status' => $request->martial_status,
             'kids' => $request->kids ?? NULL,
             'permanent_atoll_id' => $request->permanent_atoll,
@@ -261,7 +269,8 @@ class SMSController extends Controller
             'present_island_id' => $request->present_island,
             'parent_atoll_id' => $request->parent_atoll,
             'parent_island_id' => $request->parent_island,
-        ];
+        ]);
+        //dd( $data);
         $student->update($data);
 
         if (
@@ -535,28 +544,51 @@ class SMSController extends Controller
         //     'dob'       => 'required|date',
         // ]);
 
+        // if ($request->hasFile('profile_picture')) {
+        //     $destinationPath = public_path('sms_students_profile');
+
+        //     // Create directory if not exists
+        //     if (!file_exists($destinationPath)) {
+        //         mkdir($destinationPath, 0777, true);
+        //     }
+
+        //     // Generate unique filename
+        //     $file = $request->file('profile_picture');
+        //     $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+        //     // Move file to public/sms_students_profile
+        //     $file->move($destinationPath, $fileName);
+
+        //     // Save relative path to DB (so we can easily access it later)
+        //     $data['photo'] = 'sms_students_profile/' . $fileName;
+
+        //     // Optional: Delete old photo if exists
+        //     // if ($student->photo && file_exists(public_path($student->photo))) {
+        //     //     unlink(public_path($student->photo));
+        //     // }
+        // }
+
+        $data = [];
         if ($request->hasFile('profile_picture')) {
-            $destinationPath = public_path('sms_students_profile');
 
-            // Create directory if not exists
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
+            $validation = [
+                'mimes:' . 'png,jpg,jpeg,gif',
+                'max:' . '2048',
+            ];
+
+            // File name pattern: student-temp-photo.extension
+            $fileName = time() . '-photo.' . $request->file('profile_picture')->getClientOriginalExtension();
+            $dir = 'uploads/students/';
+
+            // Use Utility helper (handles local/S3/Wasabi)
+            $path = Utility::upload_file($request, 'profile_picture', $fileName, $dir, $validation);
+
+            if ($path['flag'] == 1) { 
+                $data['photo'] = $fileName; // store file name only in DB
+                //dd($data['photo']);
+            } else { //dd('flag off');
+                return redirect()->back()->with('error', __($path['msg']));
             }
-
-            // Generate unique filename
-            $file = $request->file('profile_picture');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-            // Move file to public/sms_students_profile
-            $file->move($destinationPath, $fileName);
-
-            // Save relative path to DB (so we can easily access it later)
-            $data['photo'] = 'sms_students_profile/' . $fileName;
-
-            // Optional: Delete old photo if exists
-            // if ($student->photo && file_exists(public_path($student->photo))) {
-            //     unlink(public_path($student->photo));
-            // }
         }
 
         $student = Student::create([

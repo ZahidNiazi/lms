@@ -298,8 +298,14 @@
                                 {{-- Header --}}
                                 <div class="student-head mb-3 d-flex justify-content-between align-items-start">
                                     <div class="d-flex align-items-center gap-3">
-                                        @if($student->photo && file_exists(public_path($student->photo)))
+                                        {{-- @if($student->photo && file_exists(public_path($student->photo)))
                                             <img src="{{ asset($student->photo) }}"
+                                                alt="{{ $student->full_name }}"
+                                                class="rounded-circle object-cover"
+                                                style="width: 45px; height: 45px; object-fit: cover;">
+                                        @else --}}
+                                        @if($student->photo)
+                                            <img src="{{ asset('storage/uploads/students/' . $student->photo) }}"
                                                 alt="{{ $student->full_name }}"
                                                 class="rounded-circle object-cover"
                                                 style="width: 45px; height: 45px; object-fit: cover;">

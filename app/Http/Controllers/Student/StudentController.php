@@ -146,16 +146,27 @@ class StudentController extends Controller
             // Create or update profile
             $profilePicturePath = null;
             if ($request->hasFile('profile_picture')) {
-                
-                $destinationPath = public_path('profile_pictures');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
+                // Delete old photo if exists
+                if (!empty($student->profile->profile_picture)) {
+                    $oldPath = storage_path('app/public/uploads/students/' . $student->profile->profile_picture);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
                 }
 
-                $file = $request->file('profile_picture');
-                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move($destinationPath, $fileName);
-                $profilePicturePath = 'profile_pictures/' . $fileName;
+                // Validate file
+                $request->validate([
+                    'profile_picture' => 'mimes:jpg,jpeg,png,gif|max:2048',
+                ]);
+
+                // Generate unique filename
+                $fileName = time() . '-profile.' . $request->file('profile_picture')->getClientOriginalExtension();
+
+                // Store file in storage/app/public/uploads/students
+                $path = $request->file('profile_picture')->storeAs('uploads/students', $fileName, 'public');
+
+                // Save only filename in DB
+                $profilePicturePath = $fileName;
             }
 
             $student->profile()->updateOrCreate(

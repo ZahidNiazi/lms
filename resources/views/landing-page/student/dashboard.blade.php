@@ -272,7 +272,7 @@
 
                                 @if(isset($profile) && $profile->profile_picture)
                                     <div class="profile-pic-wrapper">
-                                        <img src="{{ asset($profile->profile_picture) }}" 
+                                        <img src="{{ asset('storage/uploads/students/' . $profile->profile_picture) }}" 
                                             alt="Profile Picture" 
                                             width="120" height="120"
                                             class="rounded border object-fit-cover">
