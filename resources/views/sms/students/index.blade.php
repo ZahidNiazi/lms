@@ -540,8 +540,23 @@
                         <input type="text" name="parent_name" class="form-control" required>
                         </div>
                         <div class="col-6">
-                        <label class="form-label">Relation</label>
-                        <input type="text" name="parent_relation" class="form-control" required>
+                            <label class="form-label">Relation</label>
+                            <select name="parent_relation" class="form-control" required>
+                                <option value="">Select Relation</option>
+                                <option value="Father">Father</option>
+                                <option value="Mother">Mother</option>
+                                <option value="Step-Father">Step-Father</option>
+                                <option value="Step-Mother">Step-Mother</option>
+                                <option value="Guardian">Guardian</option>
+                                <option value="Brother">Brother</option>
+                                <option value="Sister">Sister</option>
+                                <option value="Uncle">Uncle</option>
+                                <option value="Aunt">Aunt</option>
+                                <option value="Cousin">Cousin</option>
+                                <option value="Grandfather">Grandfather</option>
+                                <option value="Grandmother">Grandmother</option>
+                                <option value="Other">Other</option>
+                            </select>
                         </div>
                         <div class="col-6">
                         <label class="form-label">Atoll</label>

@@ -412,8 +412,24 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Relation</label>
-                                        <input type="text" name="parent_relation" class="form-control" value="{{ old('parent_relation', $parentDetail->relation ?? '') }}" required>
+                                        <select name="parent_relation" class="form-control" required>
+                                            <option value="">Select Relation</option>
+                                            <option value="Father" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Father' ? 'selected' : '' }}>Father</option>
+                                            <option value="Mother" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Mother' ? 'selected' : '' }}>Mother</option>
+                                            <option value="Step-Father" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Step-Father' ? 'selected' : '' }}>Step-Father</option>
+                                            <option value="Step-Mother" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Step-Mother' ? 'selected' : '' }}>Step-Mother</option>
+                                            <option value="Guardian" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Guardian' ? 'selected' : '' }}>Guardian</option>
+                                            <option value="Brother" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Brother' ? 'selected' : '' }}>Brother</option>
+                                            <option value="Sister" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Sister' ? 'selected' : '' }}>Sister</option>
+                                            <option value="Uncle" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Uncle' ? 'selected' : '' }}>Uncle</option>
+                                            <option value="Aunt" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Aunt' ? 'selected' : '' }}>Aunt</option>
+                                            <option value="Cousin" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Cousin' ? 'selected' : '' }}>Cousin</option>
+                                            <option value="Grandfather" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Grandfather' ? 'selected' : '' }}>Grandfather</option>
+                                            <option value="Grandmother" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Grandmother' ? 'selected' : '' }}>Grandmother</option>
+                                            <option value="Other" {{ old('parent_relation', $parentDetail->relation ?? '') == 'Other' ? 'selected' : '' }}>Other</option>
+                                        </select>
                                     </div>
+
                                     
 
                                     <div class="row">

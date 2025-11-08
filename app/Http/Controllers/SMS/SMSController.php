@@ -269,6 +269,10 @@ class SMSController extends Controller
             'present_island_id' => $request->present_island,
             'parent_atoll_id' => $request->parent_atoll,
             'parent_island_id' => $request->parent_island,
+            'date_of_joining' => $request->date_of_joining ? \Carbon\Carbon::parse($request->date_of_joining)->format('Y-m-d') : null,
+            'service_duration' => $request->service_duration,
+            'blood_group' => $request->blood_group,
+            'pay_amount' => $request->pay_amount
         ]);
         //dd( $data);
         $student->update($data);
