@@ -807,6 +807,128 @@
             });
         });
     </script>
+   <script>
+        (function() {
+            const form = document.querySelector('form');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            if (!form) {
+                console.warn('Form not found on page; skipping validation init');
+                return;
+            }
+
+            // Utility functions
+            function setInvalid(input, message) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                let feedback = input.nextElementSibling;
+                if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    input.parentNode.insertBefore(feedback, input.nextSibling);
+                }
+                feedback.textContent = message;
+                toggleSubmitState();
+            }
+
+            function setValid(input) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                const feedback = input.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.textContent = '';
+                }
+                toggleSubmitState();
+            }
+
+            function clearValidation(input) {
+                input.classList.remove('is-invalid', 'is-valid');
+                const feedback = input.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) feedback.textContent = '';
+                toggleSubmitState();
+            }
+
+            // Disable/enable submit based on validation state
+            function toggleSubmitState() {
+                const anyInvalid = form.querySelector('.is-invalid');
+                submitBtn.disabled = !!anyInvalid;
+            }
+
+            // --- National ID Validation ---
+            function validateNationalID() {
+                const input = document.querySelector('[name="national_id"]');
+                const val = (input.value || '').trim().toUpperCase();
+                input.value = val;
+                if (!val) {
+                    setInvalid(input, 'National ID is required.');
+                    return false;
+                }
+                if (!/^[A-Z][0-9]{7}$/.test(val)) {
+                    setInvalid(input, 'National ID must start with a letter followed by 7 digits (e.g., A1234567).');
+                    return false;
+                }
+                setValid(input);
+                return true;
+            }
+
+            // --- Contact Number Validation ---
+            function validateContactNo() {
+                const input = document.querySelector('[name="contact_no"]');
+                const val = (input.value || '').trim();
+                if (!val) {
+                    setInvalid(input, 'Contact number is required.');
+                    return false;
+                }
+                if (!/^\d{7}$/.test(val)) {
+                    setInvalid(input, 'Contact number must be exactly 7 digits (e.g., 1234567).');
+                    return false;
+                }
+                setValid(input);
+                return true;
+            }
+
+            // --- Input sanitization and event handling ---
+            const nidEl = document.querySelector('[name="national_id"]');
+            const contactEl = document.querySelector('[name="contact_no"]');
+
+            if (nidEl) {
+                nidEl.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    clearValidation(this);
+                    if (this.value !== '') validateNationalID();
+                });
+                nidEl.addEventListener('blur', validateNationalID);
+            }
+
+            if (contactEl) {
+                contactEl.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D+/g, '');
+                    clearValidation(this);
+                    if (this.value !== '') validateContactNo();
+                });
+                contactEl.addEventListener('blur', validateContactNo);
+            }
+
+            // --- Validate on submit ---
+            form.addEventListener('submit', function(e) {
+                let ok = true;
+                if (!validateNationalID()) ok = false;
+                if (!validateContactNo()) ok = false;
+
+                if (!ok) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) firstInvalid.focus();
+                    toggleSubmitState();
+                }
+            });
+
+        })();
+    </script>
+
+
+
 
 </body>
 </html>

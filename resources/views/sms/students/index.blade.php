@@ -459,11 +459,11 @@
                         </div>
                         <div class="col-6">
                         <label class="form-label">National ID</label>
-                        <input type="text" name="nid" class="form-control" required>
+                        <input type="text" name="nid" class="form-control" data-validate="nid" required>
                         </div>
                         <div class="col-6">
                         <label class="form-label">Mobile No</label>
-                        <input type="text" name="mobile_no" class="form-control" required>
+                        <input type="text" name="mobile_no" class="form-control" data-validate="mobile" required>
                         </div>
                         <div class="col-6">
                         <label class="form-label">Profile Picture</label>
@@ -580,7 +580,7 @@
                         </div>
                         <div class="col-6">
                         <label class="form-label">Mobile No</label>
-                        <input type="text" name="parent_mobile_no" class="form-control" required>
+                        <input type="text" name="parent_mobile_no" class="form-control" data-validate="mobile" required>
                         </div>
                         <div class="col-6">
                         <label class="form-label">Email</label>
@@ -773,6 +773,114 @@
 
         });
     </script>
+    <script>
+        (function() {
+
+            // Utility Functions
+            function setInvalid(input, message) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                let feedback = input.nextElementSibling;
+                if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    input.parentNode.insertBefore(feedback, input.nextSibling);
+                }
+                feedback.textContent = message;
+                toggleSubmitState(input.form);
+            }
+
+            function setValid(input) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                const feedback = input.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.textContent = '';
+                }
+                toggleSubmitState(input.form);
+            }
+
+            function toggleSubmitState(form) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const anyInvalid = form.querySelector('.is-invalid');
+                if (submitBtn) submitBtn.disabled = !!anyInvalid;
+            }
+
+            // Validation Rules
+            function validateField(input) {
+                const val = (input.value || '').trim();
+                const type = input.dataset.validate;
+
+                if (!val) {
+                    setInvalid(input, 'This field is required.');
+                    return false;
+                }
+
+                if (type === 'nid') {
+                    const upperVal = val.toUpperCase();
+                    input.value = upperVal;
+                    if (!/^[A-Z][0-9]{7}$/.test(upperVal)) {
+                        setInvalid(input, 'National ID must start with a letter followed by 7 digits (e.g., A1234567).');
+                        return false;
+                    }
+                }
+
+                if (type === 'mobile') {
+                    if (!/^\d{7}$/.test(val)) {
+                        setInvalid(input, 'Mobile number must be exactly 7 digits (e.g., 1234567).');
+                        return false;
+                    }
+                }
+
+                setValid(input);
+                return true;
+            }
+
+            // Attach handlers to all fields with data-validate
+            document.querySelectorAll('input[data-validate]').forEach(input => {
+
+                // Sanitize input while typing
+                input.addEventListener('input', function() {
+                    if (this.dataset.validate === 'nid') {
+                        this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    }
+                    if (this.dataset.validate === 'mobile') {
+                        this.value = this.value.replace(/\D+/g, '');
+                    }
+                    // optional: validate in real-time
+                    // validateField(this);
+                });
+
+                // Validate on blur
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+            });
+
+            // Validate on submit
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    let ok = true;
+                    this.querySelectorAll('input[data-validate]').forEach(input => {
+                        if (!validateField(input)) ok = false;
+                    });
+                    toggleSubmitState(this);
+
+                    if (!ok) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const firstInvalid = this.querySelector('.is-invalid');
+                        if (firstInvalid) firstInvalid.focus();
+                    }
+                });
+
+                // Initial button state
+                toggleSubmitState(form);
+            });
+
+        })();
+    </script>
+
 
 
 </body>

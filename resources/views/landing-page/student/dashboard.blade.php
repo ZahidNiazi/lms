@@ -294,11 +294,11 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="nid" class="form-label">National ID</label>
-                                        <input type="text" id="nid" name="nid" class="form-control" value="{{ old('nid', $profile->nid ?? '') }}" required>
+                                        <input type="text" id="nid" name="nid" class="form-control" value="{{ old('nid', $profile->nid ?? '') }}" required >
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="mobile_no" class="form-label">Mobile No</label>
-                                        <input type="text" id="mobile_no" name="mobile_no" class="form-control" value="{{ old('mobile_no', $profile->mobile_no ?? '') }}" required>
+                                        <input type="text" id="mobile_no" name="mobile_no" class="form-control" value="{{ old('mobile_no', $profile->mobile_no ?? '') }}"  required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="dob" class="form-label">Date of Birth</label>
@@ -468,7 +468,7 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Mobile No</label>
-                                        <input type="text" name="parent_mobile_no" class="form-control" value="{{ old('parent_mobile_no', $parentDetail->mobile_no ?? '') }}" required>
+                                        <input type="text" id="parent_mobile_no" name="parent_mobile_no" class="form-control" value="{{ old('parent_mobile_no', $parentDetail->mobile_no ?? '') }}" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Email</label>
@@ -1016,112 +1016,92 @@ function updateDocStatus(input) {
     if (feedback && feedback.classList.contains('invalid-feedback')) feedback.textContent = '';
   }
 
-  // field validators
+  // --- Validation Rules ---
   function validateFirstName() {
     const input = document.getElementById('first_name');
     const val = (input.value || '').trim();
-    if (!val) {
-      setInvalid(input, 'First name is required.');
-      return false;
-    }
-    setValid(input);
-    return true;
+    if (!val) { setInvalid(input, 'First name is required.'); return false; }
+    setValid(input); return true;
   }
 
   function validateDOB() {
     const input = document.getElementById('dob');
     const val = (input.value || '').trim();
-    if (!val) {
-      setInvalid(input, 'Date of birth is required.');
-      return false;
-    }
-    // optional: check age range 16-28 (comment/uncomment if needed)
+    if (!val) { setInvalid(input, 'Date of birth is required.'); return false; }
     const dob = new Date(val);
-    const diff = Date.now() - dob.getTime();
-    const age = Math.floor(diff / (1000*60*60*24*365.25));
+    const age = Math.floor((Date.now() - dob.getTime()) / (1000*60*60*24*365.25));
     if (age < 16 || age > 28) { setInvalid(input, 'Age must be between 16 and 28 years.'); return false; }
-
-    setValid(input);
-    return true;
+    setValid(input); return true;
   }
 
   function validateNID() {
     const input = document.getElementById('nid');
-    const val = (input.value || '').trim();
-    if (!val) {
-      setInvalid(input, 'National ID is required.');
-      return false;
+    const val = (input.value || '').trim().toUpperCase();
+    input.value = val;
+    if (!val) { setInvalid(input, 'National ID is required.'); return false; }
+    if (!/^[A-Z][0-9]{7}$/.test(val)) { 
+      setInvalid(input, 'National ID must start with a letter followed by 7 digits (e.g., A1234567).'); 
+      return false; 
     }
-    if (!/^\d+$/.test(val)) {
-      setInvalid(input, 'National ID must contain only digits.');
-      return false;
-    }
-    setValid(input);
-    return true;
+    setValid(input); return true;
   }
 
-  function validateMobile() {
-    const input = document.getElementById('mobile_no');
+  function validateMobile(input) {
     const val = (input.value || '').trim();
-    if (!val) {
-      setInvalid(input, 'Mobile number is required.');
-      return false;
-    }
-    if (!/^\d+$/.test(val)) {
-      setInvalid(input, 'Mobile number must contain only digits.');
-      return false;
-    }
-    if (val.length > 15) {
-      setInvalid(input, 'Mobile number must be at most 15 digits.');
-      return false;
-    }
-    setValid(input);
-    return true;
+    if (!val) { setInvalid(input, 'Mobile number is required.'); return false; }
+    if (!/^\d{7}$/.test(val)) { setInvalid(input, 'Mobile number must be exactly 7 digits (e.g., 1234567).'); return false; }
+    setValid(input); return true;
   }
 
-  // sanitize inputs while typing: keep only digits for nid and mobile
-  ['nid', 'mobile_no'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('input', function() {
-      const start = el.selectionStart;
-      // remove all non-digit chars
-      const clean = el.value.replace(/\D+/g, '');
-      el.value = clean;
-      // remove validation state when typing
-      clearValidation(el);
-      // try re-validate lightly
-      if (id === 'nid' && clean !== '') validateNID();
-      if (id === 'mobile_no' && clean !== '') validateMobile();
-      // restore cursor near end (simple approach)
-      el.setSelectionRange(el.value.length, el.value.length);
+  // --- Attach input handlers ---
+  // NID
+  const nidEl = document.getElementById('nid');
+  if (nidEl) {
+    nidEl.addEventListener('input', function() {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      clearValidation(this);
+      validateNID();
     });
+    nidEl.addEventListener('blur', validateNID);
+  }
+
+  // All mobile inputs
+  const mobileInputs = form.querySelectorAll('input[name="mobile_no"], input[name="parent_mobile_no"]');
+  mobileInputs.forEach(input => {
+    input.addEventListener('input', function() {
+      this.value = this.value.replace(/\D+/g, '');
+      clearValidation(this);
+      validateMobile(this);
+    });
+    input.addEventListener('blur', function() { validateMobile(this); });
   });
 
-  // validate on blur for immediate feedback
+  // --- Other fields blur validation ---
   document.getElementById('first_name').addEventListener('blur', validateFirstName);
   document.getElementById('dob').addEventListener('blur', validateDOB);
-  document.getElementById('nid').addEventListener('blur', validateNID);
-  document.getElementById('mobile_no').addEventListener('blur', validateMobile);
 
-  // final form submit check
+  // --- Submit validation ---
   form.addEventListener('submit', function(e) {
     let ok = true;
-
     if (!validateFirstName()) ok = false;
     if (!validateDOB()) ok = false;
     if (!validateNID()) ok = false;
-    if (!validateMobile()) ok = false;
+
+    mobileInputs.forEach(input => {
+      if (!validateMobile(input)) ok = false;
+    });
 
     if (!ok) {
-        e.preventDefault();  // stops submission
-        e.stopPropagation(); // stops bubbling
-        const firstInvalid = form.querySelector('.is-invalid');
-        if (firstInvalid) firstInvalid.focus();
+      e.preventDefault();
+      e.stopPropagation();
+      const firstInvalid = form.querySelector('.is-invalid');
+      if (firstInvalid) firstInvalid.focus();
     }
-});
+  });
 
 })();
+
+
 
 // Document type selector functionality
 document.addEventListener('DOMContentLoaded', function() {

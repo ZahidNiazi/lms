@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Utility;
+use Illuminate\Support\Facades\Validator;
+
 
 class SMSController extends Controller
 {
@@ -204,7 +206,7 @@ class SMSController extends Controller
     { //dd($request->all());
         $student = Student::findOrFail($id);
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'student_id' => 'required|unique:sms_students,student_id,' . $id,
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -223,10 +225,15 @@ class SMSController extends Controller
             // 'parent_island' => 'nullable|exists:islands,id',
             //'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $data = $request->all();
         
-        $data = [];
+        //$data = [];
         
         if ($request->hasFile('photo')) {
             // Delete old photo if exists
