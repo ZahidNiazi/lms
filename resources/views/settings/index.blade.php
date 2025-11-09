@@ -371,6 +371,10 @@
                                 class="list-group-item list-group-item-action border-0">{{ __('Pusher Settings') }}
                                 <div class="float-end"><i class="ti ti-chevron-right"></i></div>
                             </a>
+                            <a href="#twellio-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Twilio Settings') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
                             <a href="#recaptcha_settings"
                                 class="list-group-item list-group-item-action border-0">{{ __('ReCaptcha Settings') }}
                                 <div class="float-end"><i class="ti ti-chevron-right"></i></div>
@@ -393,6 +397,23 @@
                             </a>
                             <a href="#chat-gpt-settings"
                                 class="list-group-item list-group-item-action border-0">{{ __('Chat GPT Settings') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
+
+                            <a href="#atoll-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Atoll Management') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
+                            <a href="#island-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Island Management') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
+                            <a href="#company-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Comapny Settings') }}
+                                <div class="float-end"><i class="ti ti-chevron-right"></i></div>
+                            </a>
+                            <a href="#platoon-settings"
+                                class="list-group-item list-group-item-action border-0">{{ __('Platoon Settings') }}
                                 <div class="float-end"><i class="ti ti-chevron-right"></i></div>
                             </a>
 
@@ -3549,7 +3570,7 @@
                         </form>
                     </div>
 
-                    <!--Pusher Settings-->
+                    <!--Pusher Settings--> 
                     <div id="pusher-settings" class="card">
                         <div class="card-header p-3">
                             <h5>{{ __('Pusher Settings') }}</h5>
@@ -3602,6 +3623,68 @@
                                         @enderror
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="card-footer p-3 text-end">
+                            <div class="form-group mb-0">
+                                <input class="btn btn-print-invoice  btn-primary" type="submit"
+                                    value="{{ __('Save Changes') }}">
+                            </div>
+                        </div>
+                        {{ Form::close() }}
+                    </div>
+                    <div id="twellio-settings" class="card">
+                        <div class="card-header p-3">
+                            <h5>{{ __('Twilio Settings') }}</h5>
+                        </div>
+                        {{ Form::model($settings, ['route' => 'twilio-s.setting', 'class' => 'mb-0', 'method' => 'post']) }}
+                        @csrf
+                        <div class="card-body p-3">
+                            <div class="row row-gap-1">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('twilio_sid', __('TWILIO SID'), ['class' => 'form-label']) }}
+                                        {{ Form::text('twilio_sid', null, ['class' => 'form-control font-style', 'placeholder' => __('Twilio SID')]) }}
+                                        @error('twilio_sid')
+                                            <span class="invalid-twilio_sid" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('twilio_token', __('TWILIO AUTH TOKEN'), ['class' => 'form-label']) }}
+                                        {{ Form::text('twilio_token', null, ['class' => 'form-control font-style', 'placeholder' => __('Twilio AUTH TOKEN')]) }}
+                                        @error('twilio_token')
+                                            <span class="invalid-twilio_token" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('twilio_from', __('TWILIO PHONE NUMBER'), ['class' => 'form-label']) }}
+                                        {{ Form::text('twilio_from', null, ['class' => 'form-control font-style', 'placeholder' => __('Twilio PHONE NUMBER')]) }}
+                                        @error('twilio_from')
+                                            <span class="invalid-twilio_from" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                {{-- <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        {{ Form::label('pusher_app_cluster', __('Pusher App Cluster'), ['class' => 'form-label']) }}
+                                        {{ Form::text('pusher_app_cluster', null, ['class' => 'form-control font-style', 'placeholder' => __('Pusher App Cluster')]) }}
+                                        @error('pusher_app_cluster')
+                                            <span class="invalid-pusher_app_cluster" role="alert">
+                                                <strong class="text-danger">{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="card-footer p-3 text-end">
@@ -4156,10 +4239,419 @@
                         </div>
                         {{ Form::close() }}
                     </div>
+                    <!-- Atoll (Category) Management --> 
+                    <div id="atoll-settings" class="card">
+                        <div class="card-header p-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ __('Atoll Management') }}</h5>
+                        </div>
+                        <div class="card-body px-4 pt-4 pb-0">
+                            <div class="row g-4">
+                                {{-- Create Atoll Form --}}
+                                <div class="col-lg-6">
+                                    <h5 class="mb-3 fw-bold">{{ __('Create Atoll') }}</h5>
+                                    <form method="POST" action="{{ route('atolls.store') }}">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">{{ __('Name') }}</label>
+                                            <input type="text" name="name" class="form-control" required placeholder="{{ __('Enter atoll name') }}">
+                                        </div>
+                                        <button class="btn btn-success px-4" type="submit">
+                                            <i class="bi bi-plus-circle me-1"></i> {{ __('Add') }}
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {{-- Atoll List --}}
+                                <div class="col-lg-12">
+                                    {{-- <h5 class="mb-3 fw-bold">{{ __('Atolls') }}</h5> --}}
+                                    <div class="table-responsive shadow-sm rounded">
+                                        <table class="table align-middle table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th width="70%">{{ __('Name') }}</th>
+                                                    <th class="text-end">{{ __('Actions') }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($atolls as $atoll)
+                                                    <tr>
+                                                        <td>
+                                                            <form method="POST" action="{{ route('atolls.update', $atoll->id) }}" class="d-flex align-items-center gap-2">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <input type="text" name="name" class="form-control form-control-sm" value="{{ $atoll->name }}" required>
+                                                                <button class="btn btn-sm btn-success" type="submit">
+                                                                    <i class="bi bi-check-circle me-1"></i> {{ __('Update') }}
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <form method="POST" action="{{ route('atolls.destroy', $atoll->id) }}" onsubmit="return confirm('{{ __('Are you sure?') }}');" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="btn btn-sm btn-danger" type="submit">
+                                                                    <i class="bi bi-trash me-1"></i> {{ __('Delete') }}
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="2" class="text-center text-muted py-4">
+                                                            {{ __('No atolls found') }}
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Island (Subcategory) Management -->
+                    <div id="island-settings" class="card">
+                        <div class="card-header p-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ __('Island Management') }}</h5>
+                        </div>
+                        <div class="card-body px-4 pt-4 pb-0">
+                            <div class="row g-4">
+                                {{-- Create Island Form --}}
+                                <div class="col-lg-12">
+                                    <h5 class="mb-3 fw-bold">{{ __('Create Island') }}</h5>
+                                    <form method="POST" action="{{ route('islands.store') }}">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">{{ __('Atoll') }}</label>
+                                            <select name="atoll_id" class="form-select" required>
+                                                <option value="">{{ __('Select Atoll') }}</option>
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->id }}">{{ $atoll->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">{{ __('Name') }}</label>
+                                            <input type="text" name="name" class="form-control" required placeholder="{{ __('Enter island name') }}">
+                                        </div>
+
+                                        <button class="btn btn-success px-4" type="submit">
+                                            <i class="bi bi-plus-circle me-1"></i> {{ __('Add') }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row g-4 mt-2 px-4">
+                                {{-- Island List --}}
+                                <div class="col-lg-12">
+                                    {{-- <h5 class="mb-3 fw-bold">{{ __('Islands') }}</h5> --}}
+                                    <div class="table-responsive shadow-sm rounded">
+                                        <table class="table align-middle table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>{{ __('Atoll') }}</th>
+                                                    <th>{{ __('Island Name') }}</th>
+                                                    <th class="text-end">{{ __('Actions') }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($atolls as $atoll)
+                                                    {{-- Atoll Header Row --}}
+                                                    <tr class="table-primary">
+                                                        <td colspan="3" class="fw-semibold">
+                                                            {{ $atoll->name }}
+                                                        </td>
+                                                    </tr>
+
+                                                    {{-- Islands for this Atoll --}}
+                                                    @forelse($atoll->islands as $island)
+                                                        <tr>
+                                                            {{-- Atoll column (readonly) --}}
+                                                            <td class="align-middle text-muted">
+                                                                {{ $atoll->name }}
+                                                            </td>
+
+                                                            {{-- Editable Island name --}}
+                                                            <td>
+                                                                <form method="POST"
+                                                                    action="{{ route('islands.update', $island->id) }}"
+                                                                    class="d-flex align-items-center gap-2">
+                                                                    @csrf
+                                                                    @method('PUT')
+
+                                                                    <input type="hidden" name="atoll_id" value="{{ $atoll->id }}">
+                                                                    <input type="text" name="name"
+                                                                        class="form-control form-control-sm"
+                                                                        value="{{ $island->name }}"
+                                                                        required>
+
+                                                                    <button class="btn btn-sm btn-success" type="submit">
+                                                                        <i class="bi bi-check-circle me-1"></i>{{ __('Update') }}
+                                                                    </button>
+                                                                </form>
+                                                            </td>
+
+                                                            {{-- Delete button --}}
+                                                            <td class="text-end">
+                                                                <form method="POST"
+                                                                    action="{{ route('islands.destroy', $island->id) }}"
+                                                                    onsubmit="return confirm('{{ __('Are you sure?') }}');"
+                                                                    class="d-inline">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button class="btn btn-sm btn-danger" type="submit">
+                                                                        <i class="bi bi-trash me-1"></i>{{ __('Delete') }}
+                                                                    </button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    @empty
+                                                        {{-- No islands for this atoll --}}
+                                                        <tr>
+                                                            <td colspan="3" class="text-center text-muted">
+                                                                {{ __('No islands found under this atoll') }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="3" class="text-center text-muted py-4">
+                                                            {{ __('No atolls found') }}
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                     {{--  End for all settings tab --}}
+                    <div id="company-settings" class="card">
+                        <div class="card-header p-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ __('Company Settings') }}</h5>
+                        </div>
+                        <div class="row px-4 pt-4">
+                            <div class="col-lg-12">
+                                <h5 class="mb-3 fw-bold">Create Company</h5>
+                                <form id="companyForm" method="POST" action="">
+                                    @csrf                                        
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Name</label>
+                                        <input type="text" name="name" class="form-control" id="companyName" required="" placeholder="Enter Company name">
+                                    </div>
+                                    <button class="btn btn-success px-4" type="submit">
+                                        <i class="bi bi-plus-circle me-1"></i> Add
+                                    </button>
+                                </form>
+                                <hr>
+                                <h6 class="fw-bold mt-4">Existing Companies</h6>
+                                <div id="companyList" class="mt-3"></div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="platoon-settings" class="card">
+                        <div class="card-header p-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ __('Platoon Settings') }}</h5>
+                        </div>
+                        <div class="row px-4 pt-4">
+                             <div class="col-lg-12">
+                                <h5 class="mb-3 fw-bold">Create Platoon</h5>
+
+                                <form id="platoonForm" method="POST">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Name</label>
+                                        <input type="text" name="name" id="platoonName" class="form-control" required placeholder="Enter Platoon name">
+                                    </div>
+                                    <button class="btn btn-success px-4" type="submit">
+                                        <i class="bi bi-plus-circle me-1"></i> Add
+                                    </button>
+                                </form>
+
+                                <hr>
+
+                                <h6 class="fw-bold mt-4">Existing Platoons</h6>
+                                <div id="platoonList" class="mt-3"></div>
+                            </div>
+                        </div>
+
+                    </div>
 
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+@if ($message = Session::get('success'))
+    <script>
+        show_toastr('success', '{!! $message !!}', 'success');
+    </script>
+@endif
+@if ($message = Session::get('error'))
+    <script>
+        show_toastr('error', '{!! $message !!}', 'error');
+    </script>
+@endif
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function () {
+    loadCompanies();
+
+    // Create company
+    $('#companyForm').on('submit', function (e) {
+        e.preventDefault();
+        let name = $('#companyName').val();
+
+        $.ajax({
+            url: "{{ route('companies.store') }}",
+            type: "POST",
+            data: { name: name, _token: "{{ csrf_token() }}" },
+            success: function (response) {
+                if (response.success) {
+                    $('#companyName').val('');
+                    loadCompanies();
+                }
+            }
+        });
+    });
+
+    // Load all companies
+    function loadCompanies() {
+        $.get("{{ route('companies.index') }}", function (companies) {
+            let html = '';
+            companies.forEach(company => {
+                html += `
+                    <div class="d-flex align-items-center mb-2" data-id="${company.id}">
+                        <input type="text" class="form-control form-control-sm me-2 company-input" value="${company.name}">
+                        <button class="btn btn-sm btn-primary updateCompany me-1">Update</button>
+                        <button class="btn btn-sm btn-danger deleteCompany">Delete</button>
+                    </div>`;
+            });
+            $('#companyList').html(html || '<p class="text-muted">No companies yet.</p>');
+        });
+    }
+
+    // Update company
+    $(document).on('click', '.updateCompany', function () {
+        let parent = $(this).closest('div[data-id]');
+        let id = parent.data('id');
+        let name = parent.find('.company-input').val();
+
+        $.ajax({
+            url: `/companies/${id}`,
+            type: "PUT",
+            data: { name: name, _token: "{{ csrf_token() }}" },
+            success: function (response) {
+                if (response.success) {
+                    loadCompanies();
+                }
+            }
+        });
+    });
+
+    // Delete company
+    $(document).on('click', '.deleteCompany', function () {
+        if (!confirm('Are you sure you want to delete this company?')) return;
+        let id = $(this).closest('div[data-id]').data('id');
+
+        $.ajax({
+            url: `/companies/${id}`,
+            type: "DELETE",
+            data: { _token: "{{ csrf_token() }}" },
+            success: function (response) {
+                if (response.success) {
+                    loadCompanies();
+                }
+            }
+        });
+    });
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function () {
+    loadPlatoons();
+
+    // Create platoon
+    $('#platoonForm').on('submit', function (e) {
+        e.preventDefault();
+        let name = $('#platoonName').val();
+
+        $.ajax({
+            url: "{{ route('platoons.store') }}",
+            type: "POST",
+            data: { name: name, _token: "{{ csrf_token() }}" },
+            success: function (response) {
+                if (response.success) {
+                    $('#platoonName').val('');
+                    loadPlatoons();
+                }
+            }
+        });
+    });
+
+    // Load all platoons
+    function loadPlatoons() {
+        $.get("{{ route('platoons.index') }}", function (platoons) {
+            let html = '';
+            platoons.forEach(platoon => {
+                html += `
+                    <div class="d-flex align-items-center mb-2" data-id="${platoon.id}">
+                        <input type="text" class="form-control form-control-sm me-2 platoon-input" value="${platoon.name}">
+                        <button class="btn btn-sm btn-primary updatePlatoon me-1">Update</button>
+                        <button class="btn btn-sm btn-danger deletePlatoon">Delete</button>
+                    </div>`;
+            });
+            $('#platoonList').html(html || '<p class="text-muted">No platoons yet.</p>');
+        });
+    }
+
+    // Update platoon
+    $(document).on('click', '.updatePlatoon', function () {
+        let parent = $(this).closest('div[data-id]');
+        let id = parent.data('id');
+        let name = parent.find('.platoon-input').val();
+
+        $.ajax({
+            url: `/platoons/${id}`,
+            type: "PUT",
+            data: { name: name, _token: "{{ csrf_token() }}" },
+            success: function (response) {
+                if (response.success) {
+                    loadPlatoons();
+                }
+            }
+        });
+    });
+
+    // Delete platoon
+    $(document).on('click', '.deletePlatoon', function () {
+        if (!confirm('Are you sure you want to delete this platoon?')) return;
+        let id = $(this).closest('div[data-id]').data('id');
+
+        $.ajax({
+            url: `/platoons/${id}`,
+            type: "DELETE",
+            data: { _token: "{{ csrf_token() }}" },
+            success: function (response) {
+                if (response.success) {
+                    loadPlatoons();
+                }
+            }
+        });
+    });
+});
+</script>
+

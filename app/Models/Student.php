@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use App\Notifications\StudentResetPassword;
 
 class Student extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable, CanResetPassword;
 
     protected $fillable = [
         'name',
@@ -21,7 +24,8 @@ class Student extends Authenticatable
         'is_under_age_18',
         'application_date',
         'rejection_reason',
-        'date_of_birth'
+        'date_of_birth',
+        'by_admin'
     ];
 
     protected $hidden = [
@@ -117,4 +121,23 @@ class Student extends Authenticatable
             ->latest()
             ->first();
     }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new StudentResetPassword($token));
+    }
+
+    public function permanentAddress()
+    {
+        return $this->hasOne(Address::class)->where('type', 'permanent');
+    }
+
+    public function presentAddress()
+    {
+        return $this->hasOne(Address::class)->where('type', 'present');
+    }
+    
 }

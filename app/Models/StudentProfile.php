@@ -11,7 +11,7 @@ class StudentProfile extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id', 'first_name', 'last_name', 'nid', 'mobile_no', 'dob'
+        'student_id', 'first_name', 'last_name', 'nid', 'mobile_no', 'dob', 'profile_picture'
     ];
 
     public function student()

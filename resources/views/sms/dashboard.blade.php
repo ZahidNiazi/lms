@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMS - Student Management System</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -193,7 +193,7 @@
                 <i class="bi bi-people-fill me-2"></i>
                 SMS - Student Management System
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -235,7 +235,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -249,7 +249,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -263,7 +263,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3 mb-3">
                 <div class="stats-card">
                     <div class="d-flex align-items-center">
@@ -281,6 +281,7 @@
 
         <!-- Main Features -->
         <div class="row mb-4">
+            {{-- @can('hr student management') --}}
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--primary-blue);">
@@ -293,7 +294,8 @@
                     </a>
                 </div>
             </div>
-            
+            {{-- @endcan --}}
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--success-green);">
@@ -306,7 +308,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--warning-yellow);">
@@ -334,7 +336,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--danger-red);">
@@ -347,7 +349,7 @@
                     </a>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
                     <div class="feature-icon" style="background: var(--primary-blue);">
@@ -372,7 +374,7 @@
                         </h5>
                         <a href="{{ route('sms.students.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
                     </div>
-                    
+
                     @forelse($recentStudents as $student)
                         <div class="activity-item">
                             <div class="activity-icon" style="background: var(--primary-blue);">
@@ -394,7 +396,7 @@
                     @endforelse
                 </div>
             </div>
-            
+
             <div class="col-md-6">
                 <div class="recent-activity">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -403,14 +405,14 @@
                         </h5>
                         <a href="{{ route('sms.leaves.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
                     </div>
-                    
+
                     @forelse($recentLeaves as $leave)
                         <div class="activity-item">
                             <div class="activity-icon" style="background: {{ $leave->status === 'pending' ? 'var(--warning-yellow)' : ($leave->status === 'approved' ? 'var(--success-green)' : 'var(--danger-red)') }};">
                                 <i class="bi bi-calendar-{{ $leave->status === 'pending' ? 'plus' : ($leave->status === 'approved' ? 'check' : 'x') }}"></i>
                             </div>
                             <div class="activity-content">
-                                <p class="activity-title">{{ $leave->student->full_name ?? 'Unknown Student' }}</p>
+                                <p class="activity-title">{{ $leave->student->name ?? 'Unknown Student' }}</p>
                                 <p class="activity-subtitle">{{ $leave->leaveType->name ?? 'Unknown Type' }} - {{ ucfirst($leave->status) }}</p>
                                 <p class="activity-time">{{ $leave->created_at->diffForHumans() }}</p>
                             </div>

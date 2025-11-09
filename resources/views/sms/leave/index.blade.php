@@ -86,7 +86,7 @@
                 <div class="card-body">
                     <div class="text-center py-4">
                         <i class="bi bi-calendar-check display-1 text-muted"></i>
-                        <h5 class="mt-3">Leave Management</h5>
+                        <h5 class="mt-3">Leave Managementasdsadsa</h5>
                         <p class="text-muted">Leave management functionality will be implemented here.</p>
                     </div>
                 </div>

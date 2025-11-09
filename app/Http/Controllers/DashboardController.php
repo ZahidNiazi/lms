@@ -517,7 +517,7 @@ class DashboardController extends Controller
 
     public function clientView()
     {
-
+//dd(Auth::user()->type);
         if (Auth::check()) {
             if (Auth::user()->type == 'super admin') {
                 $user = \Auth::user();

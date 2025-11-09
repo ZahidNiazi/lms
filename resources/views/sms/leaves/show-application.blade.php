@@ -140,7 +140,7 @@
                         <div class="col-md-6">
                             <div class="info-item">
                                 <span class="info-label">Student:</span>
-                                <span class="info-value">{{ $leave->student->full_name ?? 'Unknown Student' }}</span>
+                                <span class="info-value">{{ $leave->student->name ?? 'Unknown Student' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Student ID:</span>

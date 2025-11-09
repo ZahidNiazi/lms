@@ -298,6 +298,7 @@
         </div>
     </section>
 @endif
+
 <!-- [ features ] start -->
 <!-- [ element ] start -->
 @if ($settings['feature_status'] == 'on')

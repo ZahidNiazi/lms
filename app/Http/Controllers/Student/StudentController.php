@@ -7,6 +7,8 @@ use App\Models\ApplicationStatus;
 use App\Models\Student;
 use App\Models\StudentDocument;
 use App\Models\StudentProfile;
+use App\Models\Atoll;
+use App\Models\Island;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -65,50 +67,97 @@ class StudentController extends Controller
     }
 
     public function profileForm()
-    {
+    { 
+        
         $student = Auth::guard('student')->user();
+        // dd($student);
         $profile = $student->profile;
-        $permanentAddress = $student->addresses()->where('type', 'permanent')->first();
-        $presentAddress = $student->addresses()->where('type', 'present')->first();
-        $parentDetail = $student->parentDetail;
-        $documents = $student->documents;
+        $permanentAddress = $student->addresses()
+            ->where('type', 'permanent')
+            ->with(['atoll.islands', 'island'])
+            ->first();
 
-        return view('landing-page.student.profile-form', compact('student', 'profile', 'permanentAddress', 'presentAddress', 'parentDetail', 'documents'));
+        $presentAddress = $student->addresses()
+            ->where('type', 'present')
+            ->with(['atoll.islands', 'island'])
+            ->first();
+        $atolls = DB::table('atolls')->get();
+        $islands = DB::table('islands')->get();
+        //return $islands;
+        $parentDetail = $student->parentDetail()
+    ->with(['parentAtoll.parentIsland', 'parentIsland'])
+    ->first() ?? new \App\Models\ParentDetail;
+        //dd($parentDetail);
+        $documents = $student->documents;
+        $notifications = $student->notifications()
+            ->with('application')
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $unreadNotificationsCount = $student ? $student->notifications()->unread()->count() : 0;
+        //dd($unreadNotificationsCount);
+        
+        return view('landing-page.student.profile-form', compact('student', 'profile', 'permanentAddress', 'presentAddress', 'parentDetail', 'documents', 'unreadNotificationsCount','notifications','atolls','islands'));
     }
 
     public function submitProfile(Request $request)
-    {
+    { //dd($request->all());
         $student = Auth::guard('student')->user();
-        
+
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'nid' => 'required|string|max:20',
             'mobile_no' => 'required|string|max:20',
             'dob' => 'required|date|before:today',
-            'permanent_atoll' => 'required|string|max:255',
-            'permanent_island' => 'required|string|max:255',
+            'permanent_atoll_id' => 'required|string|max:255',
+            'permanent_island_id' => 'required|string|max:255',
             'permanent_district' => 'required|string|max:255',
             'permanent_address' => 'required|string|max:500',
-            'present_atoll' => 'required|string|max:255',
-            'present_island' => 'required|string|max:255',
+            'present_atoll_id' => 'required|string|max:255',
+            'present_island_id' => 'required|string|max:255',
             'present_district' => 'required|string|max:255',
             'present_address' => 'required|string|max:500',
             'parent_name' => 'required|string|max:255',
             'parent_relation' => 'required|string|max:255',
-            'parent_atoll' => 'required|string|max:255',
-            'parent_island' => 'required|string|max:255',
+            'parent_atoll_id' => 'required|string|max:255',
+            'parent_island_id' => 'required|string|max:255',
             'parent_address' => 'required|string|max:500',
             'parent_mobile_no' => 'required|string|max:20',
             'parent_email' => 'nullable|email|max:255',
+            'profile_picture' => isset($student->profile) && $student->profile->profile_picture 
+            ? 'nullable|image' 
+            : 'required|image',
         ]);
 
-        // Calculate age and check if under 18
         $age = \Carbon\Carbon::parse($request->dob)->age;
-        $isUnder18 = $age < 18;
 
+        // Step 3: Check if age is between 16 and 28 years
+        if ($age < 16 || $age > 28) {
+            return redirect()->back()
+                ->withErrors(['dob' => 'Age must be between 16 and 28 years.'])
+                ->withInput();
+        }
+
+        // Step 4: Set underage flag
+        $isUnder18 = $age < 18;
         DB::transaction(function () use ($request, $student, $isUnder18) {
             // Create or update profile
+            $profilePicturePath = null;
+            if ($request->hasFile('profile_picture')) {
+                
+                $destinationPath = public_path('profile_pictures');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+                $file = $request->file('profile_picture');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move($destinationPath, $fileName);
+                $profilePicturePath = 'profile_pictures/' . $fileName;
+            }
+
             $student->profile()->updateOrCreate(
                 ['student_id' => $student->id],
                 [
@@ -117,6 +166,7 @@ class StudentController extends Controller
                     'nid' => $request->nid,
                     'mobile_no' => $request->mobile_no,
                     'dob' => $request->dob,
+                    'profile_picture' => $profilePicturePath,
                 ]
             );
 
@@ -124,19 +174,19 @@ class StudentController extends Controller
             $student->addresses()->updateOrCreate(
                 ['student_id' => $student->id, 'type' => 'permanent'],
                 [
-                    'atoll' => $request->permanent_atoll,
-                    'island' => $request->permanent_island,
+                    'atoll_id' => $request->permanent_atoll_id,
+                    'island_id' => $request->permanent_island_id,
                     'district' => $request->permanent_district,
                     'address' => $request->permanent_address,
                 ]
             );
 
-            // Create or update present address
+            // // Create or update present address
             $student->addresses()->updateOrCreate(
                 ['student_id' => $student->id, 'type' => 'present'],
                 [
-                    'atoll' => $request->present_atoll,
-                    'island' => $request->present_island,
+                    'atoll_id' => $request->present_atoll_id,
+                    'island_id' => $request->present_island_id,
                     'district' => $request->present_district,
                     'address' => $request->present_address,
                 ]
@@ -148,8 +198,8 @@ class StudentController extends Controller
                 [
                     'name' => $request->parent_name,
                     'relation' => $request->parent_relation,
-                    'atoll' => $request->parent_atoll,
-                    'island' => $request->parent_island,
+                    'parent_atoll_id' => $request->parent_atoll_id,
+                    'parent_island_id' => $request->parent_island_id,
                     'address' => $request->parent_address,
                     'mobile_no' => $request->parent_mobile_no,
                     'email' => $request->parent_email,
@@ -171,7 +221,7 @@ class StudentController extends Controller
             } else {
                 // Create job portal application if it doesn't exist (fallback)
                 $applicationNumber = $this->generateUniqueApplicationNumber();
-                
+
                 \App\Models\JobPortalApplication::create([
                     'student_id' => $student->id,
                     'application_number' => $applicationNumber,
@@ -180,6 +230,7 @@ class StudentController extends Controller
                     'basic_criteria_met' => false
                 ]);
             }
+
         });
 
         return redirect()->route('student.dashboard')->with('success', 'Profile updated successfully! Your National Service application has been created.');
@@ -194,7 +245,7 @@ class StudentController extends Controller
     public function storeDocument(Request $request)
     {
         $student = Auth::guard('student')->user();
-        
+
         // Debug: Log request details
         \Log::info('Document upload request', [
             'student_id' => $student->id,
@@ -209,7 +260,7 @@ class StudentController extends Controller
             'wants_json' => $request->wantsJson(),
             'accept_header' => $request->header('Accept'),
         ]);
-        
+
         try {
             $request->validate([
                 'type' => 'required|string|in:parent_consent,photo,nid_copy,school_leaving,olevel,alevel,police_report',
@@ -250,7 +301,7 @@ class StudentController extends Controller
             }
 
             return redirect()->route('student.dashboard')->with(['success' => 'Document uploaded successfully!', 'active_tab' => 'documents']);
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->ajax() || $request->wantsJson() || $request->header('Accept') === 'application/json') {
                 return response()->json([
@@ -274,7 +325,7 @@ class StudentController extends Controller
     public function downloadDocument(StudentDocument $document)
     {
         $student = Auth::guard('student')->user();
-        
+
         if ($document->student_id !== $student->id) {
             abort(403, 'Unauthorized access to document.');
         }
@@ -285,7 +336,7 @@ class StudentController extends Controller
     public function destroyDocument(StudentDocument $document)
     {
         $student = Auth::guard('student')->user();
-        
+
         if ($document->student_id !== $student->id) {
             if (request()->ajax() || request()->wantsJson() || request()->header('Accept') === 'application/json') {
                 return response()->json([
@@ -313,7 +364,7 @@ class StudentController extends Controller
             }
 
             return redirect()->route('student.documents')->with('success', 'Document deleted successfully!');
-            
+
         } catch (\Exception $e) {
             if (request()->ajax() || request()->wantsJson() || request()->header('Accept') === 'application/json') {
                 return response()->json([
@@ -337,7 +388,7 @@ class StudentController extends Controller
         $student = Auth::guard('student')->user();
         $jobPortalApplication = $student->jobPortalApplication;
         $status = $jobPortalApplication; // Use jobPortalApplication as status
-        
+
         return view('landing-page.student.application-status', compact('student', 'jobPortalApplication', 'status'));
     }
 
@@ -345,30 +396,36 @@ class StudentController extends Controller
     {
         $student = Auth::guard('student')->user();
         $interviewSchedule = \App\Models\JobPortalInterviewSchedule::findOrFail($id);
-        
+
         // Verify the interview belongs to the student's application
         if ($interviewSchedule->application->student_id !== $student->id) {
             return redirect()->back()->with('error', 'Unauthorized access to interview schedule.');
         }
-        
+
         $interviewSchedule->acknowledge();
-        
+
         return redirect()->route('student.dashboard')->with('success', 'Interview schedule acknowledged successfully!');
     }
 
     public function dashboard()
     {
         $student = Auth::guard('student')->user();
-        
-        // Safely get relationships with null checks
         $profile = $student->profile ?? null;
-        $permanentAddress = $student->addresses()->where('type', 'permanent')->first() ?? null;
-        $presentAddress = $student->addresses()->where('type', 'present')->first() ?? null;
+        $permanentAddress = $student->addresses()
+            ->where('type', 'permanent')
+            ->with(['atoll.islands', 'island'])
+            ->first();
+
+        $presentAddress = $student->addresses()
+            ->where('type', 'present')
+            ->with(['atoll.islands', 'island'])
+            ->first();
+            //dd( $permanentAddress?->atoll?->islands, $presentAddress?->atoll?->islands );
         $parentDetail = $student->parentDetail ?? null;
         $documents = $student->documents()->get()->keyBy('type');
         $jobPortalApplication = $student->jobPortalApplication()->with('preferredInterviewLocation')->first() ?? null;
 
-        // Get interview schedule data
+
         $interviewSchedule = null;
         if ($jobPortalApplication) {
             $interviewSchedule = \App\Models\JobPortalInterviewSchedule::with('location')
@@ -381,16 +438,16 @@ class StudentController extends Controller
         // Check eligibility
         $eligibility = $this->checkEligibility($student);
         $ongoingPrograms = $this->getOngoingPrograms();
-        
+
         // Get notifications
         $notifications = $student->notifications()
             ->with('application')
             ->latest()
             ->limit(10)
             ->get();
-        
+
         $unreadNotificationsCount = $student ? $student->notifications()->unread()->count() : 0;
-        
+
         // Get interview locations for the preference form
         $interviewLocations = \App\Models\InterviewLocation::active()
             ->select('id', 'name', 'address', 'city', 'atoll', 'contact_person', 'contact_phone', 'capacity', 'available_facilities')
@@ -405,8 +462,27 @@ class StudentController extends Controller
                     'facilities' => $location->getFacilitiesList()
                 ];
             });
-        
-        return view('landing-page.student.dashboard', compact('student', 'profile', 'permanentAddress', 'presentAddress', 'parentDetail', 'documents', 'jobPortalApplication', 'interviewSchedule', 'eligibility', 'ongoingPrograms', 'notifications', 'unreadNotificationsCount', 'interviewLocations'));
+
+        // Fetch Atolls and Islands for address dropdowns
+        $atolls = Atoll::orderBy('name')->get(['id', 'name']);
+        //$islands = Island::orderBy('name')->get(['id', 'name', 'atoll_id']);
+
+        return view('landing-page.student.dashboard', compact(
+            'student',
+            'profile',
+            'permanentAddress',
+            'presentAddress',
+            'parentDetail',
+            'documents',
+            'jobPortalApplication',
+            'interviewSchedule',
+            'eligibility',
+            'ongoingPrograms',
+            'notifications',
+            'unreadNotificationsCount',
+            'interviewLocations',
+            'atolls',
+        ));
     }
 
     /**
@@ -416,17 +492,17 @@ class StudentController extends Controller
     {
         try {
             $student = Auth::guard('student')->user();
-            
+
             if (!$student) {
                 \Log::error('Student not authenticated for notification mark as read');
                 return response()->json(['success' => false, 'error' => 'Student not authenticated'], 401);
             }
-            
+
             \Log::info('Student authenticated: ' . $student->id . ', marking notification: ' . $id);
-            
+
             $notification = $student->notifications()->findOrFail($id);
             $notification->markAsRead();
-            
+
             \Log::info('Notification marked as read successfully');
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
@@ -442,19 +518,19 @@ class StudentController extends Controller
     {
         try {
             $student = Auth::guard('student')->user();
-            
+
             if (!$student) {
                 \Log::error('Student not authenticated for mark all notifications as read');
                 return response()->json(['success' => false, 'error' => 'Student not authenticated'], 401);
             }
-            
+
             \Log::info('Student authenticated: ' . $student->id . ', marking all notifications as read');
-            
+
             $updated = $student->notifications()->unread()->update([
                 'is_read' => true,
                 'read_at' => now()
             ]);
-            
+
             \Log::info('Marked ' . $updated . ' notifications as read');
             return response()->json(['success' => true, 'updated_count' => $updated]);
         } catch (\Exception $e) {
@@ -472,11 +548,11 @@ class StudentController extends Controller
 
         if ($student->profile && $student->profile->dob) {
             $age = \Carbon\Carbon::parse($student->profile->dob)->age;
-            
+
             if ($age >= 16 && $age <= 28) {
                 $isEligible = true;
                 $eligibilityMessage = 'You are eligible to apply for National Service.';
-                
+
                 if ($age < 18) {
                     $needsParentConsent = true;
                     $eligibilityMessage .= ' Since you are under 18, you will need to upload a parent consent form.';
@@ -515,12 +591,12 @@ class StudentController extends Controller
     {
         $year = date('Y');
         $prefix = 'NS-' . $year . '-';
-        
+
         // Get the last application number for this year
         $lastApplication = \App\Models\JobPortalApplication::where('application_number', 'like', $prefix . '%')
             ->orderBy('application_number', 'desc')
             ->first();
-        
+
         if ($lastApplication) {
             // Extract the number part and increment
             $lastNumber = (int) substr($lastApplication->application_number, strlen($prefix));
@@ -528,7 +604,7 @@ class StudentController extends Controller
         } else {
             $newNumber = 1;
         }
-        
+
         return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
@@ -572,7 +648,7 @@ class StudentController extends Controller
     {
         try {
             $student = Auth::guard('student')->user();
-            
+
             if (!$student) {
                 return response()->json(['success' => false, 'error' => 'Student not authenticated'], 401);
             }
@@ -591,7 +667,7 @@ class StudentController extends Controller
 
             // Get the student's job portal application
             $application = \App\Models\JobPortalApplication::where('student_id', $student->id)->first();
-            
+
             if (!$application) {
                 return response()->json([
                     'success' => false,
@@ -608,7 +684,7 @@ class StudentController extends Controller
 
             // Get the selected location details
             $selectedLocation = \App\Models\InterviewLocation::find($request->location_id);
-            
+
             // Create notification for admin
             \App\Models\StudentNotification::create([
                 'student_id' => $student->id,
@@ -650,4 +726,11 @@ class StudentController extends Controller
             ], 500);
         }
     }
+
+    public function getIslands($atoll_id)
+    {
+        $islands = Island::where('atoll_id', $atoll_id)->get(['id', 'name']);
+        return response()->json($islands);
+    }
+
 }

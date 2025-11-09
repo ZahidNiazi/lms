@@ -1,343 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-}
-
-.dashboard {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 250px;
-    background: #004080;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-}
-
-.sidebar h2 {
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.sidebar a {
-    color: white;
-    text-decoration: none;
-    padding: 0.75rem 1rem;
-    margin: 0.25rem 0;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-}
-
-.sidebar a:hover, .sidebar a.active {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.sidebar a i {
-    margin-right: 10px;
-}
-
-.main {
-    flex-grow: 1;
-    padding: 2rem;
-    overflow-y: auto;
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.topbar h1 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.icons a {
-    color: #333;
-    margin-left: 1rem;
-}
-
-        .favClass {
-            margin-right: 10px !important;
-        }
-
-        /* Notification badge styling */
-        #notification-badge {
-            font-size: 0.75rem;
-            min-width: 18px;
-            height: 18px;
-            line-height: 18px;
-            padding: 0 6px;
-            z-index: 10;
-        }
-
-        .nav-link.position-relative {
-            overflow: visible;
-        }
-
-.form-section {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-
-.form-section h2 {
-    margin-top: 0;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-.form-group input[type="submit"],
-.btn {
-    background: #004080;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: background 0.3s;
-}
-
-.form-group input[type="submit"]:hover,
-.btn:hover {
-    background: #003366;
-}
-
-.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-}
-
-.btn-primary {
-    background: #004080;
-}
-
-.btn-danger {
-    background: #dc3545;
-}
-
-.alert {
-    padding: 1rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-}
-
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-}
-
-.alert-info {
-    background: #d1ecf1;
-    color: #0c5460;
-}
-
-.alert-warning {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.document-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.document-table th,
-.document-table td {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-.document-table th {
-    background: #f4f4f4;
-}
-
-.status-card {
-    background: white;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.status-header {
-    margin-bottom: 1rem;
-}
-
-.status-incomplete {
-    color: #ffc107;
-}
-
-.status-submitted {
-    color: #17a2b8;
-}
-
-.status-under_review {
-    color: #007bff;
-}
-
-.status-selected_for_interview {
-    color: #6610f2;
-}
-
-.status-accepted {
-    color: #28a745;
-}
-
-.status-rejected {
-    color: #dc3545;
-}
-    </style>
-</head>
-<body>
-    <div class="dashboard">
-        <div class="sidebar">
-            <h2>Student Panel</h2>
-            <a href="{{ route('student.profile.form') }}" class="{{ request()->routeIs('student.profile.*') ? 'active' : '' }}">
-                <i class="fa fa-file-alt"></i> Profile Form
-            </a>
-            <a href="javascript:void(0)" onclick="switchToDocumentsTab()" class="{{ session('active_tab') == 'documents' ? 'active' : '' }}">
-                <i class="fa fa-file-upload"></i> Documents
-            </a>
-            <a href="{{ route('student.status') }}" class="{{ request()->routeIs('student.status') ? 'active' : '' }}">
-                <i class="fa fa-info-circle"></i> Application Status
-            </a>
-        </div>
-        <div class="main">
-            <div class="topbar">
-                <h1>Welcome, {{ Auth::guard('student')->user()->name }}</h1>
-                <div class="icons">
-                    <a href=""><i class="fas fa-bell favClass" title="Notifications"></i></a>
-                    <a href=""><i class="fas fa-cog favClass" title="Settings"></i></a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt favClass" title="Logout"></i>
-                    </a>
-                </div>
-            </div>
-
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @yield('content')
-        </div>
-    </div>
-    <script>
-        // Document type selector functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const typeSelector = document.querySelector('.document-type-selector');
-    if (typeSelector) {
-        typeSelector.addEventListener('change', function() {
-            const type = this.value;
-            const fieldsContainer = document.getElementById('document-fields');
-            let html = '';
-
-            switch(type) {
-                case 'school_leaving':
-                    html = `
-                        <div class="form-group">
-                            <label for="school_name">School Name</label>
-                            <input type="text" id="school_name" name="school_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="year">Year</label>
-                            <input type="text" id="year" name="year" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="report_number">Report Number</label>
-                            <input type="text" id="report_number" name="report_number" required>
-                        </div>
-                    `;
-                    break;
-
-                case 'olevel':
-                case 'alevel':
-                    html = `
-                        <div class="form-group">
-                            <label for="school_name">School Name</label>
-                            <input type="text" id="school_name" name="school_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="year">Year</label>
-                            <input type="text" id="year" name="year" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="subjects">Subjects</label>
-                            <input type="text" id="subjects" name="subjects" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="result">Result</label>
-                            <input type="text" id="result" name="result" required>
-                        </div>
-                    `;
-                    break;
-
-                case 'police_report':
-                    html = `
-                        <div class="form-group">
-                            <label for="report_number">Report Number</label>
-                            <input type="text" id="report_number" name="report_number" required>
-                        </div>
-                    `;
-                    break;
-
-                default:
-                    html = '';
-            }
-
-            fieldsContainer.innerHTML = html;
-        });
-    }
-});
-    </script>
-</body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -395,17 +55,17 @@ document.addEventListener('DOMContentLoaded', function() {
         .btn-link:hover i {
             color: black;
         }
-        
+
         .btn {
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
+
         .btn:active {
             transform: translateY(0);
         }
@@ -530,46 +190,46 @@ document.addEventListener('DOMContentLoaded', function() {
                             <h5 class="card-title">Application Status</h5>
                             <p class="text-muted">Track your application progress</p>
                             <div class="d-flex justify-content-between mb-2">
-                                <span>Status: <span class="badge bg-warning text-dark">
-                                    @if(!empty($student) && isset($student->status))
-                                        {{ucfirst($student->status)}}
-                                    @else
-                                        Pending
-                                    @endif
+                                <span>Status: 
+                                    <span class="badge 
+                                        @if(empty($student) || !isset($student->status))
+                                            bg-warning
+                                        @elseif($student->status === 'approved')
+                                            bg-success
+                                        @elseif($student->status === 'rejected')
+                                            bg-danger
+                                        @else
+                                            bg-secondary
+                                        @endif
+                                        text-white">
+                                        {{ ucfirst($student->status ?? 'Pending') }}
+                                    </span>
                                 </span></span>
                                 @php
                                     $percentage = 0;
                                     $statusClass = 'bg-warning';
-                                    
+
                                     // Progress calculation
                                     if(!empty($profile)) {
                                         $percentage = 50;
-                                        $statusClass = 'bg-primary';
+                                        $statusClass = 'bg-success';
                                     }
                                     if(!empty($student) && isset($student->status)){
                                         if($student->status === 'approved') {
-                                            $percentage = 75;
-                                            $statusClass = 'bg-info';
-                                        }
-                                        if($student->status === 'interview') {
                                             $percentage = 100;
                                             $statusClass = 'bg-success';
                                         }
-                                        if($student->status === 'rejected') {
-                                            $percentage = 100;
-                                            $statusClass = 'bg-danger';
-                                        }
                                     }
-                                    
+
                                 @endphp
                                 {{ $percentage }}%
                             </div>
                             <div class="progress mb-4">
-                                <div class="progress-bar {{ $statusClass }}" 
+                                <div class="progress-bar {{ $statusClass }}"
                                     style="width: {{ $percentage }}%;"
-                                    role="progressbar" 
-                                    aria-valuenow="{{ $percentage }}" 
-                                    aria-valuemin="0" 
+                                    role="progressbar"
+                                    aria-valuenow="{{ $percentage }}"
+                                    aria-valuemin="0"
                                     aria-valuemax="100">
                                 </div>
                             </div>
@@ -579,47 +239,47 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="circle">✓</div>
                                     <div>Submitted</div>
                                 </div>
-                                
+
                                 <!-- Step 2: Profile Review -->
                                 <div class="status-step @if($percentage >= 50) completed @endif">
                                     <div class="circle">@if($percentage >= 50) ✓ @else ⏳ @endif</div>
                                     <div>Profile Review</div>
                                 </div>
-                                
+
                                 <!-- Step 3: Approval -->
-                                <div class="status-step @if($percentage >= 75) completed @endif">
-                                    <div class="circle">@if($percentage >= 75) ✓ @else • @endif</div>
+                                <div class="status-step @if($percentage >= 100) completed @endif">
+                                    <div class="circle">@if($percentage >= 100) ✓ @else • @endif</div>
                                     <div>Approval</div>
-                                </div>
-                                
-                                <!-- Step 4: Interview/Completion -->
-                                <div class="status-step @if($percentage == 100) completed @endif">
-                                    <div class="circle">
-                                        @if($percentage == 100)
-                                            @if(!empty($student) && isset($student->status))
-                                                @if($student->status === 'rejected') ✗ @else ✓ @endif
-                                            @endif
-                                        @else 
-                                            •
-                                        @endif
-                                    </div>
-                                    <div>
-                                        @if(!empty($student) && isset($student->status))
-                                            @if($student->status === 'rejected')
-                                                Rejected
-                                            @else
-                                                Interview
-                                            @endif
-                                        @endif
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h2 class="mb-4">Student Application Form</h2>
-                            <form method="POST" action="{{ route('student.profile.submit') }}">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <strong>There were some errors with your submission:</strong>
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                            {{-- <h2 class="mb-4">Student Application Form</h2> --}}
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="mb-0">Student Application Form</h2>
+
+                                @if(isset($profile) && $profile->profile_picture)
+                                    <div class="profile-pic-wrapper">
+                                        <img src="{{ asset($profile->profile_picture) }}" 
+                                            alt="Profile Picture" 
+                                            width="120" height="120"
+                                            class="rounded border object-fit-cover">
+                                    </div>
+                                @endif
+                            </div>
+                            <form id="profileForm" method="POST" action="{{ route('student.profile.submit') }}" enctype="multipart/form-data" >
                                 @csrf
 
                                 <h4 class="mb-3">Personal Information</h4>
@@ -644,19 +304,53 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <label for="dob" class="form-label">Date of Birth</label>
                                         <input type="date" id="dob" name="dob" class="form-control" value="{{ old('dob', $profile->dob ?? '') }}" required>
                                         <small class="text-muted">Age must be between 16 to 28 years</small>
+                                        @error('dob')
+                                            <div class="text-danger small">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="profile_picture" class="form-label">Profile Picture</label>
+                                            <input type="file" id="profile_picture" name="profile_picture" class="form-control" 
+                                            {{ isset($profile) && $profile->profile_picture ? '' : 'required' }}>
                                     </div>
                                 </div>
 
                                 <h4 class="mt-4 mb-3">Permanent Address</h4>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Atoll</label>
-                                        <input type="text" name="permanent_atoll" class="form-control" value="{{ old('permanent_atoll', $permanentAddress->atoll ?? '') }}" required>
+                                
+                                    <h4 class="mt-4">Permanent Address</h4>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Atoll</label>
+                                            <select name="permanent_atoll_id" id="permanent_atoll" class="form-select">
+                                                <option value="">Select Atoll</option>
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->id }}" {{ optional($student->permanentAddress)->atoll_id == $atoll->id ? 'selected' : '' }}>
+                                                        {{ $atoll->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        
+                                        {{-- Permanent Island --}}
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Permanent Island</label>
+                                            <select name="permanent_island_id" id="permanent_island" class="form-select" required>
+                                                <option value="">Select Island</option>
+                                                @if($permanentAddress && $permanentAddress->atoll && $permanentAddress->atoll->islands)
+                                                    @foreach($permanentAddress->atoll->islands as $island)
+                                                        <option value="{{ $island->id }}" 
+                                                            {{ old('permanent_island_id', optional($permanentAddress)->island_id) == $island->id ? 'selected' : '' }}>
+                                                            {{ $island->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Island</label>
-                                        <input type="text" name="permanent_island" class="form-control" value="{{ old('permanent_island', $permanentAddress->island ?? '') }}" required>
-                                    </div>
+
+
+
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">District</label>
                                         <input type="text" name="permanent_district" class="form-control" value="{{ old('permanent_district', $permanentAddress->district ?? '') }}" required>
@@ -669,14 +363,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                 <h4 class="mt-4 mb-3">Present Address</h4>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Atoll</label>
-                                        <input type="text" name="present_atoll" class="form-control" value="{{ old('present_atoll', $presentAddress->atoll ?? '') }}" required>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Atoll</label>
+                                            <select name="present_atoll_id" id="present_atoll" class="form-select">
+                                                <option value="">Select Atoll</option>
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->id }}" {{ optional($student->presentAddress)->atoll_id == $atoll->id ? 'selected' : '' }}>
+                                                        {{ $atoll->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                            {{-- Present Island --}}
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Present Island</label>
+                                            <select name="present_island_id" id="present_island" class="form-select" required>
+                                                <option value="">Select Island</option>
+                                                @if($presentAddress && $presentAddress->atoll && $presentAddress->atoll->islands)
+                                                    @foreach($presentAddress->atoll->islands as $island)
+                                                        <option value="{{ $island->id }}" 
+                                                            {{ old('present_island_id', optional($presentAddress)->island_id) == $island->id ? 'selected' : '' }}>
+                                                            {{ $island->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Island</label>
-                                        <input type="text" name="present_island" class="form-control" value="{{ old('present_island', $presentAddress->island ?? '') }}" required>
-                                    </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">District</label>
                                         <input type="text" name="present_district" class="form-control" value="{{ old('present_district', $presentAddress->district ?? '') }}" required>
@@ -697,14 +414,38 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <label class="form-label">Relation</label>
                                         <input type="text" name="parent_relation" class="form-control" value="{{ old('parent_relation', $parentDetail->relation ?? '') }}" required>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Atoll</label>
-                                        <input type="text" name="parent_atoll" class="form-control" value="{{ old('parent_atoll', $parentDetail->atoll ?? '') }}" required>
+                                    
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Parent Atoll</label>
+                                            <select name="parent_atoll_id" id="parent_atoll" class="form-select">
+                                                <option value="">Select Atoll</option>
+                                                @foreach($atolls as $atoll)
+                                                    <option value="{{ $atoll->id }}" {{ optional($student->parentDetail)->parent_atoll_id == $atoll->id ? 'selected' : '' }}>
+                                                        {{ $atoll->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Parent Island</label>
+                                            <select name="parent_island_id" id="parent_island" class="form-select">
+                                                <option value="">Select Island</option>
+                                                @if(optional(optional($student->parentDetail)->parentAtoll)->islands)
+                                                    @foreach(optional(optional($student->parentDetail)->parentAtoll)->islands as $island)
+                                                        <option value="{{ $island->id }}"
+                                                            {{ optional($student->parentDetail)->parent_island_id == $island->id ? 'selected' : '' }}>
+                                                            {{ $island->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Island</label>
-                                        <input type="text" name="parent_island" class="form-control" value="{{ old('parent_island', $parentDetail->island ?? '') }}" required>
-                                    </div>
+
+
+
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">Address</label>
                                         <input type="text" name="parent_address" class="form-control" value="{{ old('parent_address', $parentDetail->address ?? '') }}" required>
@@ -734,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <h5 class="card-title">
                                     <i class="bi bi-geo-alt me-2"></i>Interview Location Preference
                                 </h5>
-                                
+
                                 @if(isset($jobPortalApplication->preferred_interview_location_id) && $jobPortalApplication->preferred_interview_location_id)
                                     <div class="alert alert-success">
                                         <i class="bi bi-check-circle me-2"></i>
@@ -754,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <i class="bi bi-info-circle me-2"></i>
                                         <strong>Action Required:</strong> Please select your preferred interview location.
                                     </div>
-                                    
+
                                     <form id="locationPreferenceForm">
                                         @csrf
                                         <div class="mb-3">
@@ -763,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 <option value="">Select your preferred location...</option>
                                                 @if(isset($interviewLocations) && $interviewLocations->count() > 0)
                                                     @foreach($interviewLocations as $location)
-                                                        <option value="{{ $location['id'] }}" 
+                                                        <option value="{{ $location['id'] }}"
                                                                 title="Contact: {{ $location['contact_info'] }}, Capacity: {{ $location['capacity'] }}, Facilities: {{ $location['facilities'] }}">
                                                             {{ $location['name'] }} - {{ $location['address'] }}
                                                         </option>
@@ -771,12 +512,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 @endif
                                             </select>
                                         </div>
-                                        
+
                                         <div class="mb-3">
                                             <label for="preference_reason" class="form-label">Reason for Preference (Optional)</label>
                                             <textarea class="form-control" id="preference_reason" name="preference_reason" rows="3" placeholder="Please explain why you prefer this location..."></textarea>
                                         </div>
-                                        
+
                                         <button type="submit" class="btn btn-primary">
                                             <i class="bi bi-check-circle me-1"></i>Submit Preference
                                         </button>
@@ -798,12 +539,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             <!-- Document Upload Form -->
                             <form id="document-upload-form" method="POST" action="{{ route('student.documents.store') }}" enctype="multipart/form-data">
                                 @csrf
-                                
+
                                 <div class="mb-3">
                                     <label for="type" class="form-label">Document Type</label>
                                     <select id="type" name="type" class="form-select" required>
                                         <option value="">Select Document Type</option>
-                                        @if($student->is_under_age_18)
+                                        @if(isset($student) && $student->is_under_age_18)
                                             <option value="parent_consent">Parent Consent Form</option>
                                         @endif
                                         <option value="photo">Photo</option>
@@ -814,18 +555,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <option value="police_report">Police Report</option>
                                     </select>
                                 </div>
-                                
+
                                 <!-- Dynamic fields based on document type -->
                                 <div id="document-fields">
                                     <!-- Fields will be loaded here via JavaScript -->
                                 </div>
-                                
+
                                 <div class="mb-3">
                                     <label for="file" class="form-label">File</label>
                                     <input type="file" id="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
                                     <small class="text-muted">Allowed formats: PDF, JPG, JPEG, PNG (Max 2MB)</small>
                                 </div>
-                                
+
                                 <button type="submit" class="btn btn-primary" id="upload-btn">
                                     <span class="btn-text">Upload Document</span>
                                     <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
@@ -947,13 +688,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <!-- Notifications List -->
                     @if(isset($notifications) && $notifications->count() > 0)
                         @foreach($notifications as $notification)
-                            <div class="card mb-3 notification-item {{ !$notification->is_read ? 'border-primary' : '' }}" 
+                            <div class="card mb-3 notification-item {{ !$notification->is_read ? 'border-primary' : '' }}"
                                  data-notification-id="{{ $notification->id }}">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div class="flex-grow-1">
                                             <h6 class="card-title mb-2">
-                                                <i class="bi bi-{{ $notification->type === 'info' ? 'info-circle' : ($notification->type === 'success' ? 'check-circle' : ($notification->type === 'warning' ? 'exclamation-triangle' : 'x-circle')) }} 
+                                                <i class="bi bi-{{ $notification->type === 'info' ? 'info-circle' : ($notification->type === 'success' ? 'check-circle' : ($notification->type === 'warning' ? 'exclamation-triangle' : 'x-circle')) }}
                                                    text-{{ $notification->type === 'info' ? 'primary' : ($notification->type === 'success' ? 'success' : ($notification->type === 'warning' ? 'warning' : 'danger')) }} me-2"></i>
                                                 {{ $notification->title }}
                                                 @if(!$notification->is_read)
@@ -1018,8 +759,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p><strong>Application Number:</strong> {{ $jobPortalApplication->application_number }}</p>
-                                        <p><strong>Status:</strong> 
-                                            <span class="badge 
+                                        <p><strong>Status:</strong>
+                                            <span class="badge
                                                 @if($jobPortalApplication->status == 'pending_review') bg-warning
                                                 @elseif($jobPortalApplication->status == 'approved') bg-success
                                                 @elseif($jobPortalApplication->status == 'rejected') bg-danger
@@ -1073,7 +814,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <p><strong>Date:</strong> {{ null !== $interviewSchedule->interview_date ? $interviewSchedule->interview_date->format('M d, Y') : 'To be announced' }}</p>
                                         <p><strong>Time:</strong> {{ null !== $interviewSchedule->interview_time ? $interviewSchedule->interview_time->format('h:i A') : 'To be announced' }}</p>
                                         <p><strong>Type:</strong> {{ ucfirst(str_replace('_', ' ', $interviewSchedule->interview_type ?? 'Interview')) }}</p>
-                                        <p><strong>Location:</strong> 
+                                        <p><strong>Location:</strong>
                                             @if(isset($interviewSchedule->location) && $interviewSchedule->location)
                                                 {{ $interviewSchedule->location->name }}
                                                 @if(null !== $interviewSchedule->location->getFullAddress())
@@ -1229,6 +970,7 @@ function updateDocStatus(input) {
 
 (function() {
   const form = document.getElementById('profileForm');
+  if (!form) { console.warn('profileForm not found on page; skipping validation init'); return; }
 
   // utility to show feedback
   function setInvalid(input, message) {
@@ -1369,12 +1111,12 @@ function updateDocStatus(input) {
 document.addEventListener('DOMContentLoaded', function() {
     const typeSelector = document.querySelector('#type');
     const fieldsContainer = document.getElementById('document-fields');
-    
+
     if (typeSelector && fieldsContainer) {
         typeSelector.addEventListener('change', function() {
             const type = this.value;
             let html = '';
-            
+
             switch(type) {
                 case 'school_leaving':
                     html = `
@@ -1392,7 +1134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     break;
-                    
+
                 case 'olevel':
                 case 'alevel':
                     html = `
@@ -1414,7 +1156,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     break;
-                    
+
                 case 'police_report':
                     html = `
                         <div class="mb-3">
@@ -1423,11 +1165,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     break;
-                    
+
                 default:
                     html = '';
             }
-            
+
             fieldsContainer.innerHTML = html;
         });
     }
@@ -1436,7 +1178,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Global functions for tab switching
 function switchTab(targetId) {
     console.log('Switching to tab:', targetId);
-    
+
     // Remove active class from all tabs and tab buttons
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
@@ -1444,13 +1186,13 @@ function switchTab(targetId) {
     document.querySelectorAll('.tab-pane').forEach(pane => {
         pane.classList.remove('show', 'active');
     });
-    
+
     // Add active class to target tab button
     const targetButton = document.querySelector(`[data-bs-target="${targetId}"]`);
     if (targetButton) {
         targetButton.classList.add('active');
     }
-    
+
     // Add active class to target tab pane
     const targetPane = document.querySelector(targetId);
     if (targetPane) {
@@ -1476,14 +1218,14 @@ function switchToDocumentsTab() {
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard JavaScript loaded');
-    
+
     // Check if we need to switch to a specific tab from session
     @if(session('active_tab'))
         const activeTab = '{{ session("active_tab") }}';
         console.log('Switching to tab:', activeTab);
         switchTab('#' + activeTab);
     @endif
-    
+
     // Handle all tab buttons
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(button => {
         button.addEventListener('click', function(e) {
@@ -1493,7 +1235,7 @@ document.addEventListener('DOMContentLoaded', function() {
             switchTab(targetTab);
         });
     });
-    
+
     // Handle upload documents button
     const uploadDocsBtn = document.querySelector('a[data-bs-target="#documents"]');
     if (uploadDocsBtn) {
@@ -1503,31 +1245,72 @@ document.addEventListener('DOMContentLoaded', function() {
             switchTab('#documents');
         });
     }
-    
+
     // Document upload form handling
     const documentForm = document.getElementById('document-upload-form');
+    const fileInputEl = document.getElementById('file');
+    const uploadBtn = document.getElementById('upload-btn');
+
+    // Immediate validation on file choose (2MB max)
+    if (fileInputEl) {
+        fileInputEl.addEventListener('change', function () {
+            const f = this.files && this.files[0] ? this.files[0] : null;
+            if (f && f.size > 2 * 1024 * 1024) {
+                // Mark invalid and keep button disabled
+                this.setCustomValidity('File must be less than 2 MB');
+                this.reportValidity();
+                window.showAlert('Please upload a file less than 2 MB.', 'warning');
+                if (uploadBtn) uploadBtn.disabled = true;
+            } else {
+                // Clear invalid state and enable button
+                this.setCustomValidity('');
+                if (uploadBtn) uploadBtn.disabled = false;
+            }
+        });
+    }
+
     if (documentForm) {
         documentForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const uploadBtn = document.getElementById('upload-btn');
+
             const btnText = uploadBtn.querySelector('.btn-text');
             const spinner = uploadBtn.querySelector('.spinner-border');
-            
+
+            // Size validation BEFORE showing loading state
+            const fileField = this.querySelector('#file');
+            const fileObj = fileField && fileField.files ? fileField.files[0] : null;
+            if (!fileObj) {
+                fileField.setCustomValidity('Please select a file to upload.');
+                fileField.reportValidity();
+                window.showAlert('Please select a file to upload.', 'warning');
+                if (uploadBtn) uploadBtn.disabled = false;
+                return;
+            }
+            if (fileObj.size > 2 * 1024 * 1024) {
+                fileField.setCustomValidity('File must be less than 2 MB');
+                fileField.reportValidity();
+                window.showAlert('Please upload a file less than 2 MB.', 'warning');
+                if (uploadBtn) uploadBtn.disabled = true;
+                return;
+            }
+
+            // Clear any previous validity message
+            fileField.setCustomValidity('');
+
             // Show loading state
             btnText.textContent = 'Uploading...';
             spinner.classList.remove('d-none');
             uploadBtn.disabled = true;
-            
+
             // Create FormData
             const formData = new FormData(this);
-            
+
             // Debug: Log form data
             console.log('Form data:');
             for (let [key, value] of formData.entries()) {
                 console.log(key, value);
             }
-            
+
             // Submit via AJAX
             fetch(this.action, {
                 method: 'POST',
@@ -1541,24 +1324,24 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 console.log('Response status:', response.status);
                 console.log('Response headers:', response.headers);
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 return response.json();
             })
                 .then(data => {
                     console.log('Response data:', data);
-                    
+
                     if (data.success) {
                         // Show success message
                         window.showAlert('Document uploaded successfully!', 'success');
-                        
+
                         // Reset form
                         this.reset();
                         document.getElementById('document-fields').innerHTML = '';
-                        
+
                         // Reload the page to show updated document list
                         setTimeout(() => {
                             window.location.reload();
@@ -1579,16 +1362,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // Document type selector handling
     const typeSelector = document.getElementById('type');
     const fieldsContainer = document.getElementById('document-fields');
-    
+
     if (typeSelector && fieldsContainer) {
         typeSelector.addEventListener('change', function() {
             const type = this.value;
             let html = '';
-            
+
             switch(type) {
                 case 'school_leaving':
                     html = `
@@ -1606,7 +1389,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     break;
-                    
+
                 case 'olevel':
                 case 'alevel':
                     html = `
@@ -1628,7 +1411,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     break;
-                    
+
                 case 'police_report':
                     html = `
                         <div class="mb-3">
@@ -1637,15 +1420,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     break;
-                    
+
                 default:
                     html = '';
             }
-            
+
             fieldsContainer.innerHTML = html;
         });
     }
-    
+
     // Alert function - moved to global scope
     window.showAlert = function(message, type) {
         const alertDiv = document.createElement('div');
@@ -1654,14 +1437,14 @@ document.addEventListener('DOMContentLoaded', function() {
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
-        
+
         // Insert at the top of the documents tab
         const documentsTab = document.getElementById('documents');
         const firstCard = documentsTab.querySelector('.card');
         if (firstCard) {
             firstCard.insertBefore(alertDiv, firstCard.firstChild);
         }
-        
+
         // Auto-dismiss after 5 seconds
         setTimeout(() => {
             if (alertDiv.parentNode) {
@@ -1669,15 +1452,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 5000);
     };
-    
+
     // Delete document function - moved to global scope
     window.deleteDocument = function(documentId) {
         if (!confirm('Are you sure you want to delete this document?')) {
             return;
         }
-        
+
         const deleteUrl = `{{ url('student/documents') }}/${documentId}`;
-        
+
         fetch(deleteUrl, {
             method: 'DELETE',
             headers: {
@@ -1718,7 +1501,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Global notification functions
 function markAsRead(notificationId) {
     console.log('Marking notification as read:', notificationId);
-    
+
     fetch(`/student/notifications/${notificationId}/mark-read`, {
         method: 'POST',
         headers: {
@@ -1755,7 +1538,7 @@ function markAsRead(notificationId) {
 
 function markAllAsRead() {
     console.log('Marking all notifications as read');
-    
+
     fetch('/student/notifications/mark-all-read', {
         method: 'POST',
         headers: {
@@ -1795,7 +1578,7 @@ function updateNotificationCount() {
     const unreadCount = document.querySelectorAll('.notification-item.border-primary').length;
     const tabBadge = document.querySelector('#notification-badge');
     const tab = document.querySelector('#notifications-tab');
-    
+
     if (unreadCount > 0) {
         if (tabBadge) {
             // Update existing badge
@@ -1820,7 +1603,7 @@ function updateNotificationCount() {
 // Test function for debugging
 function testNotifications() {
     console.log('Testing notifications...');
-    
+
     fetch('/student/test-notifications', {
         method: 'GET',
         headers: {
@@ -1834,10 +1617,10 @@ function testNotifications() {
     })
     .then(data => {
         console.log('Test response data:', data);
-        alert('Test Results:\n' + 
-              'Authenticated: ' + data.authenticated + '\n' + 
-              'Student ID: ' + data.student_id + '\n' + 
-              'Total Notifications: ' + data.notifications_count + '\n' + 
+        alert('Test Results:\n' +
+              'Authenticated: ' + data.authenticated + '\n' +
+              'Student ID: ' + data.student_id + '\n' +
+              'Total Notifications: ' + data.notifications_count + '\n' +
               'Unread Count: ' + data.unread_count);
     })
     .catch(error => {
@@ -1888,15 +1671,15 @@ function loadInterviewLocations() {
 
 function submitLocationPreference(event) {
     event.preventDefault();
-    
+
     const form = event.target;
     const formData = new FormData(form);
     const submitButton = form.querySelector('button[type="submit"]');
-    
+
     // Disable submit button
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Submitting...';
-    
+
     fetch('/student/interview-location-preference', {
         method: 'POST',
         headers: {
@@ -1914,11 +1697,11 @@ function submitLocationPreference(event) {
                 <i class="bi bi-check-circle me-2"></i>
                 <strong>Success!</strong> Your interview location preference has been submitted successfully.
             `;
-            
+
             // Replace the form with success message
             form.parentNode.insertBefore(alertDiv, form);
             form.style.display = 'none';
-            
+
             // Reload the page after 2 seconds to show updated status
             setTimeout(() => {
                 window.location.reload();
@@ -1931,9 +1714,9 @@ function submitLocationPreference(event) {
                 <i class="bi bi-exclamation-triangle me-2"></i>
                 <strong>Error!</strong> ${data.error || 'Failed to submit location preference. Please try again.'}
             `;
-            
+
             form.insertBefore(alertDiv, form.firstChild);
-            
+
             // Re-enable submit button
             submitButton.disabled = false;
             submitButton.innerHTML = '<i class="bi bi-check-circle me-1"></i>Submit Preference';
@@ -1941,7 +1724,7 @@ function submitLocationPreference(event) {
     })
     .catch(error => {
         console.error('Error submitting location preference:', error);
-        
+
         // Show error message
         const alertDiv = document.createElement('div');
         alertDiv.className = 'alert alert-danger';
@@ -1949,9 +1732,9 @@ function submitLocationPreference(event) {
             <i class="bi bi-exclamation-triangle me-2"></i>
             <strong>Error!</strong> Failed to submit location preference. Please try again.
         `;
-        
+
         form.insertBefore(alertDiv, form.firstChild);
-        
+
         // Re-enable submit button
         submitButton.disabled = false;
         submitButton.innerHTML = '<i class="bi bi-check-circle me-1"></i>Submit Preference';
@@ -1969,3 +1752,37 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+function loadIslands(atollSelectId, islandSelectId) {
+    const atollId = $('#' + atollSelectId).val();
+    const $islandSelect = $('#' + islandSelectId);
+    $islandSelect.html('<option value="">Loading...</option>');
+
+    if (atollId) {
+        // Use Laravel's route helper inside Blade
+        const url = "{{ route('student.get.islands', ':atoll_id') }}".replace(':atoll_id', atollId);
+
+        $.get(url, function(data) {
+            let options = '<option value="">Select Island</option>';
+            data.forEach(island => {
+                options += `<option value="${island.id}">${island.name}</option>`;
+            });
+            $islandSelect.html(options);
+        });
+    } else {
+        $islandSelect.html('<option value="">Select Island</option>');
+    }
+}
+
+$(document).ready(function() {
+    $('#permanent_atoll').change(() => loadIslands('permanent_atoll', 'permanent_island'));
+    $('#present_atoll').change(() => loadIslands('present_atoll', 'present_island'));
+    $('#parent_atoll').change(() => loadIslands('parent_atoll', 'parent_island'));
+});
+</script>
+
+

@@ -208,7 +208,20 @@
                 <div class="student-card">
                     <div class="student-head mb-2">
                         <div class="d-flex align-items-center gap-2">
-                            <div class="avatar">{{ strtoupper(substr($student->name,0,1)) }}</div>
+                            {{-- <div class="avatar">{{ strtoupper(substr($student->name,0,1)) }}</div> --}}
+                            <div class="avatar bg-primary text-white d-flex justify-content-center align-items-center"
+                                style="width: 45px; height: 45px; font-weight: 600; font-size: 18px; overflow: hidden; border-radius: 6px;">
+                                
+                                @if(isset($student->profile) && !empty($student->profile->profile_picture))
+                                    <img src="{{ asset($student->profile->profile_picture) }}"
+                                        alt="Profile Picture"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+                                @endif
+
+                            </div>
+
                             <div>
                                 <h5 class="mb-0" style="font-weight:800;">{{ $student->name }}</h5>
                                 <div class="meta">ID: {{ $student->id }} • Applied {{ $student->created_at->diffForHumans() }}</div>

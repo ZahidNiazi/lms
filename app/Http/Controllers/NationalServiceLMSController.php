@@ -13,6 +13,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\StudentNotification;
+use Twilio\Rest\Client;
+use App\Models\Utility;
+use Illuminate\Support\Facades\Log;
 
 class NationalServiceLMSController extends Controller
 {
@@ -131,14 +135,50 @@ class NationalServiceLMSController extends Controller
         } elseif ($request->application_stage === 'rejected') {
             $student->update(['status' => 'rejected']);
         }
+        $application = $student->jobPortalApplication;
+        $stageLabel = ucfirst(str_replace('_', ' ', $request->application_stage));
+        StudentNotification::create([
+                'student_id' => $student->id,
+                'application_id' => $application->id,
+                'type' => 'info',
+                'title' => $stageLabel ?: 'New Message from National Service LMS',
+                'message' => 'Your application status has been updated to ' .$stageLabel,
+                'metadata' => [
+                    'application_number' => $application->application_number,
+                    //'communication_id' => $communication->id,
+                    'sent_by' => Auth::user()->name
+                ]
+            ]);
+
+        try {
+            $settings = Utility::settings();
+
+            $twilioSid   = $settings['twilio_sid']   ?? null;
+            $twilioToken = $settings['twilio_token'] ?? null;
+            $twilioFrom  = $settings['twilio_from']  ?? null;
+            $mobileNo = $student->profile->mobile_no ?? null;
+            if ($twilioSid && $twilioToken && $twilioFrom && !empty($mobileNo)) {
+                $client = new Client($twilioSid, $twilioToken);
+
+                $messageBody = "Hello {$student->first_name}, your application status has been updated to {$stageLabel}.";
+
+                $client->messages->create($mobileNo, [
+                    'from' => $twilioFrom,
+                    'body' => $messageBody,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Twilio SMS failed: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Application stage updated successfully');
     }
 
     public function trainingBatches()
     {
-        $batches = TrainingBatch::withCount('enrollments')->latest()->paginate(20);
-
+        $batches = TrainingBatch::withCount('applications')->latest()->paginate(20);
+        //$batches = TrainingBatch::withCount('applications')->latest()->paginate(20);
+        //dd($batches);
         return view('national-service-lms.training.batches.index', compact('batches'));
     }
 

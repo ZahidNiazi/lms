@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMS - Add Performance Record</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-blue: #4f7cff;
@@ -82,7 +82,7 @@
                 <i class="bi bi-arrow-left me-2"></i>
                 SMS - Add Performance Record
             </a>
-            
+
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -142,7 +142,7 @@
                     <div class="card-body">
                         <form action="{{ route('sms.performance.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            
+
                             <div class="row g-3">
                                 <!-- Student Selection -->
                                 <div class="col-md-6">
@@ -152,9 +152,9 @@
                                     <select name="student_id" id="student_id" class="form-select @error('student_id') is-invalid @enderror" required>
                                         <option value="">Select Student</option>
                                         @foreach($students as $student)
-                                            <option value="{{ $student->id }}" 
+                                            <option value="{{ $student->id }}"
                                                     {{ (old('student_id') == $student->id || ($selectedStudent && $selectedStudent->id == $student->id)) ? 'selected' : '' }}>
-                                                {{ $student->full_name }} ({{ $student->student_id }})
+                                                {{ $student->full_name }} (ID: {{ $student->student_id }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -186,9 +186,9 @@
                                     <label for="score" class="form-label">
                                         Score <span class="text-danger">*</span>
                                     </label>
-                                    <input type="number" name="score" id="score" 
-                                           class="form-control @error('score') is-invalid @enderror" 
-                                           value="{{ old('score') }}" 
+                                    <input type="number" name="score" id="score"
+                                           class="form-control @error('score') is-invalid @enderror"
+                                           value="{{ old('score') }}"
                                            min="0" step="0.01" required>
                                     @error('score')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -200,9 +200,9 @@
                                     <label for="max_score" class="form-label">
                                         Maximum Score <span class="text-danger">*</span>
                                     </label>
-                                    <input type="number" name="max_score" id="max_score" 
-                                           class="form-control @error('max_score') is-invalid @enderror" 
-                                           value="{{ old('max_score') }}" 
+                                    <input type="number" name="max_score" id="max_score"
+                                           class="form-control @error('max_score') is-invalid @enderror"
+                                           value="{{ old('max_score') }}"
                                            min="0" step="0.01" required>
                                     @error('max_score')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -214,8 +214,8 @@
                                     <label for="evaluation_date" class="form-label">
                                         Evaluation Date <span class="text-danger">*</span>
                                     </label>
-                                    <input type="date" name="evaluation_date" id="evaluation_date" 
-                                           class="form-control @error('evaluation_date') is-invalid @enderror" 
+                                    <input type="date" name="evaluation_date" id="evaluation_date"
+                                           class="form-control @error('evaluation_date') is-invalid @enderror"
                                            value="{{ old('evaluation_date', date('Y-m-d')) }}" required>
                                     @error('evaluation_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -225,8 +225,8 @@
                                 <!-- Comments -->
                                 <div class="col-12">
                                     <label for="comments" class="form-label">Comments</label>
-                                    <textarea name="comments" id="comments" rows="3" 
-                                              class="form-control @error('comments') is-invalid @enderror" 
+                                    <textarea name="comments" id="comments" rows="3"
+                                              class="form-control @error('comments') is-invalid @enderror"
                                               placeholder="Enter general comments about the performance...">{{ old('comments') }}</textarea>
                                     @error('comments')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -236,8 +236,8 @@
                                 <!-- Counselling Notes -->
                                 <div class="col-12">
                                     <label for="counselling_notes" class="form-label">Counselling Notes</label>
-                                    <textarea name="counselling_notes" id="counselling_notes" rows="3" 
-                                              class="form-control @error('counselling_notes') is-invalid @enderror" 
+                                    <textarea name="counselling_notes" id="counselling_notes" rows="3"
+                                              class="form-control @error('counselling_notes') is-invalid @enderror"
                                               placeholder="Enter counselling notes and recommendations...">{{ old('counselling_notes') }}</textarea>
                                     @error('counselling_notes')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -247,9 +247,9 @@
                                 <!-- Pay Step -->
                                 <div class="col-md-6">
                                     <label for="pay_step" class="form-label">Pay Step</label>
-                                    <input type="text" name="pay_step" id="pay_step" 
-                                           class="form-control @error('pay_step') is-invalid @enderror" 
-                                           value="{{ old('pay_step') }}" 
+                                    <input type="text" name="pay_step" id="pay_step"
+                                           class="form-control @error('pay_step') is-invalid @enderror"
+                                           value="{{ old('pay_step') }}"
                                            placeholder="e.g., Step 1, Step 2, etc.">
                                     @error('pay_step')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -259,9 +259,9 @@
                                 <!-- Performance Indicator -->
                                 <div class="col-md-6">
                                     <label for="performance_indicator" class="form-label">Performance Indicator</label>
-                                    <input type="text" name="performance_indicator" id="performance_indicator" 
-                                           class="form-control @error('performance_indicator') is-invalid @enderror" 
-                                           value="{{ old('performance_indicator') }}" 
+                                    <input type="text" name="performance_indicator" id="performance_indicator"
+                                           class="form-control @error('performance_indicator') is-invalid @enderror"
+                                           value="{{ old('performance_indicator') }}"
                                            placeholder="e.g., Excellent, Good, Needs Improvement">
                                     @error('performance_indicator')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -271,8 +271,8 @@
                                 <!-- Observation Notes -->
                                 <div class="col-12">
                                     <label for="observation_notes" class="form-label">Observation Notes</label>
-                                    <textarea name="observation_notes" id="observation_notes" rows="3" 
-                                              class="form-control @error('observation_notes') is-invalid @enderror" 
+                                    <textarea name="observation_notes" id="observation_notes" rows="3"
+                                              class="form-control @error('observation_notes') is-invalid @enderror"
                                               placeholder="Enter detailed observation notes...">{{ old('observation_notes') }}</textarea>
                                     @error('observation_notes')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -282,8 +282,8 @@
                                 <!-- Document Upload -->
                                 <div class="col-12">
                                     <label for="documents" class="form-label">Supporting Documents</label>
-                                    <input type="file" name="documents[]" id="documents" 
-                                           class="form-control @error('documents') is-invalid @enderror" 
+                                    <input type="file" name="documents[]" id="documents"
+                                           class="form-control @error('documents') is-invalid @enderror"
                                            multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                     <div class="form-text">
                                         You can upload multiple files. Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG (Max 10MB each)
@@ -367,12 +367,12 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 @if($selectedStudent->photo)
-                                    <img src="{{ Storage::url($selectedStudent->photo) }}" 
-                                         alt="{{ $selectedStudent->full_name }}" 
-                                         class="rounded-circle me-3" 
+                                    <img src="{{ Storage::url($selectedStudent->photo) }}"
+                                         alt="{{ $selectedStudent->full_name }}"
+                                         class="rounded-circle me-3"
                                          width="50" height="50">
                                 @else
-                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
                                          style="width: 50px; height: 50px;">
                                         <i class="bi bi-person text-white"></i>
                                     </div>
@@ -381,7 +381,7 @@
                                     <h6 class="mb-0">{{ $selectedStudent->full_name }}</h6>
                                     <small class="text-muted">{{ $selectedStudent->student_id }}</small>
                                     @if($selectedStudent->batch)
-                                        <br><small class="text-muted">{{ $selectedStudent->batch->name }}</small>
+                                        <br><small class="text-muted">{{ $selectedStudent->batch->batch_name }}</small>
                                     @endif
                                 </div>
                             </div>
@@ -400,17 +400,17 @@
         // Auto-calculate percentage when score or max_score changes
         const scoreInput = document.getElementById('score');
         const maxScoreInput = document.getElementById('max_score');
-        
+
         function calculatePercentage() {
             const score = parseFloat(scoreInput.value) || 0;
             const maxScore = parseFloat(maxScoreInput.value) || 0;
-            
+
             if (maxScore > 0) {
                 const percentage = (score / maxScore) * 100;
                 console.log('Percentage:', percentage.toFixed(2) + '%');
             }
         }
-        
+
         scoreInput.addEventListener('input', calculatePercentage);
         maxScoreInput.addEventListener('input', calculatePercentage);
     });

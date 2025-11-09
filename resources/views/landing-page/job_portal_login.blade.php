@@ -1,15 +1,31 @@
+@php
+  use App\Models\Utility;
+  $title_text = \App\Models\Utility::getValByName('title_text') ?? 'National Management School';
+  //$footer_text = \App\Models\Utility::getValByName('footer_text') ?? 'National Service';
+  //$display_landing_page = \App\Models\Utility::getValByName('display_landing_page');
+  
+    $setting = \App\Models\Utility::settings();
+    $logo = \App\Models\Utility::get_file('uploads/logo');
+
+    $company_logo = $setting['company_logo_dark'] ?? '';
+    $company_logos = $setting['company_logo_light'] ?? '';
+    $company_small_logo = $setting['company_small_logo'] ?? '';
+
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>National Management School</title>
+    <title>{{ $title_text }}</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" rel="icon">
+  <link rel="icon"
+        href="{{ $logo . '/' . (isset($company_favicon) && !empty($company_favicon) ? $company_favicon : 'favicon.png')  . '?' . time() }}"
+        type="image" sizes="16x16">
   <link href="{{asset('assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
 
   <!-- Fonts -->
@@ -48,9 +64,21 @@
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-end">
-      <a href="{{route('landing_page')}}" class="logo d-flex align-items-center me-auto" style="background:none !important;color:black;">
+      {{-- <a href="{{route('landing_page')}}" class="logo d-flex align-items-center me-auto" style="background:none !important;color:black;">
         <img src="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" alt="">
 
+      </a> --}}
+      <a href="{{route('landing_page')}}" class="logo d-flex align-items-center me-auto" style="background:none !important;color:black;">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        {{-- <img src="https://mnu.edu.mv/wp-content/uploads/2021/12/MNU-Logo-Horizontal-Filled-01-e1638420030168.png" alt=""> --}}
+        @if ($setting['cust_darklayout'] && $setting['cust_darklayout'] == 'on')
+            <img src="{{ $logo . '/' . (isset($company_logos) && !empty($company_logos) ? $company_logos : 'logo-dark.png') . '?' . time() }}"
+                alt="{{ config('app.name', 'ERPGo-SaaS') }}" class="logo logo-lg">
+        @else
+            <img src="{{ $logo . '/' . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo-light.png') . '?' . time() }}"
+                alt="{{ config('app.name', 'ERPGo-SaaS') }}" class="logo logo-lg">
+        @endif
+        <h1 class="sitename" style="color:black !important;font-size:20px;"></h1>
       </a>
 
       <nav id="navmenu" class="navmenu">

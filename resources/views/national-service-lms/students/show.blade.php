@@ -349,7 +349,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <div class="document-item">
                         <h6 class="mb-2">{{ ucfirst($document->type) }}</h6>
-                        <p class="mb-2 text-muted">{{ $document->file_path ?? 'No file name' }}</p>
+                        {{-- <p class="mb-2 text-muted">{{ $document->file_path ?? 'No file name' }}</p> --}}
 
                         <div class="d-flex p-2">
                             @if(!empty($document->file_path) && \Illuminate\Support\Facades\Storage::disk('public')->exists($document->file_path))

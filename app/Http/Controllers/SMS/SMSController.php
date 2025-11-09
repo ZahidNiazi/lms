@@ -4,20 +4,26 @@ namespace App\Http\Controllers\SMS;
 
 use App\Http\Controllers\Controller;
 use App\Models\SMS\Student;
+use App\Models\Student as MainStudent;
 use App\Models\SMS\TrainingBatch;
+use App\Models\TrainingBatch as MainTrainingBatch;
 use App\Models\SMS\Leave;
 use App\Models\SMS\Attendance;
 use App\Models\SMS\Performance;
 use App\Models\SMS\MedicalRecord;
+use App\Models\SMS\SmsAcademic;
+use App\Models\SMS\SmsObservation;
 use App\Models\SMS\Award;
 use App\Models\SMS\Warning;
 use App\Models\SMS\Assessment;
 use App\Models\SMS\Graduation;
 use App\Models\SMS\Posting;
+use App\Models\Atoll;
+use App\Models\Island;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Hash;
 class SMSController extends Controller
 {
     public function __construct()
@@ -59,13 +65,15 @@ class SMSController extends Controller
      */
     public function students(Request $request)
     {
-        $query = Student::with('batch');
-
+        $query = Student::with('batch','company','platoon');
+        //$query = MainStudent::query();
         // Apply filters
+        //dd($query);
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
+                //$q->where('name', 'like', "%{$search}%")
+                  $q->Where('first_name', 'like', "%{$search}%")
                   ->orWhere('last_name', 'like', "%{$search}%")
                   ->orWhere('student_id', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
@@ -89,11 +97,13 @@ class SMSController extends Controller
         }
 
         $students = $query->paginate(20);
+        
         $batches = TrainingBatch::active()->get();
-        $companies = Student::distinct()->pluck('company')->filter();
-        $platoons = Student::distinct()->pluck('platoon')->filter();
+        $companies = \App\Models\Company::pluck('name')->filter();
+        $platoons = \App\Models\Platoon::pluck('name')->filter();
+        $atolls = DB::table('atolls')->get();
 
-        return view('sms.students.index', compact('students', 'batches', 'companies', 'platoons'));
+        return view('sms.students.index', compact('students', 'batches', 'companies', 'platoons', 'atolls'));
     }
 
     /**
@@ -110,9 +120,15 @@ class SMSController extends Controller
             'awards',
             'warnings',
             'assessments.subject',
-            'documents'
+            'documents',
+            'AcademiclRecords',
+            'Observation',
+            'permanentAtoll', 'permanentIsland',
+            'presentAtoll', 'presentIsland',
+            'parentAtoll', 'parentIsland',
+            'company','platoon'
         ])->findOrFail($id);
-
+//dd($student);
         return view('sms.students.show', compact('student'));
     }
 
@@ -144,13 +160,11 @@ class SMSController extends Controller
         ]);
 
         $data = $request->all();
-        
+
         // Handle photo upload
         if ($request->hasFile('photo')) {
-            $photo = $request->file('photo');
-            $photoName = time() . '_' . $photo->getClientOriginalName();
-            $photo->storeAs('public/student_photos', $photoName);
-            $data['photo'] = 'student_photos/' . $photoName;
+            $path = $request->file('photo')->store('student-profiles', 'public');
+            $data['photo'] = $path;
         }
 
         // Calculate age
@@ -169,16 +183,23 @@ class SMSController extends Controller
      */
     public function editStudent($id)
     {
-        $student = Student::findOrFail($id);
-        $batches = TrainingBatch::active()->get();
-        return view('sms.students.edit', compact('student', 'batches'));
+        
+        $student = Student::with('medicalRecords','AcademiclRecords','Observation')->findOrFail($id);
+        $batches = MainTrainingBatch::all();
+        //dd($batches);
+        $comapnies = DB::table('companies')->get();
+        $platoons = DB::table('platoons')->get();
+        $atolls =  Atoll::all(); // Add this
+        $islands = Island::all();
+        //dd($comapnies, $platoons);
+        return view('sms.students.edit', compact('student', 'batches','comapnies','platoons','atolls','islands'));
     }
 
     /**
      * Update student
      */
     public function updateStudent(Request $request, $id)
-    {
+    { //dd($request->all());
         $student = Student::findOrFail($id);
 
         $request->validate([
@@ -190,35 +211,113 @@ class SMSController extends Controller
             'contact_no' => 'required|string',
             'gender' => 'required|in:male,female',
             'date_of_birth' => 'required|date',
-            'batch_id' => 'nullable|exists:sms_training_batches,id',
+            //'batch_id' => 'nullable|exists:sms_training_batches,id',
+            'parent_email' => 'nullable|email',
+            // 'permanent_atoll' => 'nullable|exists:atolls,id',
+            // 'permanent_island' => 'nullable|exists:islands,id',
+            // 'present_atoll' => 'nullable|exists:atolls,id',
+            // 'present_island' => 'nullable|exists:islands,id',
+            // 'parent_atoll' => 'nullable|exists:atolls,id',
+            // 'parent_island' => 'nullable|exists:islands,id',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->all();
         
-        // Handle photo upload
         if ($request->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($student->photo && \Storage::exists('public/' . $student->photo)) {
-                \Storage::delete('public/' . $student->photo);
+
+            // Delete old photo if it exists
+            if ($student->photo && file_exists(public_path($student->photo))) {
+                unlink(public_path($student->photo));
             }
-            
-            $photo = $request->file('photo');
-            $photoName = time() . '_' . $photo->getClientOriginalName();
-            $photo->storeAs('public/student_photos', $photoName);
-            $data['photo'] = 'student_photos/' . $photoName;
+
+            // Create destination folder if not exists
+            $destinationPath = public_path('sms_students_profile');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+
+            // Move uploaded file
+            $file = $request->file('photo');
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($destinationPath, $fileName);
+
+            // Save relative path in DB
+            $data['photo'] = 'sms_students_profile/' . $fileName;
         }
 
         // Calculate age
         if ($request->date_of_birth) {
             $data['age'] = \Carbon\Carbon::parse($request->date_of_birth)->age;
         }
-
+        //$data['martial_status'] = $request->martial_status;
+        //$data['kids'] = $request->kids ?? NULL;
+        $data = [
+            'martial_status' => $request->martial_status,
+            'kids' => $request->kids ?? NULL,
+            'permanent_atoll_id' => $request->permanent_atoll,
+            'permanent_island_id' => $request->permanent_island,
+            'present_atoll_id' => $request->present_atoll,
+            'present_island_id' => $request->present_island,
+            'parent_atoll_id' => $request->parent_atoll,
+            'parent_island_id' => $request->parent_island,
+        ];
         $student->update($data);
 
-        return redirect()->route('sms.students.show', $student->id)
-            ->with('success', 'Student updated successfully.');
-    }
+        if (
+            $request->filled('medical_condition') ||
+            $request->filled('medical_severity_level') ||
+            $request->filled('medical_notes')
+        ) {
+            \App\Models\SMS\MedicalRecord::updateOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'medical_condition' => $request->medical_condition,
+                    'medical_severity_level' => $request->medical_severity_level,
+                    'medical_notes' => $request->medical_notes,
+                ]
+            );
+        }
+
+        //  --- Handle Academic Record ---
+        if (
+            $request->filled('document_type') ||
+            $request->filled('institution') ||
+            $request->filled('start_date') ||
+            $request->filled('end_date') ||
+            $request->filled('result')
+        ) {
+            \App\Models\SMS\SmsAcademic::updateOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'document_type' => $request->document_type,
+                    'institution' => $request->institution,
+                    'start_date' => $request->start_date,
+                    'end_date' => $request->end_date,
+                    'result' => $request->result,
+                ]
+            );
+        }
+
+        //  --- Handle Observation Record ---
+        if (
+            $request->filled('observation_type') ||
+            $request->filled('severity_level') ||
+            $request->filled('observation_notes')
+        ) {
+            \App\Models\SMS\SmsObservation::updateOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'observation_type' => $request->observation_type,
+                    'severity_level' => $request->severity_level,
+                    'observation_notes' => $request->observation_notes,
+                ]
+            );
+        }
+
+            return redirect()->route('sms.students.show', $student->id)
+                ->with('success', 'Student updated successfully.');
+        }
 
     /**
      * Delete student
@@ -248,7 +347,11 @@ class SMSController extends Controller
         }
 
         $leaves = $query->latest()->paginate(20);
-        $students = Student::active()->get();
+        // Fetch from main students table, only those with a batch assigned via training enrollments
+        $students = MainStudent::whereIn('status', ['active', 'approved', 'pending'])
+            ->whereHas('trainingEnrollments')
+            ->orderBy('name')
+            ->get();
 
         return view('sms.leaves.index', compact('leaves', 'students'));
     }
@@ -305,15 +408,63 @@ class SMSController extends Controller
     public function medical(Request $request)
     {
         $query = MedicalRecord::with('student');
-
-        if ($request->filled('student_id')) {
-            $query->where('student_id', $request->student_id);
-        }
+        //dd($query);
+        // if ($request->filled('student_id')) {
+        //     $query->where('student_id', $request->student_id);
+        // }
 
         $medicalRecords = $query->latest()->paginate(20);
-        $students = Student::active()->get();
+        // $students = Student::active()->get();
 
-        return view('sms.medical.index', compact('medicalRecords', 'students'));
+        // $studentsWithMedicalRecords = MedicalRecord::pluck('student_id');
+
+        // $studentsWithoutMedicalRecords = Student::whereNotIn('id', $studentsWithMedicalRecords)->get();
+
+        //return view('sms.medical.index', compact('medicalRecords', 'students', 'studentsWithoutMedicalRecords'));
+        return view('sms.medical.index', compact('medicalRecords'));
+
+    }
+
+    public function storeMedical(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:sms_students,id',
+            'record_date' => 'required|date',
+            'description' => 'required|string',
+            'attachments' => 'nullable|string',
+        ]);
+
+        MedicalRecord::create($request->all());
+
+        return redirect()->route('sms.medical.index')->with('success', 'Medical record created successfully.');
+    }
+
+    public function showMedical($id)
+    {
+        $medicalRecord = MedicalRecord::with('student')->findOrFail($id);
+        return response()->json($medicalRecord);
+    }
+
+    public function updateMedical(Request $request, $id)
+    {
+        $request->validate([
+            'record_date' => 'required|date',
+            'description' => 'required|string',
+            'attachments' => 'nullable|string',
+        ]);
+
+        $medicalRecord = MedicalRecord::findOrFail($id);
+        $medicalRecord->update($request->all());
+
+        return redirect()->route('sms.medical.index')->with('success', 'Medical record updated successfully.');
+    }
+
+    public function destroyMedical($id)
+    {
+        $medicalRecord = MedicalRecord::findOrFail($id);
+        $medicalRecord->delete();
+
+        return redirect()->route('sms.medical.index')->with('success', 'Medical record deleted successfully.');
     }
 
     /**
@@ -351,4 +502,175 @@ class SMSController extends Controller
 
         return view('sms.postings.index', compact('postings'));
     }
+
+    public function storeStudentProfile(Request $request)
+    {//dd($request->all());
+        // $request->validate([
+        //     //'student_id' => 'required|exists:students,id',
+        //     'full_name' => 'required|string|max:255',
+        //     'email' => 'required|email|max:255',
+        //     'nid' => 'required|string|max:20',
+        //     'mobile_no' => 'required|string|max:20',
+        //     'dob' => 'required|date|before:today',
+        //     'permanent_atoll' => 'required|string|max:255',
+        //     'permanent_island' => 'required|string|max:255',
+        //     'permanent_district' => 'required|string|max:255',
+        //     'permanent_address' => 'required|string|max:500',
+        //     'present_atoll' => 'required|string|max:255',
+        //     'present_island' => 'required|string|max:255',
+        //     'present_district' => 'required|string|max:255',
+        //     'present_address' => 'required|string|max:500',
+        //     'parent_name' => 'required|string|max:255',
+        //     'parent_relation' => 'required|string|max:255',
+        //     'parent_atoll' => 'required|string|max:255',
+        //     'parent_island' => 'required|string|max:255',
+        //     'parent_address' => 'required|string|max:500',
+        //     'parent_mobile_no' => 'required|string|max:20',
+        //     'parent_email' => 'nullable|email|max:255',
+        // ]);
+
+        // $validated = $request->validate([
+        //    // 'full_name' => 'required|string|max:255',
+        //     'email'     => 'required|email|unique:students,email',
+        //     'dob'       => 'required|date',
+        // ]);
+
+        if ($request->hasFile('profile_picture')) {
+            $destinationPath = public_path('sms_students_profile');
+
+            // Create directory if not exists
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+
+            // Generate unique filename
+            $file = $request->file('profile_picture');
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // Move file to public/sms_students_profile
+            $file->move($destinationPath, $fileName);
+
+            // Save relative path to DB (so we can easily access it later)
+            $data['photo'] = 'sms_students_profile/' . $fileName;
+
+            // Optional: Delete old photo if exists
+            // if ($student->photo && file_exists(public_path($student->photo))) {
+            //     unlink(public_path($student->photo));
+            // }
+        }
+
+        $student = Student::create([
+            'first_name'  => $request->first_name,
+            'last_name' => $request->last_name,
+            'email'             =>  $request->email,
+            'photo'          => $data['photo'],
+            'student_id' => rand(100000, 999999),
+            'date_of_birth'     => $request->dob,
+            'national_id' =>  $request->nid,
+            'contact_no' => $request->mobile_no,
+            'present_atoll_id' => $request->present_atoll,
+            'present_island_id' => $request->present_island,
+            'present_district' => $request->present_district,
+            'present_address_name' => $request->present_address,
+
+            'permanent_atoll_id' => $request->permanent_atoll,
+            'permanent_island_id' => $request->permanent_island,
+            'permanent_district' => $request->permanent_district,
+            'permanent_address_name' => $request->permanent_address,
+
+            'parent_name' => $request->parent_name,
+            'parent_relationship' => $request->parent_relation,
+            'parent_email' => $request->parent_email,
+            'parent_contact_no' => $request->parent_mobile_no,
+            'parent_address' => $request->parent_address,
+            'parent_atoll_id' => $request->parent_atoll,
+            'parent_island_id' => $request->parent_island,
+            //'by_admin' => true,
+        ]);
+        $medicalRecord = MedicalRecord::create([
+            'student_id' => $student->id,
+            'medical_condition' => $request->medical_condition,
+            'medical_severity_level' => $request->medical_severity_level,
+            'medical_notes' => $request->medical_notes,
+        ]);
+
+        $smsAcademic = SmsAcademic::create([
+            'student_id'    => $student->id,
+            'document_type' => $request->document_type,
+            'institution'   => $request->institution,
+            'start_date'    => $request->start_date,
+            'end_date'      => $request->end_date,
+            'result'        => $request->result,
+        ]);
+
+        $smsObservation = SmsObservation::create([
+            'student_id'    => $student->id,
+            'observation_type' => $request->observation_type,
+            'severity_level'   => $request->severity_level,
+            'observation_notes'    => $request->observation_notes,
+        ]);
+
+        // $age = \Carbon\Carbon::parse($request->dob)->age;
+        // $isUnder18 = $age < 18;
+
+        // DB::transaction(function () use ($request, $student, $isUnder18) {
+        //     // Profile
+        //     $student->profile()->updateOrCreate(
+        //         ['student_id' => $student->id],
+        //         [
+        //             'first_name' => $request->first_name,
+        //             'last_name' => $request->last_name,
+        //             'nid' => $request->nid,
+        //             'mobile_no' => $request->mobile_no,
+        //             'dob' => $request->dob,
+        //         ]
+        //     );
+
+        //     // Permanent address
+        //     $student->addresses()->updateOrCreate(
+        //         ['student_id' => $student->id, 'type' => 'permanent'],
+        //         [
+        //             'atoll' => $request->permanent_atoll,
+        //             'island' => $request->permanent_island,
+        //             'district' => $request->permanent_district,
+        //             'address' => $request->permanent_address,
+        //         ]
+        //     );
+
+        //     // Present address
+        //     $student->addresses()->updateOrCreate(
+        //         ['student_id' => $student->id, 'type' => 'present'],
+        //         [
+        //             'atoll' => $request->present_atoll,
+        //             'island' => $request->present_island,
+        //             'district' => $request->present_district,
+        //             'address' => $request->present_address,
+        //         ]
+        //     );
+
+        //     // Parent details
+        //     $student->parentDetail()->updateOrCreate(
+        //         ['student_id' => $student->id],
+        //         [
+        //             'name' => $request->parent_name,
+        //             'relation' => $request->parent_relation,
+        //             'atoll' => $request->parent_atoll,
+        //             'island' => $request->parent_island,
+        //             'address' => $request->parent_address,
+        //             'mobile_no' => $request->parent_mobile_no,
+        //             'email' => $request->parent_email,
+        //         ]
+        //     );
+
+        //     // Update student main record
+        //     $student->update([
+        //         'profile_completed' => true,
+        //         'is_under_age_18' => $isUnder18,
+        //         'application_stage' => 'profile_completed',
+        //     ]);
+        // });
+
+        return redirect()->route('sms.students.index')->with('success', 'Student profile saved successfully!');
+    }
+
 }

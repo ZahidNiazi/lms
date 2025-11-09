@@ -145,7 +145,7 @@
             <div class="col-md-4">
                 <div class="info-section text-center">
                     @if($student->photo)
-                        <img src="{{ asset('storage/' . $student->photo) }}" alt="Student Photo" class="student-photo mb-3">
+                        <img src="{{ asset($student->photo) }}" alt="Student Photo" class="student-photo mb-3">
                     @else
                         <div class="student-photo bg-light d-flex align-items-center justify-content-center mb-3 mx-auto">
                             <i class="bi bi-person display-4 text-muted"></i>
@@ -263,11 +263,11 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Atoll:</span>
-                                <span class="info-value">{{ $student->permanent_atoll ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->permanentAtoll->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Island:</span>
-                                <span class="info-value">{{ $student->permanent_island ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->permanentIsland->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">District:</span>
@@ -282,11 +282,11 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Atoll:</span>
-                                <span class="info-value">{{ $student->present_atoll ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->presentAtoll->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Island:</span>
-                                <span class="info-value">{{ $student->present_island ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->presentIsland->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">District:</span>
@@ -323,6 +323,16 @@
                                 <span class="info-value">{{ $student->parent_contact_no ?? 'N/A' }}</span>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">Atoll:</span>
+                                <span class="info-value">{{ $student->parentAtoll->name ?? 'N/A' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Islands:</span>
+                                <span class="info-value">{{ $student->parentIsland->name ?? 'N/A' }}</span>
+                            </div>
+                        </div>
                     </div>
                     @if($student->parent_address)
                         <div class="info-item">
@@ -352,11 +362,11 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Company:</span>
-                                <span class="info-value">{{ $student->company ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->company->name ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Platoon:</span>
-                                <span class="info-value">{{ $student->platoon ?? 'N/A' }}</span>
+                                <span class="info-value">{{ $student->platoon->name ?? 'N/A' }}</span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -374,6 +384,153 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- Medical Information -->
+                <div class="info-section">
+                    <h5 class="section-title">
+                        <i class="bi bi-mortarboard me-2"></i>Medical Information
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            @foreach ($student->medicalRecords as $index => $record)
+                                <div class="info-item">
+                                    <span class="info-label">Condition:</span>
+                                    <span class="info-value">
+                                        @if($record->medical_condition)
+                                            <span >{{ $record->medical_condition }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Severity Level:</span>
+                                    <span class="info-value">
+                                        @if($record->medical_severity_level)
+                                            <span >{{ $record->medical_severity_level }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Medical Notes:</span>
+                                    <span class="info-value">
+                                        @if($record->medical_notes)
+                                            <span >{{ $record->medical_notes }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                            @endforeach
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- Academic Information --> 
+                <div class="info-section">
+                    <h5 class="section-title">
+                        <i class="bi bi-mortarboard me-2"></i>Academic Information
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            @foreach ($student->AcademiclRecords as $index => $academic)
+                                <div class="info-item">
+                                    <span class="info-label">Document Type:</span>
+                                    <span class="info-value">
+                                        @if($academic->document_type)
+                                            <span >{{ $academic->document_type }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Institution:</span>
+                                    <span class="info-value">
+                                        @if($academic->institution)
+                                            <span >{{ $academic->institution }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Start Date:</span>
+                                    <span class="info-value">
+                                        @if($academic->start_date)
+                                            <span >{{ $academic->start_date }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">End Date:</span>
+                                    <span class="info-value">
+                                        @if($academic->end_date)
+                                            <span >{{ $academic->end_date }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                            @endforeach
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- Academic Information --> 
+                <div class="info-section">
+                    <h5 class="section-title">
+                        <i class="bi bi-mortarboard me-2"></i>Observation
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            @foreach ($student->Observation as $index => $observation)
+                                <div class="info-item">
+                                    <span class="info-label">Type:</span>
+                                    <span class="info-value">
+                                        @if($observation->observation_type)
+                                            <span >{{ $observation->observation_type }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Level:</span>
+                                    <span class="info-value">
+                                        @if($observation->severity_level)
+                                            <span >{{ $observation->severity_level }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Notes:</span>
+                                    <span class="info-value">
+                                        @if($observation->observation_notes)
+                                            <span >{{ $observation->observation_notes }}</span>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </span>
+                                </div>
+                                
+                            @endforeach
+                            
+                        </div>
+                        
+                    </div>
+
                 </div>
             </div>
         </div>

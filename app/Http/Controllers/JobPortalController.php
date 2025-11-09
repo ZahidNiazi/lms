@@ -389,6 +389,7 @@ class JobPortalController extends Controller
     public function batches()
     {
         $batches = TrainingBatch::withCount('applications')->latest()->paginate(20);
+        //dd($batches);
         return view('job-portal.batches.index', compact('batches'));
     }
 

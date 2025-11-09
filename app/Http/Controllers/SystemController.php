@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Mail\TestMail;
 use App\Models\EmailTemplate;
+use App\Models\Atoll;
+use App\Models\Island;
 use App\Models\ExperienceCertificate;
 use App\Models\GenerateOfferLetter;
 use App\Models\IpRestrict;
@@ -33,7 +35,17 @@ class SystemController extends Controller
             }
             $file_size = number_format($file_size / 1000000, 4);
 
-            return view('settings.index', compact('settings', 'admin_payment_setting', 'file_size'));
+            // Atolls and Islands for settings management
+            $atolls = Atoll::with('islands')->where('created_by', \Auth::user()->creatorId())
+                ->orderBy('name')
+                ->get();
+            
+            // $islands = Island::with('atoll')
+            //     ->where('created_by', \Auth::user()->creatorId())
+            //     ->orderBy('name')
+            //     ->get();
+
+            return view('settings.index', compact('settings', 'admin_payment_setting', 'file_size', 'atolls', ));
         } else {
             return redirect()->back()->with('error', 'Permission denied.');
         }
@@ -42,7 +54,7 @@ class SystemController extends Controller
     public function store(Request $request)
     {
 
-        if (\Auth::user()->can('manage system settings')) {
+        if (\Auth::user()->can('manage system settings')) { 
             if ($request->logo_dark) {
                 $logoName = 'logo-dark.png';
                 $dir = 'uploads/logo/';
@@ -1796,6 +1808,33 @@ class SystemController extends Controller
             }
             return redirect()->back()->with('success', __('Pusher Settings updated successfully'));
         }
+    }
+    
+
+    public function saveTwilioSettingsS(Request $request)
+    {
+        $post = [];
+        $post['twilio_sid'] = $request->input('twilio_sid');
+        $post['twilio_token'] = $request->input('twilio_token');
+        $post['twilio_from'] = $request->input('twilio_from');
+        if (isset($post) && !empty($post) && count($post) > 0) {
+            $created_at = $updated_at = date('Y-m-d H:i:s');
+
+            foreach ($post as $key => $data) {
+                DB::insert(
+                    'INSERT INTO settings (`value`, `name`,`created_by`,`created_at`,`updated_at`) values (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updated_at` = VALUES(`updated_at`) ',
+                    [
+                        $data,
+                        $key,
+                        Auth::user()->id,
+                        $created_at,
+                        $updated_at,
+                    ]
+                );
+            }
+        }
+
+        return redirect()->back()->with('success', __('Twilio updated successfully.'));
     }
 
     public function saveSlackSettings(Request $request)
