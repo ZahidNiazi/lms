@@ -112,8 +112,17 @@
                 </a>
             </div>
         </div>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <form action="{{ route('sms.students.update', $student->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('sms.students.update', $student->id) }}" method="POST" enctype="multipart/form-data" id="editStudentForm">
             @csrf
             @method('PUT')
             
@@ -194,13 +203,19 @@
                         <label class="form-label">Martial Status<span class="text-danger">*</span></label>
                         <select name="martial_status" id="martial_status" class="form-select @error('gender') is-invalid @enderror" required>
                             <option value="">Select Martial Status</option>
+                            <option value="Single" {{ old('martial_status', $student->martial_status) == 'Single' ? 'selected' : '' }}>Single</option>
                             <option value="Married" {{ old('martial_status', $student->martial_status) == 'Married' ? 'selected' : '' }}>Married</option>
                             <option value="Unmarried" {{ old('martial_status', $student->martial_status) == 'Unmarried' ? 'selected' : '' }}>Unmarried</option>
+                            <option value="Divorced" {{ old('martial_status', $student->martial_status) == 'Divorced' ? 'selected' : '' }}>Divorced</option>
+                            <option value="Separated" {{ old('martial_status', $student->martial_status) == 'Separated' ? 'selected' : '' }}>Separated</option>
+                            <option value="Widowed" {{ old('martial_status', $student->martial_status) == 'Widowed' ? 'selected' : '' }}>Widowed</option>
+                            <option value="Engaged" {{ old('martial_status', $student->martial_status) == 'Engaged' ? 'selected' : '' }}>Engaged</option>
                         </select>
                         @error('martial_status')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
                     <div class="col-md-3" id="kids_field" style="display: none;">
                         <label class="form-label">Number of Kids</label>
                         <input type="number" name="kids" id="kids" class="form-control"
@@ -230,16 +245,16 @@
                     <div class="col-md-4">
                         <label class="form-label">National ID <span class="text-danger">*</span></label>
                         <input type="text" name="national_id" class="form-control @error('national_id') is-invalid @enderror" 
-                               value="{{ old('national_id', $student->national_id) }}" required>
+                            value="{{ old('national_id', $student->national_id) }}" required>
                         @error('national_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    
+
                     <div class="col-md-4">
                         <label class="form-label">Contact Number <span class="text-danger">*</span></label>
                         <input type="text" name="contact_no" class="form-control @error('contact_no') is-invalid @enderror" 
-                               value="{{ old('contact_no', $student->contact_no) }}" required>
+                            value="{{ old('contact_no', $student->contact_no) }}" required>
                         @error('contact_no')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -277,7 +292,11 @@
                             <option value="O-" {{ old('blood_group', $student->blood_group) == 'O-' ? 'selected' : '' }}>O-</option>
                         </select>
                     </div>
-                    
+                    <div class="col-md-3">
+                        <label class="form-label">Joining Date </label>
+                        <input type="date" name="date_of_joining" class="form-control" 
+                               value="{{ old('date_of_joining', $student->date_of_joining) }}" min="1" max="24">
+                    </div>
                     <div class="col-md-3">
                         <label class="form-label">Service Duration (months)</label>
                         <input type="number" name="service_duration" class="form-control" 
@@ -433,9 +452,20 @@
                             <option value="">Select Relationship</option>
                             <option value="Father" {{ old('parent_relationship', $student->parent_relationship) == 'Father' ? 'selected' : '' }}>Father</option>
                             <option value="Mother" {{ old('parent_relationship', $student->parent_relationship) == 'Mother' ? 'selected' : '' }}>Mother</option>
+                            <option value="Step-Father" {{ old('parent_relationship', $student->parent_relationship) == 'Step-Father' ? 'selected' : '' }}>Step-Father</option>
+                            <option value="Step-Mother" {{ old('parent_relationship', $student->parent_relationship) == 'Step-Mother' ? 'selected' : '' }}>Step-Mother</option>
                             <option value="Guardian" {{ old('parent_relationship', $student->parent_relationship) == 'Guardian' ? 'selected' : '' }}>Guardian</option>
+                            <option value="Brother" {{ old('parent_relationship', $student->parent_relationship) == 'Brother' ? 'selected' : '' }}>Brother</option>
+                            <option value="Sister" {{ old('parent_relationship', $student->parent_relationship) == 'Sister' ? 'selected' : '' }}>Sister</option>
+                            <option value="Uncle" {{ old('parent_relationship', $student->parent_relationship) == 'Uncle' ? 'selected' : '' }}>Uncle</option>
+                            <option value="Aunt" {{ old('parent_relationship', $student->parent_relationship) == 'Aunt' ? 'selected' : '' }}>Aunt</option>
+                            <option value="Cousin" {{ old('parent_relationship', $student->parent_relationship) == 'Cousin' ? 'selected' : '' }}>Cousin</option>
+                            <option value="Grandfather" {{ old('parent_relationship', $student->parent_relationship) == 'Grandfather' ? 'selected' : '' }}>Grandfather</option>
+                            <option value="Grandmother" {{ old('parent_relationship', $student->parent_relationship) == 'Grandmother' ? 'selected' : '' }}>Grandmother</option>
+                            <option value="Other" {{ old('parent_relationship', $student->parent_relationship) == 'Other' ? 'selected' : '' }}>Other</option>
                         </select>
                     </div>
+
                     
                     <div class="col-md-3">
                         <label class="form-label">Parent Email</label>
@@ -451,13 +481,13 @@
                             placeholder="Enter contact number">
                     </div>
                     
-                    <div class="col-12">
+                    {{-- <div class="col-12">
                         <h6 class="text-muted mb-3 mt-3">Parent Address</h6>
-                    </div>
+                    </div> --}}
                     
                     <div class="col-md-6">
                         <label class="form-label">Parent Address</label>
-                        <textarea name="parent_address" class="form-control" rows="2" 
+                        <textarea name="parent_address" class="form-control" rows="2" style ="height: 20px;"
                                 placeholder="Enter parent address">{{ old('parent_address', $student->parent_address) }}</textarea>
                     </div>
                     
@@ -557,14 +587,14 @@
 
                 <div class="row g-3">
                     <!-- Medical Condition -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Medical Condition</label>
                         <input type="text" name="medical_condition" class="form-control"
                             value="{{ old('medical_condition', $medical?->medical_condition) }}">
                     </div>
 
                     <!-- Severity Level -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Medical Severity Level</label>
                         <select name="medical_severity_level" class="form-control">
                             <option value="">-- Select Severity Level --</option>
@@ -595,7 +625,7 @@
 
                 <div class="row g-3">
                     <!-- Document Type -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Document Type</label>
                         <select name="document_type" class="form-control">
                             <option value="">-- Select Document Type --</option>
@@ -607,7 +637,7 @@
                     </div>
 
                     <!-- Institution / Organization -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Institution / Organization</label>
                         <input type="text" name="institution" class="form-control"
                             value="{{ old('institution', $record?->institution) }}">
@@ -628,7 +658,7 @@
                     </div>
 
                     <!-- Result / Grade -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Result / Grade</label>
                         <input type="text" name="result" class="form-control"
                             value="{{ old('result', $record?->result) }}">
@@ -648,7 +678,7 @@
 
                 <div class="row g-3">
                     <!-- Observation Type -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Observation Type</label>
                         <select name="observation_type" class="form-control">
                             <option value="">-- Select Observation Type --</option>
@@ -661,7 +691,7 @@
                     </div>
 
                     <!-- Severity Level -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <label class="form-label">Severity Level</label>
                         <select name="severity_level" class="form-control">
                             <option value="">-- Select Severity Level --</option>
@@ -698,85 +728,207 @@
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const maritalSelect = document.getElementById('martial_status');
-        const kidsField = document.getElementById('kids_field');
-        const kidsInput = document.getElementById('kids');
+        document.addEventListener('DOMContentLoaded', function () {
+            const maritalSelect = document.getElementById('martial_status');
+            const kidsField = document.getElementById('kids_field');
+            const kidsInput = document.getElementById('kids');
 
-        // Function to toggle kids field visibility
-        function toggleKidsField() {
-            if (maritalSelect.value === 'Married') {
-                kidsField.style.display = 'block';
-            } else {
-                kidsField.style.display = 'none';
-                kidsInput.value = ''; // clear if hidden
+            // Function to toggle kids field visibility
+            function toggleKidsField() {
+                if (maritalSelect.value === 'Married') {
+                    kidsField.style.display = 'block';
+                } else {
+                    kidsField.style.display = 'none';
+                    kidsInput.value = ''; // clear if hidden
+                }
             }
-        }
 
-        // Initial check (for edit form)
-        toggleKidsField();
+            // Initial check (for edit form)
+            toggleKidsField();
 
-        // Change event
-        maritalSelect.addEventListener('change', toggleKidsField);
-    });
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        
-        function loadIslands(atollSelector, islandSelector, selectedIslandId = null) {
-            var atollId = $(atollSelector).val();
-            var $islandSelect = $(islandSelector);
-            $islandSelect.empty().append('<option value="">Select Island</option>');
+            // Change event
+            maritalSelect.addEventListener('change', toggleKidsField);
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            
+            function loadIslands(atollSelector, islandSelector, selectedIslandId = null) {
+                var atollId = $(atollSelector).val();
+                var $islandSelect = $(islandSelector);
+                $islandSelect.empty().append('<option value="">Select Island</option>');
 
-            if (atollId) {
-                const url = "{{ route('sms.get.islands', ':atoll_id') }}".replace(':atoll_id', atollId);
+                if (atollId) {
+                    const url = "{{ route('sms.get.islands', ':atoll_id') }}".replace(':atoll_id', atollId);
 
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function (response) {
-                        if (response.length > 0) {
-                            response.forEach(function (island) {
-                                var selected = selectedIslandId && island.id == selectedIslandId ? 'selected' : '';
-                                $islandSelect.append('<option value="' + island.id + '" ' + selected + '>' + island.name + '</option>');
-                            });
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        success: function (response) {
+                            if (response.length > 0) {
+                                response.forEach(function (island) {
+                                    var selected = selectedIslandId && island.id == selectedIslandId ? 'selected' : '';
+                                    $islandSelect.append('<option value="' + island.id + '" ' + selected + '>' + island.name + '</option>');
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error('Error fetching islands:', xhr.responseText);
                         }
-                    },
-                    error: function (xhr) {
-                        console.error('Error fetching islands:', xhr.responseText);
-                    }
-                });
+                    });
+                }
             }
-        }
 
-        // Load islands on page load if atoll is already selected
-        @if($student->permanent_atoll)
-            loadIslands('#permanent_atoll', '#permanent_island', {{ $student->permanent_island ?? 'null' }});
-        @endif
-        
-        @if($student->present_atoll)
-            loadIslands('#present_atoll', '#present_island', {{ $student->present_island ?? 'null' }});
-        @endif
-        
-        @if($student->parent_atoll)
-            loadIslands('#parent_atoll', '#parent_island', {{ $student->parent_island ?? 'null' }});
-        @endif
+            // Load islands on page load if atoll is already selected
+            @if($student->permanent_atoll)
+                loadIslands('#permanent_atoll', '#permanent_island', {{ $student->permanent_island ?? 'null' }});
+            @endif
+            
+            @if($student->present_atoll)
+                loadIslands('#present_atoll', '#present_island', {{ $student->present_island ?? 'null' }});
+            @endif
+            
+            @if($student->parent_atoll)
+                loadIslands('#parent_atoll', '#parent_island', {{ $student->parent_island ?? 'null' }});
+            @endif
 
-        // Bind change events for all 3 address groups
-        $('#permanent_atoll').on('change', function () {
-            loadIslands('#permanent_atoll', '#permanent_island');
+            // Bind change events for all 3 address groups
+            $('#permanent_atoll').on('change', function () {
+                loadIslands('#permanent_atoll', '#permanent_island');
+            });
+
+            $('#present_atoll').on('change', function () {
+                loadIslands('#present_atoll', '#present_island');
+            });
+
+            $('#parent_atoll').on('change', function () {
+                loadIslands('#parent_atoll', '#parent_island');
+            });
         });
+    </script>
+   <script>
+        (function() {
+            const form = document.querySelector('form');
+            const submitBtn = form.querySelector('button[type="submit"]');
 
-        $('#present_atoll').on('change', function () {
-            loadIslands('#present_atoll', '#present_island');
-        });
+            if (!form) {
+                console.warn('Form not found on page; skipping validation init');
+                return;
+            }
 
-        $('#parent_atoll').on('change', function () {
-            loadIslands('#parent_atoll', '#parent_island');
-        });
-    });
-</script>
+            // Utility functions
+            function setInvalid(input, message) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                let feedback = input.nextElementSibling;
+                if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    input.parentNode.insertBefore(feedback, input.nextSibling);
+                }
+                feedback.textContent = message;
+                toggleSubmitState();
+            }
+
+            function setValid(input) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                const feedback = input.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.textContent = '';
+                }
+                toggleSubmitState();
+            }
+
+            function clearValidation(input) {
+                input.classList.remove('is-invalid', 'is-valid');
+                const feedback = input.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) feedback.textContent = '';
+                toggleSubmitState();
+            }
+
+            // Disable/enable submit based on validation state
+            function toggleSubmitState() {
+                const anyInvalid = form.querySelector('.is-invalid');
+                submitBtn.disabled = !!anyInvalid;
+            }
+
+            // --- National ID Validation ---
+            function validateNationalID() {
+                const input = document.querySelector('[name="national_id"]');
+                const val = (input.value || '').trim().toUpperCase();
+                input.value = val;
+                if (!val) {
+                    setInvalid(input, 'National ID is required.');
+                    return false;
+                }
+                if (!/^[A-Z][0-9]{7}$/.test(val)) {
+                    setInvalid(input, 'National ID must start with a letter followed by 7 digits (e.g., A1234567).');
+                    return false;
+                }
+                setValid(input);
+                return true;
+            }
+
+            // --- Contact Number Validation ---
+            function validateContactNo() {
+                const input = document.querySelector('[name="contact_no"]');
+                const val = (input.value || '').trim();
+                if (!val) {
+                    setInvalid(input, 'Contact number is required.');
+                    return false;
+                }
+                if (!/^\d{7}$/.test(val)) {
+                    setInvalid(input, 'Contact number must be exactly 7 digits (e.g., 1234567).');
+                    return false;
+                }
+                setValid(input);
+                return true;
+            }
+
+            // --- Input sanitization and event handling ---
+            const nidEl = document.querySelector('[name="national_id"]');
+            const contactEl = document.querySelector('[name="contact_no"]');
+
+            if (nidEl) {
+                nidEl.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    clearValidation(this);
+                    if (this.value !== '') validateNationalID();
+                });
+                nidEl.addEventListener('blur', validateNationalID);
+            }
+
+            if (contactEl) {
+                contactEl.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D+/g, '');
+                    clearValidation(this);
+                    if (this.value !== '') validateContactNo();
+                });
+                contactEl.addEventListener('blur', validateContactNo);
+            }
+
+            // --- Validate on submit ---
+            form.addEventListener('submit', function(e) {
+                let ok = true;
+                if (!validateNationalID()) ok = false;
+                if (!validateContactNo()) ok = false;
+
+                if (!ok) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) firstInvalid.focus();
+                    toggleSubmitState();
+                }
+            });
+
+        })();
+    </script>
+
+
+
 
 </body>
 </html>
