@@ -145,6 +145,7 @@ class StudentController extends Controller
         DB::transaction(function () use ($request, $student, $isUnder18) {
             // Create or update profile
             $profilePicturePath = null;
+
             if ($request->hasFile('profile_picture')) {
                 // Delete old photo if exists
                 if (!empty($student->profile->profile_picture)) {
@@ -154,20 +155,27 @@ class StudentController extends Controller
                     }
                 }
 
-                // Validate file
-                $request->validate([
-                    'profile_picture' => 'mimes:jpg,jpeg,png,gif|max:2048',
-                ]);
+                // Define validation rules
+                $validation = [
+                    'mimes:png,jpg,jpeg,gif',
+                    'max:2048',
+                ];
 
                 // Generate unique filename
                 $fileName = time() . '-profile.' . $request->file('profile_picture')->getClientOriginalExtension();
+                $dir = 'uploads/students/';
 
-                // Store file in storage/app/public/uploads/students
-                $path = $request->file('profile_picture')->storeAs('uploads/students', $fileName, 'public');
+                // Upload file using Utility helper (handles local/S3/Wasabi)
+                $path = Utility::upload_file($request, 'profile_picture', $fileName, $dir, $validation);
 
-                // Save only filename in DB
-                $profilePicturePath = $fileName;
+                if ($path['flag'] == 1) {
+                    // Store only filename in DB
+                    $profilePicturePath = $fileName;
+                } else {
+                    return redirect()->back()->with('error', __($path['msg']));
+                }
             }
+
 
             $student->profile()->updateOrCreate(
                 ['student_id' => $student->id],
