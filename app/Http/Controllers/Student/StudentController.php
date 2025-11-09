@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\Utility;
 class StudentController extends Controller
 {
     public function index(){
@@ -145,18 +145,37 @@ class StudentController extends Controller
         DB::transaction(function () use ($request, $student, $isUnder18) {
             // Create or update profile
             $profilePicturePath = null;
+
             if ($request->hasFile('profile_picture')) {
-                
-                $destinationPath = public_path('profile_pictures');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
+                // Delete old photo if exists
+                if (!empty($student->profile->profile_picture)) {
+                    $oldPath = storage_path('app/public/uploads/students/' . $student->profile->profile_picture);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
                 }
 
-                $file = $request->file('profile_picture');
-                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move($destinationPath, $fileName);
-                $profilePicturePath = 'profile_pictures/' . $fileName;
+                // Define validation rules
+                $validation = [
+                    'mimes:png,jpg,jpeg,gif',
+                    'max:2048',
+                ];
+
+                // Generate unique filename
+                $fileName = time() . '-profile.' . $request->file('profile_picture')->getClientOriginalExtension();
+                $dir = 'uploads/students/';
+
+                // Upload file using Utility helper (handles local/S3/Wasabi)
+                $path = Utility::upload_file($request, 'profile_picture', $fileName, $dir, $validation);
+
+                if ($path['flag'] == 1) {
+                    // Store only filename in DB
+                    $profilePicturePath = $fileName;
+                } else {
+                    return redirect()->back()->with('error', __($path['msg']));
+                }
             }
+
 
             $student->profile()->updateOrCreate(
                 ['student_id' => $student->id],
