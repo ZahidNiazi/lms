@@ -236,6 +236,7 @@ class SMSController extends Controller
         //$data = [];
         
         if ($request->hasFile('photo')) {
+
             // Delete old photo if exists
             if (!empty($student->photo)) {
                 $oldPath = storage_path('app/public/uploads/students/' . $student->photo);
@@ -244,20 +245,28 @@ class SMSController extends Controller
                 }
             }
 
-            // Validate file
-            $request->validate([
-                'photo' => 'mimes:jpg,jpeg,png,gif|max:2048',
-            ]);
+            // Define validation rules
+            $validation = [
+                'mimes:png,jpg,jpeg,gif',
+                'max:2048',
+            ];
 
-            // Generate unique filename
+            // Generate new filename
             $fileName = time() . '-photo.' . $request->file('photo')->getClientOriginalExtension();
+            $dir = 'uploads/students/';
 
-            // Store file in storage/app/public/uploads/students
-            $path = $request->file('photo')->storeAs('uploads/students', $fileName, 'public');
+            // Upload file using Utility helper (works with local/S3/Wasabi)
+            $path = Utility::upload_file($request, 'photo', $fileName, $dir, $validation);
 
-            // Save only filename in DB (optional but clean)
-            $data['photo'] = $fileName;
+            if ($path['flag'] == 1) {
+                // Store only filename in database
+                $data['photo'] = $fileName;
+            } else {
+                return redirect()->back()->with('error', __($path['msg']));
+            }
+
         }
+
 
 
 
